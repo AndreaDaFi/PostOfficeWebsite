@@ -39,13 +39,19 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-import React from "react";
+import React, { useState } from "react";
 
 function App() {
+  const [text, setText] = useState("jijiji");
+
+  const handleClick = () => {
+    setText(text === "jijiji" ? "yo" : "jijiji");
+  };
+
   return (
     <div>
-      <h1>jijiji</h1>
-      <h1>yo</h1>
+      <h1>{text}</h1>
+      <button onClick={handleClick}>Click Me</button>
     </div>
   );
 }
