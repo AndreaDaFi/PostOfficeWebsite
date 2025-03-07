@@ -4,7 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-function HelloWorld() {
+function HelloWorld()
+function HelloWorld(){
   return <h1 className="greeting">Hello World:</h1>;
 }
 
