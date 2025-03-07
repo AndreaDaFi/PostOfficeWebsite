@@ -4,7 +4,7 @@ using namespace std;
 
 int main(){
 
-cout<<"Uma had no right making an exam like that"<<endl;
+court<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
 
 return 0;
 }
