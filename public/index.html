@@ -39,19 +39,14 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-import React, { useState } from "react";
+import React from "react";
+import "./App.css"; // Import CSS for styling
 
 function App() {
-  const [text, setText] = useState("jijiji");
-
-  const handleClick = () => {
-    setText(text === "jijiji" ? "yo" : "jijiji");
-  };
-
   return (
-    <div>
-      <h1>{text}</h1>
-      <button onClick={handleClick}>Click Me</button>
+    <div className="container">
+      <h1 className="blue-cursive">jijiji</h1>
+      <h1 className="blue-cursive">yo</h1>
     </div>
   );
 }
