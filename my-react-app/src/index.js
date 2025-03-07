@@ -18,3 +18,14 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+function App() {
+  return (
+    <div>
+      <h1>Hello World</h1>
+      <button onClick={() => console.log("Button Clicked!")}>
+        Click Me
+      </button>
+    </div>
+  );
+}
