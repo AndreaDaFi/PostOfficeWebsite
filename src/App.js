@@ -6,6 +6,9 @@ import EmpLogin from './app/EmpLogin';
 import Store from './app/Store';
 import Home from './app/Home';
 import MyPackages from './app/MyPackages';
+import TrackPackage from './app/TrackPackage';
+import AddPO from './app/AddPO';
+import AddMngr from './app/AddMngr';
 
 const App = () => {
   return (
@@ -22,6 +25,17 @@ const App = () => {
 
           {/*pages only customers should be able to see*/}
           <Button color="inherit" component={Link} to="/store">store</Button>
+          <Button color="inherit" component={Link} to="/MyPackages">My Packages</Button>
+          <Button color="inherit" component={Link} to="/TrackPackage">Track My Package</Button>
+
+          {/*EMPLOYEE PAGES*/}
+          {/*pages only Admin should be able to see*/}
+          <Button color="inherit" component={Link} to="/AddPO">Add a Post Office</Button>
+          <Button color="inherit" component={Link} to="/AddMngr">Add Manager</Button>
+
+          {/*pages only Managers should be able to see*/}
+          {/*pages only Drivers should be able to see*/}
+          {/*pages only Clerks should be able to see*/}
         </Toolbar>
       </AppBar>
       {/*this section adds the links to these pages*/}
@@ -34,6 +48,17 @@ const App = () => {
 
           {/*pages only customers should be able to see*/}
           <Route path="/Store" element={<Store />} />
+          <Route path="/MyPackages" element={<MyPackages />} />
+          <Route path="/TrackPackage" element={<TrackPackage />} />
+
+          {/*EMPLOYEE PAGES*/}
+          {/*pages only Admin should be able to see*/}
+          <Route path="/AddPO" element={<AddPO />} />
+          <Route path="/AddMngr" element={<AddMngr />} />
+
+          {/*pages only Managers should be able to see*/}
+          {/*pages only Drivers should be able to see*/}
+          {/*pages only Clerks should be able to see*/}
         </Routes>
       </Container>
 
