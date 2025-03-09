@@ -1,46 +1,33 @@
-import React from "react";
-import { Container, Typography, Button, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { AppBar, Toolbar, Button, Container, Typography } from '@mui/material';
+import CustLogin from './app/CustLogin';
+import EmpLogin from './app/EmpLogin';
+import Home from './app/Home';
 
-const packages = [
-  { id: "PKG001", sender: "John Doe", receiver: "Alice", status: "Delivered" },
-  { id: "PKG002", sender: "Mary", receiver: "Bob", status: "In Transit" },
-  { id: "PKG003", sender: "Carlos", receiver: "David", status: "Pending" }
-];
-
-export default function PostOfficeDashboard() {
+const App = () => {
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom>
-        📦 Post Office Dashboard
-      </Typography>
+    <Router>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" style={{ flexGrow: 1 }}>
+            Best Post Office Ever
+          </Typography>
+          <Button color="inherit" component={Link} to="/">Home</Button>
+          <Button color="inherit" component={Link} to="/cust-login">Customer Login</Button>
+          <Button color="inherit" component={Link} to="/emp-login">Employee Login</Button>
+        </Toolbar>
+      </AppBar>
 
-      <Button variant="contained" color="primary">
-        Add New Package
-      </Button>
-
-      <Paper style={{ marginTop: 20, padding: 20 }}>
-        <Typography variant="h6" gutterBottom>Package Status</Typography>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell><b>Tracking ID</b></TableCell>
-              <TableCell><b>Sender</b></TableCell>
-              <TableCell><b>Receiver</b></TableCell>
-              <TableCell><b>Status</b></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {packages.map((pkg) => (
-              <TableRow key={pkg.id}>
-                <TableCell>{pkg.id}</TableCell>
-                <TableCell>{pkg.sender}</TableCell>
-                <TableCell>{pkg.receiver}</TableCell>
-                <TableCell>{pkg.status}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    </Container>
+      <Container style={{ marginTop: 20 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/cust-login" element={<CustLogin />} />
+          <Route path="/emp-login" element={<EmpLogin />} />
+        </Routes>
+      </Container>
+    </Router>
   );
-}
+};
+
+export default App;
