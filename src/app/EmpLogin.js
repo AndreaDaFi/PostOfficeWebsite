@@ -1,18 +1,19 @@
-import React from 'react';
-import { Button, Typography } from '@mui/material';
+import React from "react";
+import { Container, TextField, Button, Typography, Paper } from "@mui/material";
 
-const EmpLogin = () => {
+export default function EmpLogin() {
   return (
-    <div style={{ padding: 20 }}>
-      <Typography variant="h4" gutterBottom>
-        Employee Login
-      </Typography>
-      {/* Add login form or content here */}
-      <Button variant="contained" color="primary" onClick={() => alert('Employee Login')}>
-        Login as Employee
-      </Button>
-    </div>
-  );
-};
+    <Container maxWidth="sm">
+      <Paper elevation={3} style={{ padding: 30, marginTop: 50, textAlign: "center" }}>
+        <Typography variant="h5" gutterBottom>👔 Employee Login</Typography>
 
-export default EmpLogin;
+        <TextField fullWidth label="Email" type="email" variant="outlined" margin="normal" />
+        <TextField fullWidth label="Password" type="password" variant="outlined" margin="normal" />
+
+        <Button fullWidth variant="contained" color="primary" style={{ marginTop: 20 }}>
+          Login as Employee
+        </Button>
+      </Paper>
+    </Container>
+  );
+}
