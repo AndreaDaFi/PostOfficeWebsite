@@ -16,6 +16,7 @@ import ReStock from './app/ReStock';
 import AddStaff from './app/AddStaff';
 import MngrViewStaff from './app/MngrViewStaff';
 import ViewStaffActivity from './app/ViewStaffActivity';
+import PackageStatus from './app/PackageStatus';
 
 const App = () => {
   return (
@@ -52,6 +53,7 @@ const App = () => {
           <Button color="inherit" component={Link} to="/ReStock">Update Stock</Button>
           
           {/*pages Drivers should be able to see*/}
+          <Button color="inherit" component={Link} to="/PackageStatus">Update a package status</Button>
           
         </Toolbar>
       </AppBar>
@@ -85,6 +87,7 @@ const App = () => {
           <Route path="/ReStock" element={<ReStock />} />
 
           {/*pages Drivers should be able to see*/}
+          <Route path="/PackageStatus" element={<PackageStatus />} />
           
         </Routes>
       </Container>
