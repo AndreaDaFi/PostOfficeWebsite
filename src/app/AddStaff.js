@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, Typography } from '@mui/material';
 
-const EmpLogin = () => {
+const AddStore = () => {
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h4" gutterBottom>
-        Page so customers can view all of their packages and their current
+        Page so Managers can add a new staff member
       </Typography>
       {/* Add login form or content here */}
       <Button variant="contained" color="primary" onClick={() => alert('Employee Login')}>
@@ -15,4 +15,4 @@ const EmpLogin = () => {
   );
 };
 
-export default EmpLogin;
+export default AddStore;

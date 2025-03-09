@@ -9,6 +9,13 @@ import MyPackages from './app/MyPackages';
 import TrackPackage from './app/TrackPackage';
 import AddPO from './app/AddPO';
 import AddMngr from './app/AddMngr';
+import ViewPO from './app/ViewPO';
+import ViewStaff from './app/ViewStaff';
+import AddStore from './app/AddStore';
+import ReStock from './app/ReStock';
+import AddStaff from './app/AddStaff';
+import MngrViewStaff from './app/MngrViewStaff';
+import ViewStaffActivity from './app/ViewStaffActivity';
 
 const App = () => {
   return (
@@ -23,19 +30,29 @@ const App = () => {
           <Button color="inherit" component={Link} to="/cust-login">Customer Login</Button>
           <Button color="inherit" component={Link} to="/emp-login">Employee Login</Button>
 
-          {/*pages only customers should be able to see*/}
+          {/*pages customers should be able to see*/}
           <Button color="inherit" component={Link} to="/store">store</Button>
           <Button color="inherit" component={Link} to="/MyPackages">My Packages</Button>
           <Button color="inherit" component={Link} to="/TrackPackage">Track My Package</Button>
 
           {/*EMPLOYEE PAGES*/}
-          {/*pages only Admin should be able to see*/}
+          {/*pages Admin should be able to see*/}
           <Button color="inherit" component={Link} to="/AddPO">Add a Post Office</Button>
+          <Button color="inherit" component={Link} to="/ViewPO">View Post Offices</Button>
           <Button color="inherit" component={Link} to="/AddMngr">Add Manager</Button>
+          <Button color="inherit" component={Link} to="/ViewStaff">View Staff</Button>
 
-          {/*pages only Managers should be able to see*/}
-          {/*pages only Drivers should be able to see*/}
-          {/*pages only Clerks should be able to see*/}
+          {/*pages Managers should be able to see*/}
+          <Button color="inherit" component={Link} to="/AddStore">Add Items to the store</Button>
+          <Button color="inherit" component={Link} to="/AddStaff">Add a new Staff member</Button>
+          <Button color="inherit" component={Link} to="/MngrViewStaff">View my staff</Button>
+          <Button color="inherit" component={Link} to="/ViewStaffActivity">View my staff activity</Button>
+          
+          {/*pages Clerks should be able to see*/}
+          <Button color="inherit" component={Link} to="/ReStock">Update Stock</Button>
+          
+          {/*pages Drivers should be able to see*/}
+          
         </Toolbar>
       </AppBar>
       {/*this section adds the links to these pages*/}
@@ -46,19 +63,29 @@ const App = () => {
           <Route path="/cust-login" element={<CustLogin />} />
           <Route path="/emp-login" element={<EmpLogin />} />
 
-          {/*pages only customers should be able to see*/}
+          {/*pages customers should be able to see*/}
           <Route path="/Store" element={<Store />} />
           <Route path="/MyPackages" element={<MyPackages />} />
           <Route path="/TrackPackage" element={<TrackPackage />} />
 
           {/*EMPLOYEE PAGES*/}
-          {/*pages only Admin should be able to see*/}
+          {/*pages Admin should be able to see*/}
           <Route path="/AddPO" element={<AddPO />} />
+          <Route path="/ViewPO" element={<ViewPO />} />
           <Route path="/AddMngr" element={<AddMngr />} />
+          <Route path="/ViewStaff" element={<ViewStaff />} />
 
-          {/*pages only Managers should be able to see*/}
-          {/*pages only Drivers should be able to see*/}
-          {/*pages only Clerks should be able to see*/}
+          {/*pages Managers should be able to see*/}
+          <Route path="/AddStore" element={<AddStore />} />
+          <Route path="/AddStaff" element={<AddStaff />} />
+          <Route path="/MngrViewStaff" element={<MngrViewStaff />} />
+          <Route path="/ViewStaffActivity" element={<ViewStaffActivity />} />
+
+          {/*pages Clerks should be able to see*/}
+          <Route path="/ReStock" element={<ReStock />} />
+
+          {/*pages Drivers should be able to see*/}
+          
         </Routes>
       </Container>
 
