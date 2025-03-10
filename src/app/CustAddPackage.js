@@ -6,8 +6,17 @@ export default function CustomerPackageEntry() {
   const navigate = useNavigate();
 
   const [packageData, setPackageData] = useState({
-    receiverStreet: "", receiverApartment: "", receiverCity: "", receiverState: "", receiverZip: "",
-    serviceType: "", fragile: false, insurance: false, packageType: "", weight: "", size: "",
+    receiverStreet: "",
+    receiverApartment: "",
+    receiverCity: "",
+    receiverState: "",
+    receiverZip: "",
+    serviceType: "",
+    fragile: false,
+    insurance: false,
+    packageType: "",
+    weight: "",
+    size: "",
   });
 
   const [error, setError] = useState(null);
@@ -31,6 +40,29 @@ export default function CustomerPackageEntry() {
     { label: "Next-Day Delivery", price: 10 },
     { label: "Regular Delivery", price: 0 },
   ];
+
+  // Function to validate the street address length
+  const validateStreetAddress = (value) => {
+    return value.length <= 45;
+  };
+
+  const validateCity = (value) => {
+    return value.length <= 45;
+  };
+
+  const validateState = (value) => {
+    return value.length <= 45;
+  };
+
+  // Function to validate apt# (must be numeric)
+  const validateAptNumber = (value) => {
+    return /^[0-9]*$/.test(value);
+  };
+
+  // Function to validate zip code (must be 5 digits)
+  const validateZipCode = (value) => {
+    return /^[0-9]{5}$/.test(value);
+  };
 
   const calculateTotalPrice = () => {
     let basePrice = 0;
@@ -58,13 +90,24 @@ export default function CustomerPackageEntry() {
 
   const handleSubmit = () => {
     setError(null);
-    // Adjusted validation logic: remove name validation
-    if ((!packageData.receiverStreet || !packageData.receiverCity || !packageData.receiverState || !packageData.receiverZip)) {
-      setError("⚠ Please fill in all required fields.");
+
+    // Adjusted validation logic:
+    if (
+      !validateStreetAddress(packageData.receiverStreet) ||
+      !validateAptNumber(packageData.receiverApartment) ||
+      !validateZipCode(packageData.receiverZip) ||
+      !validateCity(packageData.receiverCity) ||
+      !validateState(packageData.receiverState) ||
+      !packageData.receiverCity ||
+      !packageData.receiverState ||
+      !packageData.receiverZip
+    ) {
+      setError("⚠ Please fill in all required fields correctly.");
       return;
     }
-  
+
     const totalPrice = calculateTotalPrice();
+
     // Use the navigate function to pass the data
     navigate("/PackageCheckOut", { state: { totalPrice, packageData } });
   };
@@ -83,15 +126,79 @@ export default function CustomerPackageEntry() {
 
         {/* Address */}
         <Grid container spacing={2}>
-          <Grid item xs={8}><TextField fullWidth label="Street Address" name="receiverStreet" variant="outlined" value={packageData.receiverStreet} onChange={(e) => setPackageData({ ...packageData, receiverStreet: e.target.value })} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="Apt #" name="receiverApartment" variant="outlined" value={packageData.receiverApartment} onChange={(e) => setPackageData({ ...packageData, receiverApartment: e.target.value })} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="City" name="receiverCity" variant="outlined" value={packageData.receiverCity} onChange={(e) => setPackageData({ ...packageData, receiverCity: e.target.value })} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="State" name="receiverState" variant="outlined" value={packageData.receiverState} onChange={(e) => setPackageData({ ...packageData, receiverState: e.target.value })} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="Zip Code" name="receiverZip" variant="outlined" value={packageData.receiverZip} onChange={(e) => setPackageData({ ...packageData, receiverZip: e.target.value })} /></Grid>
+          <Grid item xs={8}>
+            <TextField
+              fullWidth
+              label="Street Address"
+              name="receiverStreet"
+              variant="outlined"
+              value={packageData.receiverStreet}
+              onChange={(e) => setPackageData({ ...packageData, receiverStreet: e.target.value })}
+              helperText="Max 45 characters"
+              error={packageData.receiverStreet.length > 45}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Apt #"
+              name="receiverApartment"
+              variant="outlined"
+              value={packageData.receiverApartment}
+              onChange={(e) => setPackageData({ ...packageData, receiverApartment: e.target.value })}
+              error={!validateAptNumber(packageData.receiverApartment)}
+              helperText="Only numbers"
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="City"
+              name="receiverCity"
+              variant="outlined"
+              value={packageData.receiverCity}
+              helperText="Max 45 characters"
+              onChange={(e) => setPackageData({ ...packageData, receiverCity: e.target.value })}
+              error={packageData.receiverCity.length > 45}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="State"
+              name="receiverState"
+              variant="outlined"
+              helperText="Max 45 characters"
+              value={packageData.receiverState}
+              onChange={(e) => setPackageData({ ...packageData, receiverState: e.target.value })}
+              error={packageData.receiverState.length > 45}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Zip Code"
+              name="receiverZip"
+              variant="outlined"
+              value={packageData.receiverZip}
+              onChange={(e) => setPackageData({ ...packageData, receiverZip: e.target.value })}
+              error={!validateZipCode(packageData.receiverZip)}
+              helperText="Must be 5 digits"
+            />
+          </Grid>
         </Grid>
 
         {/* Package Type */}
-        <TextField select fullWidth label="Package Type" name="packageType" variant="outlined" margin="normal" value={packageData.packageType} onChange={(e) => setPackageData({ ...packageData, packageType: e.target.value })}>
+        <TextField
+          select
+          fullWidth
+          label="Package Type"
+          name="packageType"
+          variant="outlined"
+          margin="normal"
+          value={packageData.packageType}
+          onChange={(e) => setPackageData({ ...packageData, packageType: e.target.value })}
+        >
           <MenuItem value="Envelope">Envelope ($20)</MenuItem>
           <MenuItem value="Box">Box (Price based on weight & size)</MenuItem>
         </TextField>
@@ -99,13 +206,31 @@ export default function CustomerPackageEntry() {
         {/* Weight & Size (Only if Box) */}
         {packageData.packageType === "Box" && (
           <>
-            <TextField select fullWidth label="Select Weight" name="weight" variant="outlined" margin="normal" value={packageData.weight} onChange={(e) => setPackageData({ ...packageData, weight: e.target.value })}>
+            <TextField
+              select
+              fullWidth
+              label="Select Weight"
+              name="weight"
+              variant="outlined"
+              margin="normal"
+              value={packageData.weight}
+              onChange={(e) => setPackageData({ ...packageData, weight: e.target.value })}
+            >
               {weightOptions.map((option, index) => (
                 <MenuItem key={index} value={option.value}>{option.label} (+${option.price})</MenuItem>
               ))}
             </TextField>
 
-            <TextField select fullWidth label="Select Size" name="size" variant="outlined" margin="normal" value={packageData.size} onChange={(e) => setPackageData({ ...packageData, size: e.target.value })}>
+            <TextField
+              select
+              fullWidth
+              label="Select Size"
+              name="size"
+              variant="outlined"
+              margin="normal"
+              value={packageData.size}
+              onChange={(e) => setPackageData({ ...packageData, size: e.target.value })}
+            >
               {sizeOptions.map((option, index) => (
                 <MenuItem key={index} value={option.label}>{option.label} (+${option.price})</MenuItem>
               ))}
@@ -114,8 +239,14 @@ export default function CustomerPackageEntry() {
         )}
 
         {/* Extra Services */}
-        <FormControlLabel control={<Checkbox checked={packageData.fragile} onChange={(e) => setPackageData({ ...packageData, fragile: e.target.checked })} />} label="Fragile Item (+$25)" />
-        <FormControlLabel control={<Checkbox checked={packageData.insurance} onChange={(e) => setPackageData({ ...packageData, insurance: e.target.checked })} />} label="Add Insurance (+$50)" />
+        <FormControlLabel
+          control={<Checkbox checked={packageData.fragile} onChange={(e) => setPackageData({ ...packageData, fragile: e.target.checked })} />}
+          label="Fragile Item (+$25)"
+        />
+        <FormControlLabel
+          control={<Checkbox checked={packageData.insurance} onChange={(e) => setPackageData({ ...packageData, insurance: e.target.checked })} />}
+          label="Add Insurance (+$50)"
+        />
 
         {/* Total Price */}
         <Typography variant="h5" style={{ fontWeight: "bold", color: "#D32F2F", marginTop: "20px" }}>
