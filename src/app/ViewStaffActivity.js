@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { Container, Typography, Paper, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Paper,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+} from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SearchIcon from "@mui/icons-material/Search";
 import WorkIcon from "@mui/icons-material/Work";
@@ -10,15 +22,68 @@ import CloseIcon from "@mui/icons-material/Close";
 export default function ViewStaffActivity() {
   // Sample list of staff at this Post Office location
   const [staffActivity, setStaffActivity] = useState([
-    { name: "John Doe", role: "Driver", clockIn: "8:00 AM", clockOut: "", status: "Present" },
-    { name: "Emily Smith", role: "Cashier", clockIn: "8:30 AM", clockOut: "", status: "Present" },
-    { name: "Michael Johnson", role: "Customer Service", clockIn: "", clockOut: "", status: "Absent" },
-    { name: "Sophia Davis", role: "Supervisor", clockIn: "7:45 AM", clockOut: "3:00 PM", status: "Completed Shift" },
-    { name: "Daniel Martinez", role: "Driver", clockIn: "9:00 AM", clockOut: "", status: "Present" },
-    { name: "Olivia Wilson", role: "Cashier", clockIn: "8:15 AM", clockOut: "", status: "Present" }
+    { name: "John Doe", role: "Driver", clockIn: "08:00 AM", clockOut: "", status: "Present", totalHours: "" },
+    { name: "Emily Smith", role: "Cashier", clockIn: "08:30 AM", clockOut: "", status: "Present", totalHours: "" },
+    { name: "Michael Johnson", role: "Customer Service", clockIn: "", clockOut: "", status: "Absent", totalHours: "" },
+    { name: "Sophia Davis", role: "Supervisor", clockIn: "07:45 AM", clockOut: "03:00 PM", status: "Completed Shift", totalHours: "7h 15m" },
+    { name: "Daniel Martinez", role: "Driver", clockIn: "09:00 AM", clockOut: "", status: "Present", totalHours: "" },
+    { name: "Olivia Wilson", role: "Cashier", clockIn: "08:15 AM", clockOut: "", status: "Present", totalHours: "" },
   ]);
 
   const [search, setSearch] = useState("");
+
+  // Function to manually clock in staff
+  const handleClockIn = (index) => {
+    setStaffActivity((prev) =>
+      prev.map((staff, i) =>
+        i === index
+          ? { ...staff, clockIn: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), status: "Present" }
+          : staff
+      )
+    );
+  };
+
+  // Function to calculate total work hours
+  const calculateWorkHours = (clockIn, clockOut) => {
+    if (!clockIn || !clockOut) return "N/A";
+
+    const parseTime = (time) => {
+      let [hours, minutes] = time.split(":");
+      let period = time.slice(-2);
+      hours = parseInt(hours);
+      minutes = parseInt(minutes.slice(0, 2));
+
+      if (period === "PM" && hours !== 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+
+      return hours * 60 + minutes; // Convert to minutes
+    };
+
+    let clockInMinutes = parseTime(clockIn);
+    let clockOutMinutes = parseTime(clockOut);
+
+    let diff = clockOutMinutes - clockInMinutes;
+    let hoursWorked = Math.floor(diff / 60);
+    let minutesWorked = diff % 60;
+
+    return `${hoursWorked}h ${minutesWorked}m`;
+  };
+
+  // Function to manually clock out staff and calculate hours worked
+  const handleClockOut = (index) => {
+    setStaffActivity((prev) =>
+      prev.map((staff, i) =>
+        i === index
+          ? {
+              ...staff,
+              clockOut: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              status: "Completed Shift",
+              totalHours: calculateWorkHours(staff.clockIn, new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })),
+            }
+          : staff
+      )
+    );
+  };
 
   // Filter staff based on search input
   const filteredStaff = staffActivity.filter(
@@ -27,24 +92,6 @@ export default function ViewStaffActivity() {
       staff.role.toLowerCase().includes(search.toLowerCase()) ||
       staff.status.toLowerCase().includes(search.toLowerCase())
   );
-
-  // Function to manually clock in staff
-  const handleClockIn = (index) => {
-    setStaffActivity((prev) =>
-      prev.map((staff, i) =>
-        i === index ? { ...staff, clockIn: new Date().toLocaleTimeString(), status: "Present" } : staff
-      )
-    );
-  };
-
-  // Function to manually clock out staff
-  const handleClockOut = (index) => {
-    setStaffActivity((prev) =>
-      prev.map((staff, i) =>
-        i === index ? { ...staff, clockOut: new Date().toLocaleTimeString(), status: "Completed Shift" } : staff
-      )
-    );
-  };
 
   return (
     <Container style={{ marginTop: "20px", textAlign: "center" }}>
@@ -63,7 +110,7 @@ export default function ViewStaffActivity() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         InputProps={{
-          startAdornment: <SearchIcon style={{ marginRight: "10px", color: "#D32F2F" }} />
+          startAdornment: <SearchIcon style={{ marginRight: "10px", color: "#D32F2F" }} />,
         }}
         style={{ marginBottom: "20px", backgroundColor: "#fff", borderRadius: "8px" }}
       />
@@ -78,6 +125,7 @@ export default function ViewStaffActivity() {
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>💼 Role</TableCell>
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>⏰ Clock In</TableCell>
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>⏳ Clock Out</TableCell>
+                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>🕒 Hours Worked</TableCell>
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>✅ Status</TableCell>
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>🕒 Actions</TableCell>
               </TableRow>
@@ -96,6 +144,7 @@ export default function ViewStaffActivity() {
                     </TableCell>
                     <TableCell>{staff.clockIn || "—"}</TableCell>
                     <TableCell>{staff.clockOut || "—"}</TableCell>
+                    <TableCell>{staff.totalHours || "N/A"}</TableCell>
                     <TableCell>{staff.status}</TableCell>
                     <TableCell>
                       {!staff.clockIn && (
@@ -123,7 +172,7 @@ export default function ViewStaffActivity() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} style={{ textAlign: "center", color: "#B71C1C" }}>
+                  <TableCell colSpan={7} style={{ textAlign: "center", color: "#B71C1C" }}>
                     ❌ No results found.
                   </TableCell>
                 </TableRow>
