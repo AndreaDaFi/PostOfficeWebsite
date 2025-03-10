@@ -162,15 +162,23 @@ export default function CustLogin() {
             Need help? Contact us at <Link href="mailto:support@yourcompany.com" style={{ fontWeight: "bold", color: "#D32F2F" }}>support@yourcompany.com</Link>
           </Typography>
 
-          {/* SIGN UP LINK (DIRECTS TO CUSTOMER SIGN-UP) */}
-          {!isResetMode && (
-            <Typography variant="body2" style={{ marginTop: "20px", color: "#666", textAlign: "center" }}>
-              Don't have an account?{" "}
-              <Button color="inherit" component={Link} to={`/CustSignin`} sx={{ color: '#D32F2F' }}>
-                    Sign Up
-                </Button>
-            </Typography>
-          )}
+         {/* SIGN UP LINK (DIRECTS TO CUSTOMER SIGN-UP) */}
+{!isResetMode && (
+  <Typography variant="body2" style={{ marginTop: "20px", color: "#666", textAlign: "center" }}>
+    Don't have an account?{" "}
+    <Button 
+      color="inherit" 
+      sx={{ color: '#D32F2F' }}
+      onClick={(event) => { 
+        event.preventDefault();  // ✅ Prevents unwanted page refresh
+        console.log("Sign Up button clicked!");  // ✅ Debugging message
+        window.location.href = "/CustSignin";  // ✅ Redirects correctly
+      }}
+    >
+      Sign Up
+    </Button>
+  </Typography>
+)}
 
         </Paper>
       </Container>
