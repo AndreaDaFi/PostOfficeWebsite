@@ -21,6 +21,7 @@ import PackageDetails from './app/PackageDetails';
 import CustSignin from './app/CustSignin';
 import ClerkAddPackage from './app/ClerkAddPackage';
 import CustAddPackage from './app/CustAddPackage';
+import Checkout from './app/Checkout';
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
           <Button color="inherit" component={Link} to="/store">store</Button>
           <Button color="inherit" component={Link} to="/MyPackages">My Packages</Button>
           <Button color="inherit" component={Link} to="/CustAddPackage">Ship a new package</Button>
+          <Button color="inherit" component={Link} to="/Checkout">temporary checkout page</Button>
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}
@@ -76,6 +78,7 @@ const App = () => {
           <Route path="/TrackPackage" element={<TrackPackage />} />
           <Route path="/PackageDetails" element={<PackageDetails />} />
           <Route path="/CustAddPackage" element={<CustAddPackage />} />
+          <Route path="/Checkout" element={<Checkout />} />
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}
