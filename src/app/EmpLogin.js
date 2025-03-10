@@ -68,7 +68,7 @@ export default function EmployerLogin() {
           }}
         >
           <Typography variant="h5" gutterBottom style={{ fontWeight: "bold", color: "#333" }}>
-            🏢 Employer Sign-in
+            🏢 Employer Loging
           </Typography>
 
           <Typography variant="body2" color="textSecondary" style={{ marginBottom: "20px" }}>
