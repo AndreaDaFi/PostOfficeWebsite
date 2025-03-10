@@ -7,12 +7,7 @@ export default function CustomerPackageEntry() {
   const navigate = useNavigate();
 
   const [packageData, setPackageData] = useState({
-    customerID: "", customerFirstName: "", customerLastName: "", customerPhone: "",
-    customerStreet: "", customerApartment: "", customerCity: "", customerState: "", customerZip: "",
-    senderFirstName: "", senderLastName: "",
-    senderStreet: "", senderApartment: "", senderCity: "", senderState: "", senderZip: "",
-    receiverFirstName: "", receiverLastName: "",
-    receiverStreet: "", receiverApartment: "", receiverCity: "", receiverState: "", receiverZip: "",
+    customerID: "", receiverStreet: "", receiverApartment: "", receiverCity: "", receiverState: "", receiverZip: "",
     serviceType: "", fragile: false, insurance: false, packageType: "", weight: "", size: "",
   });
 

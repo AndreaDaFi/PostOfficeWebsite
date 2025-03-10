@@ -49,7 +49,9 @@ export default function PackageCheckout() {
 
         {/* Receiver Information */}
         <Typography variant="h6" style={{ marginTop: "20px", fontWeight: "bold" }}>Receiver Information</Typography>
+        <Typography>Receiver name: {packageData.receiverName}</Typography>
         <Typography>Address: {packageData.receiverStreet} {packageData.receiverApartment}, {packageData.receiverCity}, {packageData.receiverState} {packageData.receiverZip}</Typography>
+        
 
         {/* Package Information */}
         <Typography variant="h6" style={{ marginTop: "20px", fontWeight: "bold" }}>Package Information</Typography>

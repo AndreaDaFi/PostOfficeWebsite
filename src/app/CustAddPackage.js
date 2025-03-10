@@ -6,6 +6,7 @@ export default function CustomerPackageEntry() {
   const navigate = useNavigate();
 
   const [packageData, setPackageData] = useState({
+    receiverName: "",
     receiverStreet: "",
     receiverApartment: "",
     receiverCity: "",
@@ -54,6 +55,10 @@ export default function CustomerPackageEntry() {
     return value.length <= 45;
   };
 
+  const validateName = (value) => {
+    return value.length <= 20;
+  };
+
   // Function to validate apt# (must be numeric)
   const validateAptNumber = (value) => {
     return /^[0-9]*$/.test(value);
@@ -98,6 +103,8 @@ export default function CustomerPackageEntry() {
       !validateZipCode(packageData.receiverZip) ||
       !validateCity(packageData.receiverCity) ||
       !validateState(packageData.receiverState) ||
+      !validateName(packageData.receiverName) ||
+      !packageData.receiverName ||
       !packageData.receiverCity ||
       !packageData.receiverState ||
       !packageData.receiverZip
@@ -126,6 +133,18 @@ export default function CustomerPackageEntry() {
 
         {/* Address */}
         <Grid container spacing={2}>
+        <Grid item xs={8}>
+            <TextField
+              fullWidth
+              label="Receiver Name"
+              name="receiverName"
+              variant="outlined"
+              value={packageData.receiverName}
+              onChange={(e) => setPackageData({ ...packageData, receiverName: e.target.value })}
+              helperText="Max 20 characters"
+              error={packageData.receiverName.length > 20}
+            />
+          </Grid>
           <Grid item xs={8}>
             <TextField
               fullWidth
