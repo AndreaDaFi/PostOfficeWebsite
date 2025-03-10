@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Grid, TextField, Button, Typography, Box, Paper, Card, CardContent, Divider } from '@mui/material';
+import { Container, Grid, TextField, Button, Typography, Box, Paper } from '@mui/material';
 
 export default function PackageCheckout() {
   // Access location state passed from the previous page
@@ -49,7 +49,6 @@ export default function PackageCheckout() {
 
         {/* Receiver Information */}
         <Typography variant="h6" style={{ marginTop: "20px", fontWeight: "bold" }}>Receiver Information</Typography>
-        <Typography>Name: {packageData.receiverFirstName} {packageData.receiverLastName}</Typography>
         <Typography>Address: {packageData.receiverStreet} {packageData.receiverApartment}, {packageData.receiverCity}, {packageData.receiverState} {packageData.receiverZip}</Typography>
 
         {/* Package Information */}

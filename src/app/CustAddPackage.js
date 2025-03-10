@@ -6,7 +6,6 @@ export default function CustomerPackageEntry() {
   const navigate = useNavigate();
 
   const [packageData, setPackageData] = useState({
-    receiverFirstName: "", receiverLastName: "",
     receiverStreet: "", receiverApartment: "", receiverCity: "", receiverState: "", receiverZip: "",
     serviceType: "", fragile: false, insurance: false, packageType: "", weight: "", size: "",
   });
@@ -59,13 +58,13 @@ export default function CustomerPackageEntry() {
 
   const handleSubmit = () => {
     setError(null);
-    if (!packageData.receiverFirstName || !packageData.receiverLastName || !packageData.receiverStreet) {
+    // Adjusted validation logic: remove name validation
+    if ((!packageData.receiverStreet || !packageData.receiverCity || !packageData.receiverState || !packageData.receiverZip)) {
       setError("⚠ Please fill in all required fields.");
       return;
     }
   
     const totalPrice = calculateTotalPrice();
-    
     // Use the navigate function to pass the data
     navigate("/PackageCheckOut", { state: { totalPrice, packageData } });
   };
@@ -81,10 +80,6 @@ export default function CustomerPackageEntry() {
 
         {/* Receiver Info */}
         <Typography variant="h6" style={{ fontWeight: "bold", marginTop: "10px" }}>📍 Receiver</Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={6}><TextField fullWidth label="First Name" name="receiverFirstName" variant="outlined" value={packageData.receiverFirstName} onChange={(e) => setPackageData({ ...packageData, receiverFirstName: e.target.value })} /></Grid>
-          <Grid item xs={6}><TextField fullWidth label="Last Name" name="receiverLastName" variant="outlined" value={packageData.receiverLastName} onChange={(e) => setPackageData({ ...packageData, receiverLastName: e.target.value })} /></Grid>
-        </Grid>
 
         {/* Address */}
         <Grid container spacing={2}>
