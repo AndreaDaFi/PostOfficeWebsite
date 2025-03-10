@@ -37,7 +37,6 @@ const App = () => {
           <Button color="inherit" component={Link} to="/store">store</Button>
           <Button color="inherit" component={Link} to="/MyPackages">My Packages</Button>
           <Button color="inherit" component={Link} to="/CustAddPackage">Ship a new package</Button>
-          <Button color="inherit" component={Link} to="/Checkout">temporary checkout page</Button>
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}
