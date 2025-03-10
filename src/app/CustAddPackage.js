@@ -63,9 +63,11 @@ export default function CustomerPackageEntry() {
       setError("⚠ Please fill in all required fields.");
       return;
     }
-
+  
     const totalPrice = calculateTotalPrice();
-    navigate("/checkout", { state: { totalPrice, packageData } });
+    
+    // Use the navigate function to pass the data
+    navigate("/PackageCheckOut", { state: { totalPrice, packageData } });
   };
 
   return (
