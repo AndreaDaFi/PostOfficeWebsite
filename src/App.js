@@ -21,7 +21,7 @@ import PackageStatus from './app/PackageStatus';
 const App = () => {
   return (
     <Router>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ color: '#ffffff', backgroundColor: '#D32F2F' }}>
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
             Best Post Office Ever
