@@ -9,7 +9,7 @@ import AllInboxIcon from '@mui/icons-material/AllInbox';
 const storeItems = [
   { category: "📦 Packing Supplies", 
     items: [
-      { name: "Packing Tape", description: "Clear, reinforced, and branded shipping tape.", icon: <LocalShippingIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
+     
       { name: "Bubble Wrap", description: "For cushioning fragile items.", icon: <InventoryIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
       { name: "Packing Peanuts", description: "Foam sheets for safe packing.", icon: <InventoryIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
       { name: "Shrink Wrap", description: "Stretch wrap for securing shipments.", icon: <InventoryIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
