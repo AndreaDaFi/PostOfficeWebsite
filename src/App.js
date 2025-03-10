@@ -34,7 +34,6 @@ const App = () => {
           {/*pages customers should be able to see*/}
           <Button color="inherit" component={Link} to="/store">store</Button>
           <Button color="inherit" component={Link} to="/MyPackages">My Packages</Button>
-          <Button color="inherit" component={Link} to="/TrackPackage">Track My Package</Button>
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}

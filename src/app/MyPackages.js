@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Container, Grid, Card, CardContent, CardActions, Button, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
 
-// Example data - in a real app, you would fetch this data from an API
 const mockPackages = [
   { id: 1, trackingNumber: '123456', status: 'Shipped', deliveryDate: '2025-03-15' },
   { id: 2, trackingNumber: '654321', status: 'In Transit', deliveryDate: '2025-03-18' },
   { id: 3, trackingNumber: '789012', status: 'Delivered', deliveryDate: '2025-03-05' },
+  { id: 3, trackingNumber: '789012', status: 'These are all', deliveryDate: 'Mock Packages' },
+  { id: 3, trackingNumber: '789012', status: 'In other words', deliveryDate: 'NOT REAL PACKAGES' },
+  { id: 3, trackingNumber: '789012', status: '(-‿◦☀)', deliveryDate: '(っ˘ڡ˘ς)' },
 ];
 
 const MyPackages = () => {
   const [packages, setPackages] = useState([]);
 
   useEffect(() => {
-    // Fetch or set packages data (using mock data for now)
     setPackages(mockPackages);
   }, []);
 
@@ -26,14 +28,11 @@ const MyPackages = () => {
 
       <Grid container spacing={3}>
         {packages.length === 0 ? (
-          <>
-            {/* Adding a Box with margin-top */}
-            <Box my={2}>
-              <Typography variant="h4" color="textSecondary">
-                You have no packages to display.
-              </Typography>
-            </Box>
-          </>
+          <Box my={2}>
+            <Typography variant="h4" color="textSecondary">
+              You have no packages to display.
+            </Typography>
+          </Box>
         ) : (
           packages.map((pkg) => (
             <Grid item xs={12} sm={6} md={4} key={pkg.id}>
@@ -46,8 +45,8 @@ const MyPackages = () => {
                   <Typography variant="body2">Delivery Date: {pkg.deliveryDate}</Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" sx={{ color: '#D32F2F' }}>
-                    Track Package
+                  <Button color="inherit" component={Link} to={`/TrackPackage`} sx={{ color: '#D32F2F' }}>
+                    Track this package
                   </Button>
                 </CardActions>
               </Card>
