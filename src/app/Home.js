@@ -1,17 +1,19 @@
 import React from 'react';
-import { Button, Typography } from '@mui/material';
+import { Container, Typography, Box } from '@mui/material';
 
 const Home = () => {
   return (
-    <div style={{ padding: 20 }}>
-      <Typography variant="h4" gutterBottom>
-        Welcome to the Home Page
-      </Typography>
-      {/* Add content or information here */}
-      <Button variant="contained" color="primary" onClick={() => alert('Welcome to Home')}>
-        Go to Home
-      </Button>
-    </div>
+    <Container>
+      {/* Header Section */}
+      <Box my={4}>
+        <Typography variant="h1" gutterBottom align="center">
+          Welcome to CougarPost
+        </Typography>
+        <Typography variant="h6" color="textSecondary" align="center">
+          We provide the best postal services for all your needs
+        </Typography>
+      </Box>
+    </Container>
   );
 };
 

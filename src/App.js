@@ -19,15 +19,14 @@ import ViewStaffActivity from './app/ViewStaffActivity';
 import PackageStatus from './app/PackageStatus';
 import PackageDetails from './app/PackageDetails';
 import CustSignin from './app/CustSignin';
+import ClerkAddPackage from './app/ClerkAddPackage';
+import CustAddPackage from './app/CustAddPackage';
 
 const App = () => {
   return (
     <Router>
       <AppBar position="static" sx={{ color: '#ffffff', backgroundColor: '#D32F2F' }}>
         <Toolbar>
-          <Typography variant="h6" style={{ flexGrow: 1 }}>
-            Best Post Office Ever
-          </Typography>
           {/*pages anyone could see when openning the app*/}
           <Button color="inherit" component={Link} to="/">Home</Button>
           <Button color="inherit" component={Link} to="/cust-login">Customer Login</Button>
@@ -36,6 +35,7 @@ const App = () => {
           {/*pages customers should be able to see*/}
           <Button color="inherit" component={Link} to="/store">store</Button>
           <Button color="inherit" component={Link} to="/MyPackages">My Packages</Button>
+          <Button color="inherit" component={Link} to="/CustAddPackage">Ship a new package</Button>
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}
@@ -52,6 +52,7 @@ const App = () => {
           
           {/*pages Clerks should be able to see*/}
           <Button color="inherit" component={Link} to="/ReStock">Update Stock</Button>
+          <Button color="inherit" component={Link} to="/ClerkAddPackage">Manual entry for new customer package</Button>
           
           {/*pages Drivers should be able to see*/}
           <Button color="inherit" component={Link} to="/PackageStatus">Update a package status</Button>
@@ -74,6 +75,7 @@ const App = () => {
           <Route path="/MyPackages" element={<MyPackages />} />
           <Route path="/TrackPackage" element={<TrackPackage />} />
           <Route path="/PackageDetails" element={<PackageDetails />} />
+          <Route path="/CustAddPackage" element={<CustAddPackage />} />
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}
@@ -90,6 +92,7 @@ const App = () => {
 
           {/*pages Clerks should be able to see*/}
           <Route path="/ReStock" element={<ReStock />} />
+          <Route path="/ClerkAddPackage" element={<ClerkAddPackage />} />
 
           {/*pages Drivers should be able to see*/}
           <Route path="/PackageStatus" element={<PackageStatus />} />
