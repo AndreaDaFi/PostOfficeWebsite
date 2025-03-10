@@ -48,6 +48,9 @@ const MyPackages = () => {
                   <Button color="inherit" component={Link} to={`/TrackPackage`} sx={{ color: '#D32F2F' }}>
                     Track this package
                   </Button>
+                  <Button color="inherit" component={Link} to={`/PackageDetails`} sx={{ color: '#D32F2F' }}>
+                    View details
+                  </Button>
                 </CardActions>
               </Card>
             </Grid>

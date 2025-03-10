@@ -166,9 +166,9 @@ export default function CustLogin() {
           {!isResetMode && (
             <Typography variant="body2" style={{ marginTop: "20px", color: "#666", textAlign: "center" }}>
               Don't have an account?{" "}
-              <Link href="/cust-signup" style={{ fontWeight: "bold", color: "#D32F2F", textDecoration: "none" }}>
-                Sign Up
-              </Link>
+              <Button color="inherit" component={Link} to={`/CustSignin`} sx={{ color: '#D32F2F' }}>
+                    Sign Up
+                </Button>
             </Typography>
           )}
 

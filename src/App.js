@@ -17,6 +17,8 @@ import AddStaff from './app/AddStaff';
 import MngrViewStaff from './app/MngrViewStaff';
 import ViewStaffActivity from './app/ViewStaffActivity';
 import PackageStatus from './app/PackageStatus';
+import PackageDetails from './app/PackageDetails';
+import CustSignin from './app/CustSignin';
 
 const App = () => {
   return (
@@ -56,6 +58,8 @@ const App = () => {
           
         </Toolbar>
       </AppBar>
+
+
       {/*this section adds the links to these pages*/}
       <Container style={{ marginTop: 20 }}>
         <Routes>
@@ -63,11 +67,13 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/cust-login" element={<CustLogin />} />
           <Route path="/emp-login" element={<EmpLogin />} />
+          <Route path="/CustSignin" element={<CustSignin />} />
 
           {/*pages customers should be able to see*/}
           <Route path="/Store" element={<Store />} />
           <Route path="/MyPackages" element={<MyPackages />} />
           <Route path="/TrackPackage" element={<TrackPackage />} />
+          <Route path="/PackageDetails" element={<PackageDetails />} />
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}
