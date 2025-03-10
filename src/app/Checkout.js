@@ -18,7 +18,7 @@ const CheckoutPage = () => {
     address: '',
     city: '',
     zipCode: '',
-    paymentMethod: '',
+    paymentMethod: 'card', // Default to 'card'
     cardNumber: '',
     expirationDate: '',
     cvv: '',
@@ -114,6 +114,7 @@ const CheckoutPage = () => {
                     />
                   </Grid>
 
+                  {/* Payment Method (default to 'card') */}
                   <Grid item xs={12}>
                     <Typography variant="h6">Payment Method</Typography>
                     <TextField
@@ -122,11 +123,11 @@ const CheckoutPage = () => {
                       variant="outlined"
                       fullWidth
                       value={formData.paymentMethod}
-                      onChange={handleInputChange}
+                      disabled // Make it disabled since it’s always set to 'card'
                     />
                   </Grid>
 
-                  {/* If payment is by card, ask for card details */}
+                  {/* Card Information Fields */}
                   {formData.paymentMethod.toLowerCase() === 'card' && (
                     <>
                       <Grid item xs={12}>

@@ -21,7 +21,8 @@ import PackageDetails from './app/PackageDetails';
 import CustSignin from './app/CustSignin';
 import ClerkAddPackage from './app/ClerkAddPackage';
 import CustAddPackage from './app/CustAddPackage';
-import Checkout from './app/Checkout';
+import Checkout from './app/Checkout';//checkout if they order items from the store
+import PackageCheckOut from './app/PackageCheckOut';//checkout if they want to ship a package
 
 const App = () => {
   return (
@@ -73,11 +74,12 @@ const App = () => {
 
           {/*pages customers should be able to see*/}
           <Route path="/Store" element={<Store />} />
+          <Route path="/Checkout" element={<Checkout />} />
           <Route path="/MyPackages" element={<MyPackages />} />
           <Route path="/TrackPackage" element={<TrackPackage />} />
           <Route path="/PackageDetails" element={<PackageDetails />} />
           <Route path="/CustAddPackage" element={<CustAddPackage />} />
-          <Route path="/Checkout" element={<Checkout />} />
+          <Route path="/PackageCheckOut" element={<PackageCheckOut />} />
 
           {/*EMPLOYEE PAGES*/}
           {/*pages Admin should be able to see*/}
