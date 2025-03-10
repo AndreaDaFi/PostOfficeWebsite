@@ -25,7 +25,7 @@ const Home = () => {
               transition: 'transform 0.3s ease-in-out'  // Move transition into inline styles
           }} />
           <figcaption style={{ fontSize: '12px', color: '#555', marginTop: '8px' }}>
-            Logo reference image: 
+            Reference image: 
           <a 
             href="https://www.dreamstime.com/cougar-growling-close-up-mountain-lion-image220929865" 
             style={{ color: '#D32F2F' }} 
