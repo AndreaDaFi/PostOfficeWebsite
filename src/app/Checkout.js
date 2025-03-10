@@ -8,8 +8,14 @@ const CheckoutPage = () => {
 
   // Function to calculate the total price
   const calculateTotal = () => {
-    return cart?.reduce((total, item) => total + parseFloat(item.price.replace('$', '')), 0).toFixed(2);
+    return cart?.reduce((total, item) => {
+      // Ensure the price is converted to a number by removing the '$' sign and parsing it
+      const price = parseFloat(item.price.replace('$', ''));
+      const quantity = item.quantity || 1; // Default to 1 if no quantity is set
+      return total + price * quantity; // Calculate total with quantity
+    }, 0).toFixed(2); // Return total with 2 decimal places
   };
+  
 
   const [formData, setFormData] = useState({
     name: '',
@@ -136,6 +142,7 @@ const CheckoutPage = () => {
                 <Box my={2} key={idx}>
                   <Typography variant="h6">{item.name}</Typography>
                   <Typography variant="body2">Price: {item.price}</Typography>
+                  <Typography variant="body2">Quantity: {item.quantity || 1}</Typography>
                 </Box>
               ))}
 

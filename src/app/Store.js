@@ -7,9 +7,9 @@ import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import LabelIcon from '@mui/icons-material/Label';
 import AllInboxIcon from '@mui/icons-material/AllInbox';
 
-// Example Store Items
 const storeItems = [
-  { category: "📦 Packing Supplies", 
+  {
+    category: "📦 Packing Supplies", 
     items: [
       { name: "Bubble Wrap", description: "For cushioning fragile items.", price: "$5.00", icon: <InventoryIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
       { name: "Packing Peanuts", description: "Foam sheets for safe packing.", price: "$3.00", icon: <InventoryIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
@@ -17,14 +17,16 @@ const storeItems = [
       { name: '"Fragile" Stickers', description: "Labels for fragile shipments.", price: "$2.50", icon: <LabelIcon style={{ fontSize: 50, color: "#B71C1C" }} /> }
     ]
   },
-  { category: "📦 Boxes & Sizes",
+  {
+    category: "📦 Boxes & Sizes",
     items: [
       { name: "Small Box", description: "6x6x6 inches - Lightweight shipping box.", price: "$1.50", icon: <AllInboxIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
       { name: "Medium Box", description: "12x12x8 inches - Standard mailing box.", price: "$2.50", icon: <AllInboxIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
       { name: "Large Box", description: "18x18x12 inches - Big shipments.", price: "$4.00", icon: <AllInboxIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
     ]
   },
-  { category: "✉️ Envelopes & Mailers",
+  {
+    category: "✉️ Envelopes & Mailers",
     items: [
       { name: "Standard Envelopes", description: "Letter-size, legal-size envelopes.", price: "$1.00", icon: <MailOutlineIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
       { name: "Padded Envelopes", description: "Bubble mailers for fragile items.", price: "$3.00", icon: <MailOutlineIcon style={{ fontSize: 50, color: "#B71C1C" }} /> },
@@ -37,15 +39,37 @@ const storeItems = [
 
 export default function Store() {
   const [cart, setCart] = useState([]);
-  
+
   const handleItemClick = (item) => {
-    // Add item to cart
-    setCart((prevCart) => [...prevCart, item]);
+    // Add item to cart with a default quantity of 1
+    setCart((prevCart) => {
+      const existingItem = prevCart.find(cartItem => cartItem.name === item.name);
+      if (existingItem) {
+        return prevCart.map(cartItem =>
+          cartItem.name === item.name
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        );
+      } else {
+        return [...prevCart, { ...item, quantity: 1 }];
+      }
+    });
   };
+  
 
   const handleRemoveFromCart = (item) => {
-    // Remove item from cart
-    setCart(cart.filter(cartItem => cartItem.name !== item.name));
+    setCart((prevCart) => {
+      const existingItemIndex = prevCart.findIndex(cartItem => cartItem.name === item.name);
+      if (existingItemIndex >= 0) {
+        const updatedCart = [...prevCart];
+        updatedCart[existingItemIndex].quantity -= 1; // Decrease quantity if in cart
+        if (updatedCart[existingItemIndex].quantity === 0) {
+          updatedCart.splice(existingItemIndex, 1); // Remove item if quantity is 0
+        }
+        return updatedCart;
+      }
+      return prevCart;
+    });
   };
 
   const handleCheckout = () => {
@@ -57,6 +81,7 @@ export default function Store() {
       <Typography variant="h3" style={{ fontWeight: "bold", color: "#B71C1C", marginBottom: "20px" }}>
         📦 Welcome to the Post Office Store
       </Typography>
+
       <Typography variant="h6" style={{ color: "#555", marginBottom: "30px" }}>
         Find all your packaging and mailing essentials in one place!
       </Typography>
@@ -87,7 +112,6 @@ export default function Store() {
                     <Typography variant="body1" style={{ color: "#555", marginTop: "5px" }}>
                       {item.description}
                     </Typography>
-                    {/* Display the price here */}
                     <Typography variant="h6" style={{ fontWeight: "bold", color: "#D32F2F", marginTop: "10px" }}>
                       {item.price}
                     </Typography>
@@ -111,42 +135,40 @@ export default function Store() {
             Your cart is empty.
           </Typography>
         ) : (
-        <Grid container spacing={2}>
-          {cart.map((item, idx) => (
-            <Grid item xs={12} sm={6} md={4} key={idx}>
-              <Paper style={{ padding: "10px", textAlign: "center" }} elevation={2}>
-                <Typography variant="h6" style={{ fontWeight: "bold", color: "#D32F2F" }}>
-                  {item.name}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="error"
-                  sx={{ color: 'white', textTransform: 'none' }} // White text
-                  onClick={() => handleRemoveFromCart(item)}
-                >
-                  REMOVE
-                </Button>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+          <Grid container spacing={2}>
+            {cart.map((item, idx) => (
+              <Grid item xs={12} sm={6} md={4} key={idx}>
+                <Paper style={{ padding: "10px", textAlign: "center" }} elevation={2}>
+                  <Typography variant="h6" style={{ fontWeight: "bold", color: "#D32F2F" }}>
+                    {item.name} x{item.quantity}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    sx={{ color: 'white', textTransform: 'none' }}
+                    onClick={() => handleRemoveFromCart(item)}
+                  >
+                    REMOVE
+                  </Button>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
         )}
 
         {/* Checkout Button */}
         <Box mt={2}>
-        <Button
-          color="inherit"
-          component={Link}
-          to={{
-            pathname: "/checkout", // Specify the path to the checkout page
-            state: { cart } // Pass the cart data to the checkout page
-          }}
-          sx={{ color: '#D32F2F', textTransform: 'none' }}
-        >
-          Proceed to Checkout
-        </Button>
-
-          
+          <Button
+            color="inherit"
+            component={Link}
+            to={{
+              pathname: "/checkout", // Specify the path to the checkout page
+              state: { cart } // Pass the cart data to the checkout page
+            }}
+            sx={{ color: '#D32F2F', textTransform: 'none' }}
+          >
+            Proceed to Checkout
+          </Button>
         </Box>
       </Paper>
     </Container>
