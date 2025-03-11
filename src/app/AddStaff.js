@@ -78,16 +78,16 @@ export default function AddStaff() {
 
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="First Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} />
+            <TextField fullWidth label="First Name " variant="outlined" value={name} onChange={(e) => setName(e.target.value)} helperText="Only up to 20 characters allowed." />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Last Name" variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            <TextField fullWidth label="Last Name " variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} helperText="Only up to 30 characters allowed." />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="Email" type="email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Phone Number" type="tel" variant="outlined" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <TextField fullWidth label="Phone Number " type="tel" variant="outlined" value={phone} onChange={(e) => setPhone(e.target.value)} helperText="Must be exactly 10 digits." />
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
