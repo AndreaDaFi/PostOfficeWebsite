@@ -23,8 +23,14 @@ export default function AddStaff() {
 
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [roleId, setRoleId] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [salaryPerHour, setSalaryPerHour] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [address, setAddress] = useState("");
+  const [workPO, setWorkPO] = useState("");
+  const [ssn, setSSN] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [assignedPostOffice, setAssignedPostOffice] = useState("");
   const [error, setError] = useState(null);
@@ -34,25 +40,35 @@ export default function AddStaff() {
     setError(null);
     setSuccessMessage(null);
 
-    if (!name || !lastName || !email || !phone || !jobTitle || !assignedPostOffice) {
+    if (!name || !lastName || !roleId || !email || !phone || !salaryPerHour || !birthday || !address || !workPO || !ssn || !jobTitle || !assignedPostOffice) {
       setError("⚠ Please fill in all fields.");
       return;
     }
 
-    if (name.length > 20) {
-      setError("⚠ Name must be 20 characters or less.");
-      return;
-    }
+  if (name.length > 20) {
+    setError("⚠ Name must be 20 characters or less.");
+    return;
+  }
 
-    if (lastName.length > 30) {
-      setError("⚠ Last Name must be 30 characters or less.");
-      return;
-    }
+  if (lastName.length > 30) {
+    setError("⚠ Last Name must be 30 characters or less.");
+    return;
+  }
 
-    if (!/^[0-9]{10}$/.test(phone)) {
-      setError("⚠ Phone number must be exactly 10 digits.");
-      return;
-    }
+  if (!/^[0-9]{10}$/.test(phone)) {
+    setError("⚠ Phone number must be exactly 10 digits.");
+    return;
+  }
+
+  if (!/^[0-9]{9}$/.test(ssn)) {
+    setError("⚠ SSN must be exactly 9 digits.");
+    return;
+  }
+
+  if (isNaN(parseFloat(salaryPerHour)) || parseFloat(salaryPerHour) <= 0) {
+    setError("⚠ Salary must be a positive number.");
+    return;
+  }
 
     console.log("New Staff Added:", { name, lastName, email, phone, jobTitle, assignedPostOffice });
     setSuccessMessage(`🎉 Staff member ${name} ${lastName} added as ${jobTitle} at ${assignedPostOffice}!`);
@@ -71,11 +87,6 @@ export default function AddStaff() {
       </Typography>
       
       <Paper style={{ padding: "20px", marginBottom: "20px", borderRadius: "10px", backgroundColor: "#fff" }} elevation={4}>
-        <Typography variant="h5" style={{ fontWeight: "bold", color: "#333", marginBottom: "15px" }}>
-          <PersonAddIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-          Add a New Staff Member
-        </Typography>
-
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="First Name " variant="outlined" value={name} onChange={(e) => setName(e.target.value)} helperText="Only up to 20 characters allowed." />
@@ -83,6 +94,17 @@ export default function AddStaff() {
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="Last Name " variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} helperText="Only up to 30 characters allowed." />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="SSN " variant="outlined" value={ssn} onChange={(e) => setSSN(e.target.value)} helperText="Only up to 9 characters allowed." />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="Birthdate" type="date" InputLabelProps={{ shrink: true }} variant="outlined" value={birthday} onChange={(e) => setBirthday(e.target.value)} helperText="Select a valid date." />
+          </Grid>
+          <Grid container spacing={2} justifyContent="center">
+          <Grid item xs={12} sm={6}>
+            <TextField fullWidth label="Salary Per Hour" type="number" variant="outlined" value={salaryPerHour} onChange={(e) => setSalaryPerHour(e.target.value)} helperText="Enter a valid hourly salary (e.g., 15.50)." />
+          </Grid>
+        </Grid>
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="Email" type="email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Grid>
