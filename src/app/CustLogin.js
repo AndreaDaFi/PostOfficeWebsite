@@ -54,7 +54,6 @@ export default function CustLogin() {
       justifyContent: "center",
       alignItems: "center",
       height: "100vh",
-      backgroundColor: "#F7F7F7"
     }}>
       <Container maxWidth="xs">
         <Paper
