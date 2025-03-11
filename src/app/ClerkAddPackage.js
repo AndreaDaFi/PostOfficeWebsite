@@ -7,7 +7,8 @@ export default function CustomerPackageEntry() {
   const navigate = useNavigate();
 
   const [packageData, setPackageData] = useState({
-    customerID: "", receiverStreet: "", receiverApartment: "", receiverCity: "", receiverState: "", receiverZip: "",
+    customerID: "",receiverName: "",
+    receiverStreet: "", receiverApartment: "", receiverCity: "", receiverState: "", receiverZip: "",
     serviceType: "", fragile: false, insurance: false, packageType: "", weight: "", size: "",
   });
 
@@ -56,12 +57,11 @@ export default function CustomerPackageEntry() {
 
   const handleSubmit = () => {
     setError(null);
-    if (!packageData.customerID || !packageData.customerFirstName || !packageData.customerLastName || !packageData.customerStreet) {
-      setError("⚠ Please fill in all required customer fields.");
-      return;
-    }
-    if (!packageData.receiverFirstName || !packageData.receiverLastName || !packageData.receiverStreet) {
-      setError("⚠ Please fill in all required receiver fields.");
+    if (!packageData.customerID || !packageData.receiverName ||
+      (!packageData.receiverStreet || !packageData.receiverApartment) ||
+      !packageData.receiverCity || !packageData.receiverState ||
+      !packageData.receiverZip) {
+      setError("⚠ Please fill in all required fields.");
       return;
     }
     const totalPrice = calculateTotalPrice();
@@ -80,29 +80,12 @@ export default function CustomerPackageEntry() {
         <Typography variant="h6" style={{ fontWeight: "bold", marginTop: "10px" }}>👤 Customer Info</Typography>
         <Grid container spacing={2}>
           <Grid item xs={4}><TextField fullWidth label="Customer ID" name="customerID" variant="outlined" value={packageData.customerID} onChange={handleChange} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="First Name" name="customerFirstName" variant="outlined" value={packageData.customerFirstName} onChange={handleChange} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="Last Name" name="customerLastName" variant="outlined" value={packageData.customerLastName} onChange={handleChange} /></Grid>
-        </Grid>
-
-        {/* Sender Info */}
-        <Typography variant="h6" style={{ fontWeight: "bold", marginTop: "10px" }}>📦 Sender Info</Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={6}><TextField fullWidth label="First Name" name="senderFirstName" variant="outlined" value={packageData.senderFirstName} onChange={handleChange} /></Grid>
-          <Grid item xs={6}><TextField fullWidth label="Last Name" name="senderLastName" variant="outlined" value={packageData.senderLastName} onChange={handleChange} /></Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={8}><TextField fullWidth label="Street Address" name="senderStreet" variant="outlined" value={packageData.senderStreet} onChange={handleChange} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="Apt #" name="senderApartment" variant="outlined" value={packageData.senderApartment} onChange={handleChange} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="City" name="senderCity" variant="outlined" value={packageData.senderCity} onChange={handleChange} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="State" name="senderState" variant="outlined" value={packageData.senderState} onChange={handleChange} /></Grid>
-          <Grid item xs={4}><TextField fullWidth label="Zip Code" name="senderZip" variant="outlined" value={packageData.senderZip} onChange={handleChange} /></Grid>
         </Grid>
 
         {/* Receiver Info */}
         <Typography variant="h6" style={{ fontWeight: "bold", marginTop: "10px" }}>📍 Receiver Info</Typography>
         <Grid container spacing={2}>
-          <Grid item xs={6}><TextField fullWidth label="First Name" name="receiverFirstName" variant="outlined" value={packageData.receiverFirstName} onChange={handleChange} /></Grid>
-          <Grid item xs={6}><TextField fullWidth label="Last Name" name="receiverLastName" variant="outlined" value={packageData.receiverLastName} onChange={handleChange} /></Grid>
+          <Grid item xs={6}><TextField fullWidth label="First Name" name="receiverName" variant="outlined" value={packageData.receiverName} onChange={handleChange} /></Grid>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={8}><TextField fullWidth label="Street Address" name="receiverStreet" variant="outlined" value={packageData.receiverStreet} onChange={handleChange} /></Grid>
