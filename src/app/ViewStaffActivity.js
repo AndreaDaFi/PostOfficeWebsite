@@ -95,13 +95,13 @@ export default function ViewStaff() {
                   👤 Name
                 </TableCell>
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
-                   Employee ID
+                  🆔 Employee ID
                 </TableCell>
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
-                   Location ID
+                  📍 Location ID
                 </TableCell>
                 <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
-                   Performance
+                  📈 Performance
                 </TableCell>
               </TableRow>
             </TableHead>
