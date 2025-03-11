@@ -11,6 +11,12 @@ export default function AddStaff() {
     ssn: "",
     role: "",
     postOfficeID: "",
+    street: "",
+    streetLine2: "",
+    aptNumber: "",
+    city: "",
+    state: "",
+    zipCode: "",
     password: "",
     securityQuestion: "",
     securityAnswer: "",
@@ -32,6 +38,11 @@ export default function AddStaff() {
     if (!formData.ssn.trim() || formData.ssn.length !== 9 || isNaN(formData.ssn)) return "⚠ SSN must be exactly 9 digits.";
     if (!formData.postOfficeID.trim() || formData.postOfficeID.length !== 6 || isNaN(formData.postOfficeID)) return "⚠ Post Office ID must be exactly 6 digits.";
     if (!formData.role) return "⚠ Please select a role.";
+    if (!formData.street.trim() || formData.street.length > 45) return "⚠ Street address must be up to 45 characters.";
+    if (formData.streetLine2.length > 45) return "⚠ Street Address Line 2 must be up to 45 characters.";
+    if (!formData.city.trim() || formData.city.length > 45) return "⚠ City must be up to 45 characters.";
+    if (!formData.state) return "⚠ Please select a state.";
+    if (!formData.zipCode.trim() || formData.zipCode.length !== 5 || isNaN(formData.zipCode)) return "⚠ Zip Code must be exactly 5 digits.";
     if (!formData.password.trim() || formData.password.length > 10) return "⚠ Password must be up to 10 characters.";
     if (!formData.securityQuestion) return "⚠ Please select a security question.";
     if (!formData.securityAnswer.trim() || formData.securityAnswer.length > 10) return "⚠ Security answer must be up to 10 characters.";
@@ -62,6 +73,11 @@ export default function AddStaff() {
     }
   };
 
+  // List of U.S. states for the dropdown
+  const states = [
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+  ];
+
   return (
     <div style={{
       display: "flex",
@@ -71,7 +87,7 @@ export default function AddStaff() {
     }}>
       <Container maxWidth="sm">
         <Paper elevation={3} style={{ padding: "30px", borderRadius: "12px", textAlign: "center" }}>
-          <Typography variant="h5" style={{ fontWeight: "bold" }}>👨‍💼 Add New Staff</Typography>
+          <Typography variant="h5" style={{ fontWeight: "bold" }}>👨‍💼 Add New Staff Member</Typography>
           <Typography variant="body2" color="textSecondary">Add a new staff member to the system.</Typography>
 
           {error && <Alert severity="error" style={{ marginTop: "15px" }}>{error}</Alert>}
@@ -115,6 +131,40 @@ export default function AddStaff() {
               <TextField fullWidth label="Post Office ID" name="postOfficeID" onChange={handleChange} required 
                 inputProps={{ maxLength: 6 }} helperText="Exactly 6 digits" />
             </Grid>
+
+            {/* Address Fields */}
+            <Grid item xs={12}>
+              <TextField fullWidth label="Street Address" name="street" onChange={handleChange} required 
+                inputProps={{ maxLength: 45 }} helperText="Up to 45 characters" />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Street Address Line 2" name="streetLine2" onChange={handleChange} 
+                inputProps={{ maxLength: 45 }} helperText="Up to 45 characters (optional)" />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Apartment Number" name="aptNumber" onChange={handleChange} 
+                inputProps={{ maxLength: 10 }} helperText="Optional" />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="City" name="city" onChange={handleChange} required 
+                inputProps={{ maxLength: 45 }} helperText="Up to 45 characters" />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth required>
+                <InputLabel>State</InputLabel>
+                <Select name="state" value={formData.state} onChange={handleChange}>
+                  {states.map((state) => (
+                    <MenuItem key={state} value={state}>{state}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Zip Code" name="zipCode" onChange={handleChange} required 
+                inputProps={{ maxLength: 5 }} helperText="Exactly 5 digits" />
+            </Grid>
+
+            {/* Security & Password Fields */}
             <Grid item xs={12}>
               <TextField fullWidth label="Password" name="password" type="password" onChange={handleChange} required 
                 inputProps={{ maxLength: 10 }} helperText="Up to 10 characters" />
