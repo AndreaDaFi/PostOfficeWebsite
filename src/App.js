@@ -18,7 +18,7 @@ import MngrViewStaff from './app/MngrViewStaff';
 import ViewStaffActivity from './app/ViewStaffActivity';
 import PackageStatus from './app/PackageStatus';
 import PackageDetails from './app/PackageDetails';
-import CustSignin from './app/CustSignin';
+import CustSignup from './app/CustSignup';
 import ClerkAddPackage from './app/ClerkAddPackage';
 import CustAddPackage from './app/CustAddPackage';
 import Checkout from './app/Checkout';//checkout if they order items from the store
@@ -70,7 +70,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/cust-login" element={<CustLogin />} />
           <Route path="/emp-login" element={<EmpLogin />} />
-          <Route path="/CustSignin" element={<CustSignin />} />
+          <Route path="/CustSignup" element={<CustSignup />} />
 
           {/*pages customers should be able to see*/}
           <Route path="/Store" element={<Store />} />

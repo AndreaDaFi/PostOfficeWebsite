@@ -172,7 +172,7 @@ export default function CustLogin() {
       onClick={(event) => { 
         event.preventDefault();  // ✅ Prevents unwanted page refresh
         console.log("Sign Up button clicked!");  // ✅ Debugging message
-        window.location.href = "/CustSignin";  // ✅ Redirects correctly
+        window.location.href = "/CustSignup";  // ✅ Redirects correctly
       }}
     >
       Sign Up
