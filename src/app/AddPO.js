@@ -1,46 +1,65 @@
 import React, { useState } from "react";
-import { Container, Typography, Grid, Paper, TextField, Button, List, ListItem, ListItemText, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { Container, Typography, Grid, Paper, TextField, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
-import StorefrontIcon from "@mui/icons-material/Storefront";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export default function AddPO() {
   // Default 10 Post Offices with names & built-in eStores
   const [locations, setLocations] = useState([
-    { name: "CougarPost - Houston", state: "Texas", city: "Houston", address: "123 Main St" },
-    { name: "CougarPost - Los Angeles", state: "California", city: "Los Angeles", address: "456 Sunset Blvd" },
-    { name: "CougarPost - New York", state: "New York", city: "New York City", address: "789 Broadway Ave" },
-    { name: "CougarPost - Chicago", state: "Illinois", city: "Chicago", address: "100 Lake Shore Dr" },
-    { name: "CougarPost - Miami", state: "Florida", city: "Miami", address: "500 Ocean Dr" },
-    { name: "CougarPost - Dallas", state: "Texas", city: "Dallas", address: "222 Lone Star Rd" },
-    { name: "CougarPost - Seattle", state: "Washington", city: "Seattle", address: "900 Rainy St" },
-    { name: "CougarPost - Denver", state: "Colorado", city: "Denver", address: "333 Mountain Ave" },
-    { name: "CougarPost - Atlanta", state: "Georgia", city: "Atlanta", address: "777 Peach Tree Blvd" },
-    { name: "CougarPost - San Francisco", state: "California", city: "San Francisco", address: "600 Golden Gate Ave" }
+    { state: "Texas", city: "Houston", address: "123 Main St", zip: "77001" },
+    { state: "California", city: "Los Angeles", address: "456 Sunset Blvd", zip: "12345" },
+    { state: "New York", city: "New York City", address: "789 Broadway Ave", zip: "67891" },
+    { state: "Illinois", city: "Chicago", address: "100 Lake Shore Dr", zip: "54321" },
+    { state: "Florida", city: "Miami", address: "500 Ocean Dr", zip: "65432" },
+    { state: "Texas", city: "Dallas", address: "222 Lone Star Rd", zip: "76543" },
+    { state: "Washington", city: "Seattle", address: "900 Rainy St", zip: "87654" },
+    { state: "Colorado", city: "Denver", address: "333 Mountain Ave", zip: "98765" },
+    { state: "Georgia", city: "Atlanta", address: "777 Peach Tree Blvd", zip: "09876" },
+    { state: "California", city: "San Francisco", address: "600 Golden Gate Ave", zip: "45678" }
   ]);
 
-  const [name, setName] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [address, setAddress] = useState("");
+  const [poData, setPoData] = useState({
+    state: "",
+    city: "",
+    address: "",
+    zip: ""
+  });
+
   const [error, setError] = useState(null);
 
+  const validatecity = (value) => value.length <= 45;
+  const validateaddress = (value) => value.length <= 45;
+  const validatezip = (value) => /^[0-9]{5}$/.test(value);
+
   const handleAddLocation = () => {
-    if (!name || !state || !city || !address) {
-      setError("⚠ Please fill in all fields.");
+    const { state, city, address } = poData;
+    if (!validateaddress(poData.address) ||
+      !validatecity(poData.city) ||
+      !validatezip(poData.zip) ||
+      !state || !city || !address) {
+      setError("⚠ Please fill in all required fields correctly.");
       return;
     }
 
-    const newLocation = { name, state, city, address };
+    const newLocation = { ...poData };  // Copy poData and use it for the new location
     setLocations([...locations, newLocation]);
-    setName("");
-    setState("");
-    setCity("");
-    setAddress("");
+    setPoData({
+      state: "",
+      city: "",
+      address: "",
+      zip: ""
+    });
     setError(null);
   };
+
+  // List of all U.S. states for the dropdown
+  const states = [
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+    "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+    "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey",
+    "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+    "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
+    "Wisconsin", "Wyoming"
+  ];
 
   return (
     <Container style={{ marginTop: "20px", textAlign: "center" }}>
@@ -61,16 +80,47 @@ export default function AddPO() {
         {/* Input Fields */}
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Post Office Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} />
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>State</InputLabel>
+              <Select
+                value={poData.state}
+                onChange={(e) => setPoData({ ...poData, state: e.target.value })}
+                label="State"
+              >
+                {states.map((stateName, index) => (
+                  <MenuItem key={index} value={stateName}>
+                    {stateName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="State" variant="outlined" value={state} onChange={(e) => setState(e.target.value)} />
+            <TextField
+              fullWidth
+              label="City"
+              variant="outlined"
+              value={poData.city}
+              onChange={(e) => setPoData({ ...poData, city: e.target.value })}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="City" variant="outlined" value={city} onChange={(e) => setCity(e.target.value)} />
+            <TextField
+              fullWidth
+              label="Address"
+              variant="outlined"
+              value={poData.address}
+              onChange={(e) => setPoData({ ...poData, address: e.target.value })}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Address" variant="outlined" value={address} onChange={(e) => setAddress(e.target.value)} />
+            <TextField
+              fullWidth
+              label="Zip Code"
+              variant="outlined"
+              value={poData.zip}
+              onChange={(e) => setPoData({ ...poData, zip: e.target.value })}
+            />
           </Grid>
         </Grid>
 
@@ -82,7 +132,7 @@ export default function AddPO() {
         )}
 
         {/* Add Button */}
-        <Button 
+        <Button
           variant="contained"
           style={{ marginTop: "20px", padding: "12px 20px", borderRadius: "8px", backgroundColor: "#D32F2F", color: "#FFF" }}
           onClick={handleAddLocation}
@@ -98,41 +148,10 @@ export default function AddPO() {
             📍 {location.name}
           </Typography>
           <Typography variant="body2" style={{ color: "#777", marginBottom: "10px" }}>
-            {location.address}, {location.city}, {location.state}
+            {location.address}, {location.city}, {location.state}, {location.zip}
           </Typography>
-
-          {/* Expandable eStore Section */}
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} style={{ backgroundColor: "#FFF3E0" }}>
-              <Typography style={{ fontWeight: "bold", color: "#D32F2F" }}>
-                <StorefrontIcon style={{ verticalAlign: "middle", marginRight: "10px" }} />
-                View eStore at {location.name}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <List>
-                <ListItem>
-                  <ShoppingCartIcon style={{ marginRight: "10px", color: "#D32F2F" }} />
-                  <ListItemText primary="Packing Tape" />
-                </ListItem>
-                <ListItem>
-                  <ShoppingCartIcon style={{ marginRight: "10px", color: "#D32F2F" }} />
-                  <ListItemText primary="Bubble Wrap" />
-                </ListItem>
-                <ListItem>
-                  <ShoppingCartIcon style={{ marginRight: "10px", color: "#D32F2F" }} />
-                  <ListItemText primary="Envelopes & Mailers" />
-                </ListItem>
-                <ListItem>
-                  <ShoppingCartIcon style={{ marginRight: "10px", color: "#D32F2F" }} />
-                  <ListItemText primary="Boxes (Small, Medium, Large)" />
-                </ListItem>
-              </List>
-            </AccordionDetails>
-          </Accordion>
         </Paper>
       ))}
     </Container>
   );
 }
-
