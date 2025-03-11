@@ -23,6 +23,7 @@ import ClerkAddPackage from './app/ClerkAddPackage';
 import CustAddPackage from './app/CustAddPackage';
 import Checkout from './app/Checkout';//checkout if they order items from the store
 import PackageCheckOut from './app/PackageCheckOut';//checkout if they want to ship a package
+import AddMyHours from './app/AddMyHours';
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
           <Button color="inherit" component={Link} to="/CustAddPackage">Ship a new package</Button>
 
           {/*EMPLOYEE PAGES*/}
+          <Button color="inherit" component={Link} to="/AddMyHours">Input the hours I worked</Button>
           {/*pages Admin should be able to see*/}
           <Button color="inherit" component={Link} to="/AddPO">Add a Post Office</Button>
           <Button color="inherit" component={Link} to="/ViewPO">View Post Offices</Button>
@@ -82,6 +84,7 @@ const App = () => {
           <Route path="/PackageCheckOut" element={<PackageCheckOut />} />
 
           {/*EMPLOYEE PAGES*/}
+          <Route path="/AddMyHours" element={<AddMyHours />} />
           {/*pages Admin should be able to see*/}
           <Route path="/AddPO" element={<AddPO />} />
           <Route path="/ViewPO" element={<ViewPO />} />
