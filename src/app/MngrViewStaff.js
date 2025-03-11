@@ -1,117 +1,144 @@
 import React, { useState } from "react";
-import { Container, Typography, Paper, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Paper,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  InputAdornment,
+} from "@mui/material";
+import BadgeIcon from "@mui/icons-material/Badge";
 import SearchIcon from "@mui/icons-material/Search";
 import WorkIcon from "@mui/icons-material/Work";
-import TimerIcon from "@mui/icons-material/Timer";
-import StoreIcon from "@mui/icons-material/Store";
-import DownloadIcon from "@mui/icons-material/Download";
+import BusinessIcon from "@mui/icons-material/Business";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
-export default function ManagerDashboard() {
-  const [search, setSearch] = useState("");
-  const [filterLocation, setFilterLocation] = useState("");
-
-  // Sample staff data
-  const staffData = [
-    { name: "John Doe", role: "Driver", location: "Houston", clockIn: "8:00 AM", clockOut: "5:00 PM", hoursWorked: 9, performance: "Good" },
-    { name: "Emily Smith", role: "Cashier", location: "Los Angeles", clockIn: "9:00 AM", clockOut: "6:00 PM", hoursWorked: 9, performance: "Excellent" },
-    { name: "Michael Johnson", role: "Customer Service", location: "New York", clockIn: "8:30 AM", clockOut: "4:30 PM", hoursWorked: 8, performance: "Satisfactory" },
-    { name: "Sophia Davis", role: "Supervisor", location: "Chicago", clockIn: "7:45 AM", clockOut: "3:00 PM", hoursWorked: 7.25, performance: "Good" },
-    { name: "Daniel Martinez", role: "Driver", location: "Miami", clockIn: "10:00 AM", clockOut: "6:00 PM", hoursWorked: 8, performance: "Excellent" },
-    { name: "Olivia Wilson", role: "Cashier", location: "Dallas", clockIn: "8:15 AM", clockOut: "4:15 PM", hoursWorked: 8, performance: "Needs Improvement" },
-    { name: "Liam Brown", role: "Customer Service", location: "Seattle", clockIn: "7:30 AM", clockOut: "3:30 PM", hoursWorked: 8, performance: "Good" },
-    { name: "Emma Garcia", role: "Supervisor", location: "Denver", clockIn: "8:00 AM", clockOut: "5:00 PM", hoursWorked: 9, performance: "Excellent" }
+export default function ViewStaff() {
+  // Sample list of staff members
+  const staffMembers = [
+    {
+      id: "EMP001",
+      name: "John Doe",
+      locationId: "LOC100",
+      performance: "Excellent",
+    },
+    {
+      id: "EMP002",
+      name: "Emily Smith",
+      locationId: "LOC200",
+      performance: "Good",
+    },
+    {
+      id: "EMP003",
+      name: "Michael Johnson",
+      locationId: "LOC300",
+      performance: "Average",
+    },
+    // Add more staff members as needed
   ];
 
-  // Filter staff based on search input and location
-  const filteredStaff = staffData.filter(
-    (staff) =>
-      (staff.name.toLowerCase().includes(search.toLowerCase()) ||
-        staff.role.toLowerCase().includes(search.toLowerCase()) ||
-        staff.performance.toLowerCase().includes(search.toLowerCase())) &&
-      (filterLocation === "" || staff.location === filterLocation)
-  );
+  const [search, setSearch] = useState("");
 
-  // Simulate downloading a report
-  const handleDownloadReport = () => {
-    alert("📥 Staff performance report downloaded successfully!");
-  };
+  // Filter staff members based on search input
+  const filteredStaff = staffMembers.filter(
+    (staff) =>
+      staff.name.toLowerCase().includes(search.toLowerCase()) ||
+      staff.id.toLowerCase().includes(search.toLowerCase()) ||
+      staff.locationId.toLowerCase().includes(search.toLowerCase()) ||
+      staff.performance.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <Container style={{ marginTop: "20px", textAlign: "center" }}>
-      <Typography variant="h4" style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}>
-        📊 Staff Overview Dashboard
+      <Typography
+        variant="h4"
+        style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}
+      >
+        👥 View Staff Members
       </Typography>
       <Typography variant="body1" style={{ color: "#555", marginBottom: "20px" }}>
-        General Managers can track all staff, work hours, and performance.
+        Admins can view all CougarPost staff members and their performance.
       </Typography>
 
       {/* Search Bar */}
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="🔍 Search by name, role, or performance..."
+        placeholder="🔍 Search by name, ID, location ID, or performance..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         InputProps={{
-          startAdornment: <SearchIcon style={{ marginRight: "10px", color: "#D32F2F" }} />
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon style={{ color: "#D32F2F" }} />
+            </InputAdornment>
+          ),
         }}
         style={{ marginBottom: "20px", backgroundColor: "#fff", borderRadius: "8px" }}
       />
 
-      {/* Filter by Location */}
-      <FormControl fullWidth variant="outlined" style={{ marginBottom: "20px" }}>
-        <InputLabel>Filter by Location</InputLabel>
-        <Select value={filterLocation} onChange={(e) => setFilterLocation(e.target.value)} label="Filter by Location">
-          <MenuItem value="">All Locations</MenuItem>
-          {[...new Set(staffData.map((staff) => staff.location))].map((location, index) => (
-            <MenuItem key={index} value={location}>
-              {location}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* Staff Table */}
-      <Paper elevation={3} style={{ padding: "20px", borderRadius: "10px", backgroundColor: "#fff" }}>
+      {/* Staff List */}
+      <Paper
+        elevation={3}
+        style={{ padding: "20px", borderRadius: "10px", backgroundColor: "#fff" }}
+      >
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow style={{ backgroundColor: "#D32F2F" }}>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>👤 Name</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>💼 Role</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>🏢 Location</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>⏰ Clock In</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>⏳ Clock Out</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>⌛ Hours Worked</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>📈 Performance</TableCell>
+                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
+                  👤 Name
+                </TableCell>
+                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
+                  🆔 Employee ID
+                </TableCell>
+                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
+                  📍 Location ID
+                </TableCell>
+                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
+                  📈 Performance
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredStaff.length > 0 ? (
                 filteredStaff.map((staff, index) => (
                   <TableRow key={index} hover>
-                    <TableCell>{staff.name}</TableCell>
                     <TableCell>
-                      <WorkIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-                      {staff.role}
+                      <BadgeIcon
+                        style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }}
+                      />
+                      {staff.name}
                     </TableCell>
                     <TableCell>
-                      <StoreIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-                      {staff.location}
+                      <WorkIcon
+                        style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }}
+                      />
+                      {staff.id}
                     </TableCell>
-                    <TableCell>{staff.clockIn}</TableCell>
-                    <TableCell>{staff.clockOut}</TableCell>
                     <TableCell>
-                      <TimerIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-                      {staff.hoursWorked} hrs
+                      <BusinessIcon
+                        style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }}
+                      />
+                      {staff.locationId}
                     </TableCell>
-                    <TableCell>{staff.performance}</TableCell>
+                    <TableCell>
+                      <AssessmentIcon
+                        style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }}
+                      />
+                      {staff.performance}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} style={{ textAlign: "center", color: "#B71C1C" }}>
-                    ❌ No results found.
+                  <TableCell colSpan={4} style={{ textAlign: "center", color: "#B71C1C" }}>
+                     No results found.
                   </TableCell>
                 </TableRow>
               )}
@@ -119,16 +146,6 @@ export default function ManagerDashboard() {
           </Table>
         </TableContainer>
       </Paper>
-
-      {/* Download Report Button */}
-      <Button
-        variant="contained"
-        style={{ backgroundColor: "#D32F2F", color: "#FFF", marginTop: "20px", padding: "12px", fontWeight: "bold" }}
-        onClick={handleDownloadReport}
-      >
-        <DownloadIcon style={{ marginRight: "8px" }} />
-        Download Staff Report
-      </Button>
     </Container>
   );
 }
