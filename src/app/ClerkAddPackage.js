@@ -58,7 +58,7 @@ export default function CustomerPackageEntry() {
   const handleSubmit = () => {
     setError(null);
     if (!packageData.customerID || !packageData.receiverName ||
-      (!packageData.receiverStreet || !packageData.receiverApartment) ||
+      (!packageData.receiverStreet && !packageData.receiverApartment) ||
       !packageData.receiverCity || !packageData.receiverState ||
       !packageData.receiverZip) {
       setError("⚠ Please fill in all required fields.");
