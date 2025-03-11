@@ -15,6 +15,7 @@ export default function CustomerPackageEntry() {
     serviceType: "",
     fragile: false,
     insurance: false,
+    fastdelivery: false,
     packageType: "Envelope",
     weight: "",
     size: "",
@@ -85,6 +86,9 @@ export default function CustomerPackageEntry() {
 
     // Add insurance charge
     if (packageData.insurance) basePrice += 50;
+
+    if (packageData.fastdelivery) basePrice += 30;
+
 
     // Add service charge
     const selectedService = serviceOptions.find(s => s.label === packageData.serviceType);
@@ -266,6 +270,10 @@ export default function CustomerPackageEntry() {
         <FormControlLabel
           control={<Checkbox checked={packageData.insurance} onChange={(e) => setPackageData({ ...packageData, insurance: e.target.checked })} />}
           label="Add Insurance (+$50)"
+        />
+        <FormControlLabel
+          control={<Checkbox checked={packageData.fastdelivery} onChange={(e) => setPackageData({ ...packageData, fastdelivery : e.target.checked })} />}
+          label="fast delivery (+$30)"
         />
 
         {/* Total Price */}

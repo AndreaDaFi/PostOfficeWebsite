@@ -16,6 +16,7 @@ export default function CustomerPackageEntry() {
     serviceType: "",
     fragile: false,
     insurance: false,
+    fastdelivery: false,
     packageType: "Envelope",
     weight: "",
     size: "",
@@ -52,8 +53,13 @@ export default function CustomerPackageEntry() {
       const selectedSize = sizeOptions.find((s) => s.label === packageData.size);
       basePrice = (selectedWeight?.price || 0) + (selectedSize?.price || 0);
     }
+    // Add fragile charge
     if (packageData.fragile) basePrice += 25;
+
+    // Add insurance charge
     if (packageData.insurance) basePrice += 50;
+
+    if (packageData.fastdelivery) basePrice += 30;
     const selectedService = serviceOptions.find((s) => s.label === packageData.serviceType);
     basePrice += selectedService?.price || 0;
     return basePrice.toFixed(2);
@@ -216,6 +222,9 @@ export default function CustomerPackageEntry() {
         {/* Extra Services */}
         <FormControlLabel control={<Checkbox checked={packageData.fragile} onChange={(e) => setPackageData({ ...packageData, fragile: e.target.checked })} />} label="Fragile Item (+$25)" />
         <FormControlLabel control={<Checkbox checked={packageData.insurance} onChange={(e) => setPackageData({ ...packageData, insurance: e.target.checked })} />} label="Add Insurance (+$50)" />
+        <FormControlLabel control={<Checkbox checked={packageData.fastdelivery} onChange={(e) => setPackageData({ ...packageData, fastdelivery : e.target.checked })} />}
+                  label="fast delivery (+$30)"
+                />
 
         {/* Total Price */}
         <Typography variant="h5" style={{ fontWeight: "bold", color: "#D32F2F", marginTop: "20px" }}>
