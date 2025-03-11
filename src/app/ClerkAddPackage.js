@@ -16,7 +16,7 @@ export default function CustomerPackageEntry() {
     serviceType: "",
     fragile: false,
     insurance: false,
-    packageType: "",
+    packageType: "Envelope",
     weight: "",
     size: "",
   });

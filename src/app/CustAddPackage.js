@@ -15,7 +15,7 @@ export default function CustomerPackageEntry() {
     serviceType: "",
     fragile: false,
     insurance: false,
-    packageType: "",
+    packageType: "Envelope",
     weight: "",
     size: "",
   });
@@ -98,8 +98,8 @@ export default function CustomerPackageEntry() {
 
     // Adjusted validation logic:
     if (
-      !validateStreetAddress(packageData.receiverStreet) ||
-      !validateAptNumber(packageData.receiverApartment) ||
+      (!validateStreetAddress(packageData.receiverStreet) &&
+      !validateAptNumber(packageData.receiverApartment)) ||
       !validateZipCode(packageData.receiverZip) ||
       !validateCity(packageData.receiverCity) ||
       !validateState(packageData.receiverState) ||
@@ -107,6 +107,7 @@ export default function CustomerPackageEntry() {
       !packageData.receiverName ||
       !packageData.receiverCity ||
       !packageData.receiverState ||
+      (!packageData.receiverStreet && !packageData.receiverApartment) ||
       !packageData.receiverZip
     ) {
       setError("⚠ Please fill in all required fields correctly.");
