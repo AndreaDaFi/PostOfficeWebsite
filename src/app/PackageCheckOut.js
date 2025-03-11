@@ -134,7 +134,7 @@ export default function PackageCheckout() {
 
             {/* Complete Checkout Button */}
             <Box mt={2} textAlign="right">
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained" sx={{ color: '#ffffff', backgroundColor: '#D32F2F' }} style={{ marginTop: "15px" }}>
                 Complete Checkout
               </Button>
             </Box>

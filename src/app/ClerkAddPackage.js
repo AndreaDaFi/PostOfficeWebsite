@@ -85,7 +85,7 @@ export default function CustomerPackageEntry() {
       return;
     }
     const totalPrice = calculateTotalPrice();
-    navigate("/checkout", { state: { totalPrice, packageData } });
+    navigate("/Packagecheckout", { state: { totalPrice, packageData } });
   };
 
   return (
@@ -223,7 +223,7 @@ export default function CustomerPackageEntry() {
         </Typography>
 
         {/* Checkout Button */}
-        <Button fullWidth variant="contained" color="primary" style={{ marginTop: "15px" }} onClick={handleSubmit}>
+        <Button fullWidth variant="contained" sx={{ color: '#ffffff', backgroundColor: '#D32F2F' }} style={{ marginTop: "15px" }} onClick={handleSubmit}>
           🛒 Proceed to Checkout
         </Button>
       </Paper>
