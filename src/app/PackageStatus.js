@@ -17,6 +17,7 @@ export default function UpdatePackageStatus() {
     "Out for Delivery",
     "Delivered",
     "Returned"
+    "missing"
   ];
 
   const handleUpdateStatus = async () => {
