@@ -28,6 +28,7 @@ import LowStockPage from './app/low_stock';
 import DeliveredMessagesPage from './app/delivered';
 import AskPostOfficeForStore from './app/ask_postof_for_store';
 import WorkHours from "./app/h_w";
+import testAPI from './app/testAPI';
 
 
 
@@ -54,6 +55,7 @@ const App = () => {
       <AppBar position="static" sx={{ color: '#ffffff', backgroundColor: '#D32F2F' }}>
         <Toolbar>
           {/*pages anyone could see when opening the app*/}
+          <Button color="testAPI" component={Link} to="/">testAPI</Button>
           <Button color="inherit" component={Link} to="/">Home</Button>
           <Button color="inherit" component={Link} to="/cust-login">Customer Login</Button>
           <Button color="inherit" component={Link} to="/emp-login">Employee Login</Button>
@@ -141,6 +143,7 @@ const App = () => {
         <Routes>
           {/* Pages anyone could see when opening the app */}
           <Route path="/" element={<Home />} />
+          <Route path="/testAPI" element={<testAPI />} />
           <Route path="/cust-login" element={<CustLogin />} />
           <Route path="/emp-login" element={<EmpLogin />} />
           <Route path="/CustSignup" element={<CustSignup />} />
