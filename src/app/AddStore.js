@@ -13,10 +13,9 @@ export default function AddStoreItem() {
 
   const categories = [
     "Packing Supplies",
-    "Boxes & Envelopes",
-    "Stamps",
-    "Shipping Labels",
-    "Office Supplies",
+    "Envelopes & Mailers",
+    "Boxes & Sizes",
+    
   ];
 
   const handleAddItem = () => {
