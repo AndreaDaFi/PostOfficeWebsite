@@ -1,61 +1,93 @@
 import React, { useState } from "react";
-import { Container, TextField, Button, Typography, Paper, Alert, Grid, MenuItem, Select, FormControl, InputLabel, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Container, Typography, Paper, TextField, Button, MenuItem, List, ListItem, ListItemText, Divider } from "@mui/material";
 
-export default function ViewStaffActivity() {
+export default function WorkHoursPage() {
   const [employeeId, setEmployeeId] = useState("");
-  const [totalHours, setTotalHours] = useState(null);
-  const [error, setError] = useState(null);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [hoursWorked, setHoursWorked] = useState("");
+  const [weeklyHours, setWeeklyHours] = useState([]);
+  const [totalHours, setTotalHours] = useState(0);
 
-  const staffHours = {
-    EMP101: [8, 7, 6, 9, 5, 4, 3],
-    EMP102: [9, 8, 7, 6, 5, 4, 3],
-    EMP103: [7, 6, 5, 9, 8, 7, 6],
-  };
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-  const calculateTotalHours = () => {
-    setError(null);
-    if (!employeeId.trim()) {
-      setError("⚠ Please enter an employee ID.");
-      return;
+  const handleAddHours = () => {
+    if (employeeId && selectedDay && hoursWorked) {
+      const newEntry = { day: selectedDay, hours: parseFloat(hoursWorked) };
+      setWeeklyHours([...weeklyHours, newEntry]);
+      setTotalHours(totalHours + newEntry.hours);
+      setSelectedDay("");
+      setHoursWorked("");
     }
-    if (!staffHours[employeeId]) {
-      setError("⚠ Employee ID not found.");
-      return;
-    }
-    const total = staffHours[employeeId].reduce((acc, hours) => acc + hours, 0);
-    setTotalHours(total);
   };
 
   return (
-    <Container maxWidth="sm">
-      <Paper elevation={3} style={{ padding: "30px", borderRadius: "12px", textAlign: "center" }}>
-        <Typography variant="h5" style={{ fontWeight: "bold" }}>⏳ Hours Worked Report</Typography>
-        <Typography variant="body2" color="textSecondary">Enter an employee ID to view total hours worked.</Typography>
-
-        {error && <Alert severity="error" style={{ marginTop: "15px" }}>{error}</Alert>}
-        {totalHours !== null && (
-          <Alert severity="success" style={{ marginTop: "15px" }}>
-            ✅ Total Hours Worked: {totalHours} hours
-          </Alert>
-        )}
+    <Container maxWidth="md" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: "20px" }}>
+      <Paper elevation={10} style={{ padding: "40px", borderRadius: "20px", textAlign: "center", backgroundColor: "#ffffff", width: "100%" }}>
+        <Typography variant="h3" style={{ fontWeight: "bold", color: "#d32f2f", marginBottom: "30px" }}>
+          ⏳ Employee Work Hours
+        </Typography>
+        <Divider style={{ marginBottom: "20px" }} />
 
         <TextField
           fullWidth
           label="Employee ID"
+          variant="outlined"
           value={employeeId}
           onChange={(e) => setEmployeeId(e.target.value)}
-          style={{ marginTop: "20px" }}
+          style={{ marginBottom: "20px" }}
+        />
+
+        <TextField
+          select
+          fullWidth
+          label="Select Day"
+          variant="outlined"
+          value={selectedDay}
+          onChange={(e) => setSelectedDay(e.target.value)}
+          style={{ marginBottom: "20px" }}
+        >
+          {daysOfWeek.map((day) => (
+            <MenuItem key={day} value={day}>{day}</MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          fullWidth
+          label="Hours Worked"
+          variant="outlined"
+          type="number"
+          value={hoursWorked}
+          onChange={(e) => setHoursWorked(e.target.value)}
+          style={{ marginBottom: "20px" }}
         />
 
         <Button
-          fullWidth
           variant="contained"
           color="primary"
-          style={{ marginTop: "20px", padding: "12px" }}
-          onClick={calculateTotalHours}
+          onClick={handleAddHours}
+          style={{ padding: "12px 30px", fontSize: "16px", backgroundColor: "#d32f2f", color: "white", borderRadius: "8px" }}
         >
-          🔍 View Hours Worked
+           Add Work Hours
         </Button>
+
+        <Divider style={{ margin: "30px 0" }} />
+        <Typography variant="h5" style={{ fontWeight: "bold", color: "#333", marginBottom: "15px" }}>
+          Weekly Work Hours Summary
+        </Typography>
+
+        <List>
+          {weeklyHours.map((entry, index) => (
+            <ListItem key={index} style={{ borderBottom: "1px solid #ddd", padding: "10px 0" }}>
+              <ListItemText 
+                primary={<Typography variant="h6">📅 {entry.day}: {entry.hours} hours</Typography>} 
+              />
+            </ListItem>
+          ))}
+        </List>
+
+        <Typography variant="h5" style={{ marginTop: "20px", fontWeight: "bold", color: "#d32f2f" }}>
+           Total Hours Worked: {totalHours} hours
+        </Typography>
       </Paper>
     </Container>
   );
