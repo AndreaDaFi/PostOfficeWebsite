@@ -16,7 +16,7 @@ export default function UpdatePackageStatus() {
     "In Transit",
     "Out for Delivery",
     "Delivered",
-    "Returned"
+    "Returned",
     "missing"
   ];
 
