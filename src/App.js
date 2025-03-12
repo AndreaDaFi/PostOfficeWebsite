@@ -25,6 +25,8 @@ import Checkout from './app/Checkout'; // checkout if they order items from the 
 import PackageCheckOut from './app/PackageCheckOut'; // checkout if they want to ship a package
 import AddMyHours from './app/AddMyHours';
 import LowStockPage from './app/low_stock';
+import AskPostOfficeForStore from './app/ask_postof_for_store';
+
 //import viewStaffAC from './app/view_staffAC';
 
 const App = () => {
@@ -61,7 +63,9 @@ const App = () => {
             open={Boolean(anchorElCustomer)}
             onClose={() => handleMenuClose(setAnchorElCustomer)}
           >
+          
             <MenuItem component={Link} to="/store">Store</MenuItem>
+            <MenuItem component={Link} to="/ask-store-location">Select Store Location</MenuItem>
             <MenuItem component={Link} to="/MyPackages">My Packages</MenuItem>
             <MenuItem component={Link} to="/CustAddPackage">Ship a New Package</MenuItem>
           </Menu>
@@ -134,6 +138,7 @@ const App = () => {
           <Route path="/CustSignup" element={<CustSignup />} />
 
           {/* Pages customers should be able to see */}
+          <Route path="/ask-store-location" element={<AskPostOfficeForStore />} />
           <Route path="/Store" element={<Store />} />
           <Route path="/Checkout" element={<Checkout />} />
           <Route path="/MyPackages" element={<MyPackages />} />
