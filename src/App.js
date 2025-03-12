@@ -24,6 +24,7 @@ import CustAddPackage from './app/CustAddPackage';
 import Checkout from './app/Checkout'; // checkout if they order items from the store
 import PackageCheckOut from './app/PackageCheckOut'; // checkout if they want to ship a package
 import AddMyHours from './app/AddMyHours';
+import LowStockPage from './app/low_stock';
 //import viewStaffAC from './app/view_staffAC';
 
 const App = () => {
@@ -105,6 +106,7 @@ const App = () => {
             onClose={() => handleMenuClose(setAnchorElClerk)}
           >
             <MenuItem component={Link} to="/ReStock">Update Stock</MenuItem>
+            <MenuItem component={Link} to="/low_stock">low stock</MenuItem>
             <MenuItem component={Link} to="/ClerkAddPackage">Manual Entry for New Customer Package</MenuItem>
           </Menu>
 
@@ -158,6 +160,7 @@ const App = () => {
 
           {/* Pages Clerks should be able to see */}
           <Route path="/ReStock" element={<ReStock />} />
+          <Route path="/low_stock" element={<LowStockPage />} />
           <Route path="/ClerkAddPackage" element={<ClerkAddPackage />} />
 
           {/* Pages Drivers should be able to see */}
