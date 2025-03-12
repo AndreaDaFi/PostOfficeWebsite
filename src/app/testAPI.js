@@ -6,7 +6,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://vercel-api-powebapp.vercel.app/api/data');
+        const response = await fetch('https://vercel-api-powebapp.vercel.app/api/getData');
         const result = await response.json();
         setData(result);
       } catch (error) {
