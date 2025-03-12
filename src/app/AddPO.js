@@ -21,6 +21,7 @@ export default function AddPO() {
     state: "",
     city: "",
     address: "",
+    address2: "",
     zip: ""
   });
 
@@ -111,6 +112,16 @@ export default function AddPO() {
               variant="outlined"
               value={poData.address}
               onChange={(e) => setPoData({ ...poData, address: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Address2"
+                variant="outlined"
+                value={poData.address}
+                onChange={(e) => setPoData({ ...poData, address2: e.target.value })}
+         
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -137,7 +148,7 @@ export default function AddPO() {
           style={{ marginTop: "20px", padding: "12px 20px", borderRadius: "8px", backgroundColor: "#D32F2F", color: "#FFF" }}
           onClick={handleAddLocation}
         >
-          ➕ Add CougarPost
+           Add CougarPost
         </Button>
       </Paper>
 
