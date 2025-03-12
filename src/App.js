@@ -25,6 +25,7 @@ import Checkout from './app/Checkout'; // checkout if they order items from the 
 import PackageCheckOut from './app/PackageCheckOut'; // checkout if they want to ship a package
 import AddMyHours from './app/AddMyHours';
 import LowStockPage from './app/low_stock';
+import DeliveredMessagesPage from './app/delivered';
 import AskPostOfficeForStore from './app/ask_postof_for_store';
 
 //import viewStaffAC from './app/view_staffAC';
@@ -67,6 +68,8 @@ const App = () => {
             <MenuItem component={Link} to="/store">Store</MenuItem>
             <MenuItem component={Link} to="/ask-store-location">Select Store Location</MenuItem>
             <MenuItem component={Link} to="/MyPackages">My Packages</MenuItem>
+            <MenuItem component={Link} to="/delivered-messages">Delivered Packages</MenuItem>
+
             <MenuItem component={Link} to="/CustAddPackage">Ship a New Package</MenuItem>
           </Menu>
 
@@ -144,6 +147,7 @@ const App = () => {
           <Route path="/MyPackages" element={<MyPackages />} />
           <Route path="/TrackPackage" element={<TrackPackage />} />
           <Route path="/PackageDetails" element={<PackageDetails />} />
+          <Route path="/delivered-messages" element={<DeliveredMessagesPage />} />
           <Route path="/CustAddPackage" element={<CustAddPackage />} />
           <Route path="/PackageCheckOut" element={<PackageCheckOut />} />
 
