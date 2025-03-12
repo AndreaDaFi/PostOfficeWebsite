@@ -19,6 +19,7 @@ export default function AddStaff() {
     zipCode: "",
     password: "",
     securityQuestion: "",
+    securityCode: "",
     securityAnswer: "",
   });
 
@@ -163,6 +164,12 @@ export default function AddStaff() {
             </Grid>
 
             {/* Security & Password Fields */}
+          
+            <Grid item xs={12}>
+              <TextField fullWidth label="Security Code" name="securityCode" onChange={handleChange} required 
+                inputProps={{ maxLength: 45 }} helperText="Up to 45 characters" />
+            </Grid>
+
             <Grid item xs={12}>
               <TextField fullWidth label="Password" name="password" type="password" onChange={handleChange} required 
                 inputProps={{ maxLength: 10 }} helperText="Up to 10 characters" />
@@ -183,7 +190,7 @@ export default function AddStaff() {
             </Grid>
           </Grid>
 
-          <Button fullWidth variant="contained" color="primary" style={{ marginTop: "20px", padding: "12px" }} onClick={handleAddStaff}>
+          <Button fullWidth variant="contained" color="error" style={{ marginTop: "20px", padding: "12px" }}>
             ADD Manager
           </Button>
         </Paper>
