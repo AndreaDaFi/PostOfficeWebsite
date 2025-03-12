@@ -24,6 +24,7 @@ import CustAddPackage from './app/CustAddPackage';
 import Checkout from './app/Checkout'; // checkout if they order items from the store
 import PackageCheckOut from './app/PackageCheckOut'; // checkout if they want to ship a package
 import AddMyHours from './app/AddMyHours';
+//import viewStaffAC from './app/view_staffAC';
 
 const App = () => {
   // State for dropdown menus
@@ -153,6 +154,7 @@ const App = () => {
           <Route path="/AddStaff" element={<AddStaff />} />
           <Route path="/MngrViewStaff" element={<MngrViewStaff />} />
           <Route path="/ViewStaffActivity" element={<ViewStaffActivity />} />
+          <Route path="/view-staffAC" element={<viewStaffAC />} />
 
           {/* Pages Clerks should be able to see */}
           <Route path="/ReStock" element={<ReStock />} />
