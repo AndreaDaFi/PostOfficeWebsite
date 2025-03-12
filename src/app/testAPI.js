@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
+// app/testAPI.js
+import React, { useEffect, useState } from 'react';
 
-function App() {
-  const [data, setData] = useState([]);
+const TestAPI = () => {
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://vercel-api-powebapp.vercel.app/api/getData');
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
+    // Fetch data from your API or perform any necessary action
+    fetch('https://vercel-api-powebapp.vercel.app/api/getData')  // Replace with your actual endpoint if different
+      .then(response => response.json())
+      .then(data => setData(data))
+      .catch(error => console.error('Error fetching data:', error));
   }, []);
 
   return (
     <div>
-      <h1>Data from Azure MySQL Database</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <h1>Test API Page</h1>
+      <p>Data from the API:</p>
+      {data ? (
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
-}
+};
 
-export default App;
+export default TestAPI;
