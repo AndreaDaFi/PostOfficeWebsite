@@ -9,7 +9,7 @@ const Home = () => {
 
   useEffect(() => {
     // Fetch data from the API when the component mounts
-    fetch('http://localhost:3000/api/testDB')
+    fetch('https://vercel-api-powebapp.vercel.app/api/testDB')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');
