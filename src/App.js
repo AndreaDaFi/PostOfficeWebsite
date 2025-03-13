@@ -55,7 +55,7 @@ const App = () => {
       <AppBar position="static" sx={{ color: '#ffffff', backgroundColor: '#D32F2F' }}>
         <Toolbar>
           {/*pages anyone could see when opening the app*/}
-          <Button color="testAPI" component={Link} to="/">testAPI</Button>
+          <Button color="testAPI" component={Link} to="/testAPI">testAPI</Button>
           <Button color="inherit" component={Link} to="/">Home</Button>
           <Button color="inherit" component={Link} to="/cust-login">Customer Login</Button>
           <Button color="inherit" component={Link} to="/emp-login">Employee Login</Button>
