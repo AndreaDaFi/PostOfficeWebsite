@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+
 const TestAPI = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,12 +34,27 @@ const TestAPI = () => {
       ) : error ? (
         <p>Error: {error}</p>
       ) : data && data.success ? (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <pre style={styles.pre}>{JSON.stringify(data, null, 2)}</pre>
       ) : (
         <p>No data available.</p>
       )}
     </div>
   );
+};
+
+// Optional: Add some styles to the pre tag for better formatting
+const styles = {
+  pre: {
+    backgroundColor: '#f4f4f9',
+    padding: '20px',
+    borderRadius: '5px',
+    whiteSpace: 'pre-wrap',  // Allows text to wrap properly within the container
+    wordWrap: 'break-word',  // Prevents long words from breaking layout
+    fontFamily: 'monospace',
+    fontSize: '14px',
+    color: '#333',
+    overflowX: 'auto',  // Adds horizontal scrolling if the text is too long
+  },
 };
 
 export default TestAPI;
