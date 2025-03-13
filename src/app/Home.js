@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box } from '@mui/material';
+import { Container, Typography, Box, Grid } from '@mui/material';
 import Cougar from '../components/Cougar.png';
 
 const Home = () => {
@@ -9,7 +9,7 @@ const Home = () => {
 
   useEffect(() => {
     // Fetch data from the API when the component mounts
-    fetch('https://vercel-api-powebapp.vercel.app/api/testDB')
+    fetch('http://localhost:3000/api/testDB')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');
@@ -30,9 +30,8 @@ const Home = () => {
 
   return (
     <>
-      {/* Wrapping everything in a React Fragment or a single parent element */}
       <Container>
-        <h1>Testing the API here</h1>
+        <h1>City Information</h1>
         <Box my={4}>
           {/* Display API data or loading/error messages */}
           {loading ? (
@@ -40,7 +39,25 @@ const Home = () => {
           ) : error ? (
             <p>Error: {error}</p>
           ) : data && data.success ? (
-            <pre style={styles.pre}>{JSON.stringify(data, null, 2)}</pre>
+            <Grid container spacing={2}>
+              {data.data && data.data.map((city, index) => (
+                <Grid item xs={12} sm={6} md={4} key={city.city_id}>
+                  <Box
+                    sx={{
+                      border: '1px solid #ccc',
+                      padding: 2,
+                      borderRadius: 2,
+                      backgroundColor: '#f4f4f9',
+                      boxShadow: 2,
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Typography variant="h6">{`City: ${city.city_name}`}</Typography>
+                    <Typography variant="body2" color="textSecondary">{`City ID: ${city.city_id}`}</Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
           ) : (
             <p>No data available.</p>
           )}
@@ -91,21 +108,6 @@ const Home = () => {
       </Container>
     </>
   );
-};
-
-// Optional: Add some styles to the pre tag for better formatting
-const styles = {
-  pre: {
-    backgroundColor: '#f4f4f9',
-    padding: '20px',
-    borderRadius: '5px',
-    whiteSpace: 'pre-wrap',
-    wordWrap: 'break-word',
-    fontFamily: 'monospace',
-    fontSize: '14px',
-    color: '#333',
-    overflowX: 'auto',
-  },
 };
 
 export default Home;
