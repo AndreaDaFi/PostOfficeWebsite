@@ -1,10 +1,10 @@
-// app/testAPI.js
 import React, { useEffect, useState } from 'react';
 
 const TestAPI = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
+    console.log('Fetching data from API...');
     fetch('https://vercel-api-powebapp.vercel.app/api/testDB')
       .then(response => {
         if (!response.ok) {
@@ -12,7 +12,10 @@ const TestAPI = () => {
         }
         return response.json();
       })
-      .then(data => setData(data))
+      .then(data => {
+        console.log('API Data:', data);  // Log the data to see what is returned
+        setData(data);
+      })
       .catch(error => {
         console.error('Error fetching data:', error);
         setData({ error: error.message });  // Handle error gracefully
