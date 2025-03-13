@@ -5,11 +5,18 @@ const TestAPI = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    // Fetch data from your API or perform any necessary action
-    fetch('https://vercel-api-powebapp.vercel.app/api/testDB')  // Replace with your actual endpoint if different
-      .then(response => response.json())
+    fetch('https://vercel-api-powebapp.vercel.app/api/testDB')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
       .then(data => setData(data))
-      .catch(error => console.error('Error fetching data:', error));
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setData({ error: error.message });  // Handle error gracefully
+      });
   }, []);
 
   return (
