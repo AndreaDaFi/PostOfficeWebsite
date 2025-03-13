@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const TestAPI = () => {
+const testAPI = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -35,4 +35,4 @@ const TestAPI = () => {
   );
 };
 
-export default TestAPI;
+export default testAPI;
