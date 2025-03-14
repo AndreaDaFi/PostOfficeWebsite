@@ -19,23 +19,21 @@ import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from "@mui/icons-material/Search";
 
 export default function ViewStaff() {
-  const [staffMembers, setStaffMembers] = useState([]); // ✅ Holds API data
+  const [staffMembers, setStaffMembers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ✅ Fetch staff data from API when component mounts
   useEffect(() => {
     const fetchStaff = async () => {
       try {
         const response = await fetch("https://vercel-api-powebapp.vercel.app/api/viewstaff-admin");
-
-        console.log("Response Status:", response.status); // ✅ Debugging
         const data = await response.json();
-        console.log("Fetched Data:", data); // 🔍 Log API response
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          setStaffMembers(data.data); // ✅ Update state with API response
+          // Filter out users with role "admin"
+          const filteredData = data.data.filter(staff => staff.role.toLowerCase() !== "admin");
+          setStaffMembers(filteredData);
         } else {
           console.error("⚠ API returned an empty array:", data);
         }
@@ -50,7 +48,6 @@ export default function ViewStaff() {
     fetchStaff();
   }, []);
 
-  // ✅ Filter staff members based on search input
   const filteredStaff = staffMembers.filter((staff) =>
     `${staff.name} ${staff.id} ${staff.locationId || "N/A"} ${staff.role}`
       .toLowerCase()
@@ -60,7 +57,7 @@ export default function ViewStaff() {
   return (
     <Container style={{ marginTop: "20px", textAlign: "center" }}>
       <Typography variant="h4" style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}>
-        👥 View All Staff Members
+        👥 View All Staff Members (Excluding Admins)
       </Typography>
       <TextField
         fullWidth
@@ -107,7 +104,7 @@ export default function ViewStaff() {
                       <TableCell>{staff.id}</TableCell>
                       <TableCell>
                         <BusinessIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-                        {staff.locationId || "N/A"} {/* ✅ Fix missing locationId */}
+                        {staff.locationId || "N/A"}
                       </TableCell>
                       <TableCell>
                         <WorkIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
