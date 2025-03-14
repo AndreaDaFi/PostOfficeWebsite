@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -11,6 +11,7 @@ import {
   TableHead,
   TableRow,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
 import BadgeIcon from "@mui/icons-material/Badge";
@@ -18,25 +19,42 @@ import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from "@mui/icons-material/Search";
 
 export default function ViewStaff() {
-  // Sample list of staff members
-  const staffMembers = [
-    { id: "EMP101", name: "John Doe", locationId: "LOC001", role: "Supervisor" },
-    { id: "EMP102", name: "Emily Smith", locationId: "LOC002", role: "Driver" },
-    { id: "EMP103", name: "Michael Johnson", locationId: "LOC003", role: "Cashier" },
-    { id: "EMP104", name: "Sophia Davis", locationId: "LOC004", role: "Customer Service" },
-    { id: "EMP105", name: "Daniel Martinez", locationId: "LOC005", role: "Driver" },
-    { id: "EMP106", name: "Olivia Wilson", locationId: "LOC006", role: "Cashier" },
-  ];
-
+  const [staffMembers, setStaffMembers] = useState([]); // ✅ Holds API data
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Filter staff members based on search input
-  const filteredStaff = staffMembers.filter(
-    (staff) =>
-      staff.name.toLowerCase().includes(search.toLowerCase()) ||
-      staff.id.toLowerCase().includes(search.toLowerCase()) ||
-      staff.locationId.toLowerCase().includes(search.toLowerCase()) ||
-      staff.role.toLowerCase().includes(search.toLowerCase())
+  // ✅ Fetch staff data from API when component mounts
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const response = await fetch("https://vercel-api-powebapp.vercel.app/api/viewstaff-admin");
+
+        console.log("Response Status:", response.status); // ✅ Debugging
+        const data = await response.json();
+        console.log("Fetched Data:", data); // 🔍 Log API response
+
+        if (Array.isArray(data.data) && data.data.length > 0) {
+          setStaffMembers(data.data); // ✅ Update state with API response
+        } else {
+          console.error("⚠ API returned an empty array:", data);
+        }
+      } catch (err) {
+        console.error("❌ Error fetching staff:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStaff();
+  }, []);
+
+  // ✅ Filter staff members based on search input
+  const filteredStaff = staffMembers.filter((staff) =>
+    `${staff.name} ${staff.id} ${staff.locationId || "N/A"} ${staff.role}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
   );
 
   return (
@@ -44,11 +62,6 @@ export default function ViewStaff() {
       <Typography variant="h4" style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}>
         👥 View All Staff Members
       </Typography>
-      <Typography variant="body1" style={{ color: "#555", marginBottom: "20px" }}>
-        Admins can view all staff members and their assigned locations.
-      </Typography>
-
-      {/* Search Bar */}
       <TextField
         fullWidth
         variant="outlined"
@@ -65,48 +78,55 @@ export default function ViewStaff() {
         style={{ marginBottom: "20px", backgroundColor: "#fff", borderRadius: "8px" }}
       />
 
-      {/* Staff List */}
-      <Paper elevation={3} style={{ padding: "20px", borderRadius: "10px", backgroundColor: "#fff" }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow style={{ backgroundColor: "#D32F2F" }}>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>👤 Name</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>🆔 Employee ID</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>📍 Location ID</TableCell>
-                <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>💼 Role</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredStaff.length > 0 ? (
-                filteredStaff.map((staff, index) => (
-                  <TableRow key={index} hover>
-                    <TableCell>
-                      <BadgeIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-                      {staff.name}
-                    </TableCell>
-                    <TableCell>{staff.id}</TableCell>
-                    <TableCell>
-                      <BusinessIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-                      {staff.locationId}
-                    </TableCell>
-                    <TableCell>
-                      <WorkIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
-                      {staff.role}
+      {loading ? (
+        <CircularProgress style={{ color: "#D32F2F", marginTop: "20px" }} />
+      ) : error ? (
+        <Typography variant="body2" style={{ color: "#D32F2F", fontWeight: "bold" }}>
+          ❌ {error}
+        </Typography>
+      ) : (
+        <Paper elevation={3} style={{ padding: "20px", borderRadius: "10px", backgroundColor: "#fff" }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow style={{ backgroundColor: "#D32F2F" }}>
+                  <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>👤 Name</TableCell>
+                  <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>🆔 Employee ID</TableCell>
+                  <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>📍 Location ID</TableCell>
+                  <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>💼 Role</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredStaff.length > 0 ? (
+                  filteredStaff.map((staff, index) => (
+                    <TableRow key={index} hover>
+                      <TableCell>
+                        <BadgeIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
+                        {staff.name}
+                      </TableCell>
+                      <TableCell>{staff.id}</TableCell>
+                      <TableCell>
+                        <BusinessIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
+                        {staff.locationId || "N/A"} {/* ✅ Fix missing locationId */}
+                      </TableCell>
+                      <TableCell>
+                        <WorkIcon style={{ verticalAlign: "middle", marginRight: "10px", color: "#D32F2F" }} />
+                        {staff.role}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} style={{ textAlign: "center", color: "#B71C1C" }}>
+                      ❌ No results found.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} style={{ textAlign: "center", color: "#B71C1C" }}>
-                    ❌ No results found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )}
     </Container>
   );
 }
