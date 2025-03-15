@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
 
 export default function CustLogin() {
@@ -6,7 +7,8 @@ export default function CustLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [resetMessage, setResetMessage] = useState(null);
-  const [isResetMode, setIsResetMode] = useState(false); // Track reset mode
+  const [isResetMode, setIsResetMode] = useState(false);
+  const navigate = useNavigate(); // For navigation instead of window.location.href
 
   const handleLogin = async () => {
     setError(null);
@@ -16,18 +18,20 @@ export default function CustLogin() {
     if (!password) return setError("⚠ Please enter your password.");
 
     try {
-      const response = await fetch("http://localhost:3000/api/custLogin", {
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/custLogin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Login failed");
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Login failed");
+      }
 
       alert("🎉 Login successful!");
-      window.location.href = "/dashboard"; // Redirect after login
+      navigate("/dashboard"); // Use React Router for navigation
+
     } catch (err) {
       setError("❌ " + err.message);
     }
@@ -46,37 +50,33 @@ export default function CustLogin() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/resetPassword", {
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/resetPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Reset failed");
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Reset failed");
+      }
 
       setResetMessage("📩 Password reset instructions have been sent to your email.");
+
     } catch (err) {
       setError("❌ " + err.message);
     }
   };
 
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100vh",
-     
-    }}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
       <Container maxWidth="sm">
         <Paper
           elevation={3}
           style={{
             padding: "50px",
-            width: "400px", // Enlarged form box
-             backgroundColor: "#FFF",
+            width: "400px",
+            backgroundColor: "#FFF",
             borderRadius: "12px",
             textAlign: "center",
             boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
@@ -174,7 +174,7 @@ export default function CustLogin() {
               Don't have an account?{" "}
               <Button 
                 color="inherit" 
-                onClick={() => (window.location.href = "/CustSignup")}
+                onClick={() => navigate("/CustSignup")}
                 style={{ color: "#D32F2F", fontWeight: "bold" }}
               >
                 Sign Up
