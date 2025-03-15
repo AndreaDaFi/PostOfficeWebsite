@@ -7,7 +7,7 @@ export default function AddStaff() {
     lastName: "",
     birthdate: "",
     salary: "",
-    hire_date: new Date().toISOString().split("T")[0], // Set current date as default
+    hire_date:"", //new Date().toISOString().split("T")[0], // Set current date as default
     ssn: "",
     role: "Manager",
     postOfficeID: "",
@@ -45,12 +45,35 @@ export default function AddStaff() {
       setFormData({ ...formData, [name]: value });
     }
   };
+
+  const birthdateValid = (birthdate) => {
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+    if (!datePattern.test(birthdate)) return false;
+  
+    const [year, month, day] = birthdate.split('-').map(Number);
+  
+    // Check if the year, month, and day are valid integers
+    if (year < 1900 || year > new Date().getFullYear() - 18 || month < 1 || month > 12 || day < 1 || day > 31) {
+      return false;
+    }
+  
+    const birthDateObj = new Date(year, month - 1, day);
+    const currentDate = new Date();
+  
+    // Ensure birthdate is not in the future
+    if (birthDateObj > currentDate) return false;
+  
+    return true;
+  };
+  
   
 
   const validateForm = () => {
     if (!formData.firstName.trim() || formData.firstName.length > 20) return "⚠ First Name must be up to 20 characters.";
     if (!formData.lastName.trim() || formData.lastName.length > 30) return "⚠ Last Name must be up to 30 characters.";
     if (!formData.birthdate || !/^\d{4}-\d{2}-\d{2}$/.test(formData.birthdate)) return "⚠ Birthdate must be in YYYY-MM-DD format.";
+    if (!formData.hire_date || !/^\d{4}-\d{2}-\d{2}$/.test(formData.hire_date)) 
+      return "⚠ Hire Date must be in YYYY-MM-DD format.";
     if (!formData.salary || isNaN(formData.salary)) return "⚠ Salary must be a valid decimal number.";
     if (!formData.ssn.trim() || formData.ssn.length !== 9 || isNaN(formData.ssn)) return "⚠ SSN must be exactly 9 digits.";
     if (!formData.postOfficeID.trim() || formData.postOfficeID.length !== 1 || isNaN(formData.postOfficeID)) return "⚠ Post Office ID must be exactly 1 digit.";
@@ -76,16 +99,17 @@ export default function AddStaff() {
     if (errorMsg) return setError(errorMsg);
   
     try {
-      const response = await fetch('/api/addManager', {
+      const response = await fetch('http://localhost:3001/api/addManager', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
       
-      //checking here
-      
-      
-      if (!response.ok) throw new Error(response.statusText);
+      //check error
+      if (!response.ok) {
+        const errorData = await response.json(); // Parse error details from backend
+        throw new Error(errorData.error || response.statusText);
+      }
   
       //const data = await response.json();
   
@@ -108,7 +132,7 @@ export default function AddStaff() {
 
   // List of U.S. states for the dropdown
   const states = [
-    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "tx", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+    "al", "ak", "az", "ar", "ca", "co", "ct", "de", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "ne", "nv", "nh", "nj", "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy"
   ];
 
   return (
@@ -146,9 +170,15 @@ export default function AddStaff() {
                 helperText="Decimal number" inputProps={{ min: 0 }} />
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth value={formData.hire_date} type="date" label="Hire Date" name="hire_date" disabled 
-                InputLabelProps={{ shrink: true }} helperText="Current date" />
-            </Grid>
+  <TextField
+    fullWidth
+    label="Hire Date"
+    name="hire_date"
+    onChange={handleChange}
+    required
+    helperText="Enter date in YYYY-MM-DD format"
+  />
+</Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="SSN" name="ssn" onChange={handleChange} required 
                 inputProps={{ maxLength: 9 }} helperText="Exactly 9 digits" />
