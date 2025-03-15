@@ -16,7 +16,7 @@ export default function CustLogin() {
     if (!password) return setError("⚠ Please enter your password.");
 
     try {
-      const response = await fetch("https://your-api-url.com/customer-login", {
+      const response = await fetch("http://localhost:3001/api/custLogin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -26,26 +26,40 @@ export default function CustLogin() {
 
       if (!response.ok) throw new Error(data.message || "Login failed");
 
-      alert("Login successful!");
+      alert("🎉 Login successful!");
+      window.location.href = "/dashboard"; // Redirect after login
     } catch (err) {
-      setError(err.message);
+      setError("❌ " + err.message);
     }
   };
 
   const handleForgotPassword = () => {
-    setIsResetMode(true); // Switch to reset mode
+    setIsResetMode(true);
     setError(null);
     setResetMessage(null);
   };
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     if (!email) {
       setError("⚠ Please enter your email to receive the reset link.");
       return;
     }
 
-    setError(null);
-    setResetMessage("📩 Password reset instructions have been sent to your email.");
+    try {
+      const response = await fetch("http://localhost:3000/api/resetPassword", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "Reset failed");
+
+      setResetMessage("📩 Password reset instructions have been sent to your email.");
+    } catch (err) {
+      setError("❌ " + err.message);
+    }
   };
 
   return (
@@ -54,30 +68,32 @@ export default function CustLogin() {
       justifyContent: "center",
       alignItems: "center",
       height: "100vh",
+     
     }}>
-      <Container maxWidth="xs">
+      <Container maxWidth="sm">
         <Paper
           elevation={3}
           style={{
-            padding: "40px",
+            padding: "50px",
+            width: "400px", // Enlarged form box
+             backgroundColor: "#FFF",
             borderRadius: "12px",
-            backgroundColor: "#FFF",
             textAlign: "center",
             boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
           }}
         >
           <Typography variant="h5" gutterBottom style={{ fontWeight: "bold", color: "#333" }}>
-          📦 Customer Login
+            📦 Customer Login
           </Typography>
 
           <Typography variant="body2" color="textSecondary" style={{ marginBottom: "20px" }}>
             {isResetMode ? "Enter your email to reset your password." : "Please enter your credentials to continue."}
           </Typography>
 
-          {error && <Alert severity="error" style={{ marginBottom: "15px", backgroundColor: "#FFCDD2", color: "#B71C1C" }}>{error}</Alert>}
-          {resetMessage && <Alert severity="success" style={{ marginBottom: "15px", backgroundColor: "#E8F5E9", color: "#1B5E20" }}>{resetMessage}</Alert>}
+          {error && <Alert severity="error" style={{ marginBottom: "15px" }}>{error}</Alert>}
+          {resetMessage && <Alert severity="success" style={{ marginBottom: "15px" }}>{resetMessage}</Alert>}
 
-          {/* EMAIL FIELD (Always Visible) */}
+          {/* EMAIL FIELD */}
           <TextField 
             fullWidth 
             label="Email" 
@@ -86,7 +102,6 @@ export default function CustLogin() {
             margin="normal" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
-            InputProps={{ style: { backgroundColor: "#FFF", borderRadius: "8px" } }} 
           />
 
           {/* PASSWORD & LOGIN BUTTON - HIDDEN IN RESET MODE */}
@@ -100,7 +115,6 @@ export default function CustLogin() {
                 margin="normal" 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
-                InputProps={{ style: { backgroundColor: "#FFF", borderRadius: "8px" } }} 
               />
 
               <Button 
@@ -131,54 +145,42 @@ export default function CustLogin() {
 
           {/* RESET PASSWORD BUTTON - ONLY VISIBLE IN RESET MODE */}
           {isResetMode && (
-            <Button 
-              fullWidth 
-              variant="contained" 
-              style={{ 
-                marginTop: "20px", 
-                padding: "12px 0", 
-                borderRadius: "8px", 
-                fontSize: "16px", 
-                fontWeight: "bold",
-                backgroundColor: "#D32F2F", 
-                color: "#FFF"
-              }} 
-              onClick={handleResetPassword}
-            >
-              SEND RESET LINK
-            </Button>
+            <>
+              <Button 
+                fullWidth 
+                variant="contained" 
+                style={{ 
+                  marginTop: "20px", 
+                  padding: "12px 0", 
+                  borderRadius: "8px", 
+                  fontSize: "16px", 
+                  fontWeight: "bold",
+                  backgroundColor: "#D32F2F", 
+                  color: "#FFF"
+                }} 
+                onClick={handleResetPassword}
+              >
+                SEND RESET LINK
+              </Button>
+              <Typography variant="body2" style={{ marginTop: "15px", color: "#B71C1C" }}>
+                📩 Check your email for password reset instructions.
+              </Typography>
+            </>
           )}
 
-          {/* Reset Password Mode Message */}
-          {isResetMode && (
-            <Typography variant="body2" style={{ marginTop: "15px", color: "#B71C1C" }}>
-              📩 Check your email for password reset instructions.
+          {/* SIGN UP LINK */}
+          {!isResetMode && (
+            <Typography variant="body2" style={{ marginTop: "20px", textAlign: "center" }}>
+              Don't have an account?{" "}
+              <Button 
+                color="inherit" 
+                onClick={() => (window.location.href = "/CustSignup")}
+                style={{ color: "#D32F2F", fontWeight: "bold" }}
+              >
+                Sign Up
+              </Button>
             </Typography>
           )}
-
-          {/* Customer Support Email */}
-          <Typography variant="body2" style={{ marginTop: "20px", color: "#888" }}>
-            Need help? Contact us at <Link href="mailto:support@yourcompany.com" style={{ fontWeight: "bold", color: "#D32F2F" }}>support@yourcompany.com</Link>
-          </Typography>
-
-         {/* SIGN UP LINK (DIRECTS TO CUSTOMER SIGN-UP) */}
-{!isResetMode && (
-  <Typography variant="body2" style={{ marginTop: "20px", color: "#666", textAlign: "center" }}>
-    Don't have an account?{" "}
-    <Button 
-      color="inherit" 
-      sx={{ color: '#D32F2F' }}
-      onClick={(event) => { 
-        event.preventDefault();  // ✅ Prevents unwanted page refresh
-        console.log("Sign Up button clicked!");  // ✅ Debugging message
-        window.location.href = "/CustSignup";  // ✅ Redirects correctly
-      }}
-    >
-      Sign Up
-    </Button>
-  </Typography>
-)}
-
         </Paper>
       </Container>
     </div>
