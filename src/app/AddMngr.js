@@ -20,8 +20,8 @@ export default function AddStaff() {
     email: "",
     phone: "",
     password: "",
-    securityQuestion: "",
     securityCode: "",
+    securityQuestion: "",
     securityAnswer: "",
   });
 
@@ -99,7 +99,7 @@ export default function AddStaff() {
     if (errorMsg) return setError(errorMsg);
   
     try {
-      const response = await fetch('http://localhost:3001/api/addManager', {
+      const response = await fetch('https://vercel-api-powebapp.vercel.app/api/addManager', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -182,14 +182,6 @@ export default function AddStaff() {
             <Grid item xs={12}>
               <TextField fullWidth label="SSN" name="ssn" onChange={handleChange} required 
                 inputProps={{ maxLength: 9 }} helperText="Exactly 9 digits" />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Role</InputLabel>
-                <Select name="role" value={formData.role} onChange={handleChange}>
-                  <MenuItem value="Driver">Manager</MenuItem>
-                </Select>
-              </FormControl>
             </Grid>
             <Grid item xs={12}>
   <TextField
