@@ -16,7 +16,7 @@ export default function CustLogin() {
     if (!password) return setError("⚠ Please enter your password.");
 
     try {
-      const response = await fetch("http://localhost:3001/api/custLogin", {
+      const response = await fetch("http://localhost:3000/api/custLogin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
