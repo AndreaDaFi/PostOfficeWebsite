@@ -82,7 +82,7 @@ export default function CustSignin() {
     if (errorMsg) return setError(errorMsg);
   
     try {
-      const response = await fetch("http://localhost:3000/api/custSignup", {
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/custSignup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
