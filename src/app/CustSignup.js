@@ -140,11 +140,11 @@ export default function CustSignin() {
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="Street Address" name="streetAddress" onChange={handleChange} required
-                inputProps={{ maxLength: 45 }} helperText="Up to 50 characters" />
+                inputProps={{ maxLength: 45 }} helperText="Up to 45 characters" />
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="Address Line 2 (Apt, Suite, etc.)" name="addressLine2" onChange={handleChange}
-                inputProps={{ maxLength: 45 }} helperText="Optional, up to 50 characters" />
+                inputProps={{ maxLength: 45 }} helperText="Optional, up to 45 characters" />
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="Apt/Suite" name="apt" onChange={handleChange}
