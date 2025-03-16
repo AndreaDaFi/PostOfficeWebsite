@@ -1,20 +1,12 @@
 import React, { useState, useContext } from "react";
-<<<<<<< HEAD
-=======
-import AuthContext from "../context/AuthProvider"
->>>>>>> 061c22c99d4f1d0906e6869f24a593512217bb0c
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "./AuthContext";  // ✅ Make sure this matches your app structure
 import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
 
 export default function CustLogin() {
-<<<<<<< HEAD
-  const { login } = useContext(AuthContext); // ✅ Use context to track login
-  const navigate = useNavigate(); // For navigation
+  const { login } = useContext(AuthContext); // ✅ Uses AuthContext to track login
+  const navigate = useNavigate();
 
-=======
-  const {setAuth} = useContext(AuthContext);
->>>>>>> 061c22c99d4f1d0906e6869f24a593512217bb0c
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -28,8 +20,6 @@ export default function CustLogin() {
     if (!email) return setError("⚠ Please enter your email.");
     if (!password) return setError("⚠ Please enter your password.");
 
-    console.log('Sending data to backend:', { email, password });
-
     try {
       const response = await fetch("https://vercel-api-powebapp.vercel.app/api/custLogin", {
         method: "POST",
@@ -42,25 +32,10 @@ export default function CustLogin() {
         throw new Error(data.error || "Login failed");
       }
 
-<<<<<<< HEAD
       const data = await response.json();
       login(data.user); // ✅ Save user in context
       alert("🎉 Login successful!");
-      navigate("/dashboard"); // ✅ Redirect to Dashboard
-=======
-      //the customer's data that's returned from the api function
-      const data = await response.json();
-      if (data.success){
-        setAuth(data.user);//the user's dats is stored in a global variable
-        setEmail('');
-        setPassword('');
-        //log to make sure this data is what we wanted
-        console.log('data received', data.user);
-        //sends the user to the login page once that's done
-        alert("🎉 Login successful!");
-        navigate("/");
-      }
->>>>>>> 061c22c99d4f1d0906e6869f24a593512217bb0c
+      navigate("/dashboard"); // ✅ Redirects to Dashboard
 
     } catch (err) {
       setError("❌ " + err.message);
