@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
 
 export default function CustLogin() {
+  const { login } = useContext(AuthContext); // ✅ Use context to track login
+  const navigate = useNavigate(); // For navigation
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [resetMessage, setResetMessage] = useState(null);
   const [isResetMode, setIsResetMode] = useState(false);
-  const navigate = useNavigate(); // For navigation instead of window.location.href
 
   const handleLogin = async () => {
     setError(null);
@@ -29,8 +32,10 @@ export default function CustLogin() {
         throw new Error(data.error || "Login failed");
       }
 
+      const data = await response.json();
+      login(data.user); // ✅ Save user in context
       alert("🎉 Login successful!");
-      navigate("/dashboard"); // Use React Router for navigation
+      navigate("/dashboard"); // ✅ Redirect to Dashboard
 
     } catch (err) {
       setError("❌ " + err.message);
