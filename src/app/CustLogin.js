@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import AuthContext from "../context/AuthProvider"
 import { useNavigate } from "react-router-dom";
 import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
 
 export default function CustLogin() {
+  const {setAuth} = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -17,8 +19,10 @@ export default function CustLogin() {
     if (!email) return setError("⚠ Please enter your email.");
     if (!password) return setError("⚠ Please enter your password.");
 
+    console.log('Sending data to backend:', { email, password });
+
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/custLogin", {
+      const response = await fetch("http://localhost:3001/api/custLogin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -29,8 +33,18 @@ export default function CustLogin() {
         throw new Error(data.error || "Login failed");
       }
 
-      alert("🎉 Login successful!");
-      navigate("/dashboard"); // Use React Router for navigation
+      //the customer's data that's returned from the api function
+      const data = await response.json();
+      if (data.success){
+        setAuth(data.user);//the user's dats is stored in a global variable
+        setEmail('');
+        setPassword('');
+        //log to make sure this data is what we wanted
+        console.log('data received', data.user);
+        //sends the user to the login page once that's done
+        alert("🎉 Login successful!");
+        navigate("/");
+      }
 
     } catch (err) {
       setError("❌ " + err.message);
