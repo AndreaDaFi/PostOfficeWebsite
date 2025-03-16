@@ -1,12 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
 
-export default function EmployerLogin() {
+export default function CustLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [resetMessage, setResetMessage] = useState(null);
-  const [isResetMode, setIsResetMode] = useState(false); // Track reset mode
+  const [isResetMode, setIsResetMode] = useState(false);
+  const navigate = useNavigate(); // For navigation instead of window.location.href
 
   const handleLogin = async () => {
     setError(null);
@@ -16,69 +18,82 @@ export default function EmployerLogin() {
     if (!password) return setError("⚠ Please enter your password.");
 
     try {
-      const response = await fetch("https://your-api-url.com/employer-login", {
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/ENLogin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Login failed");
+      }
 
-      if (!response.ok) throw new Error(data.message || "Login failed");
+      alert("🎉 Login successful!");
+      navigate("/dashboard"); // Use React Router for navigation
 
-      alert("Login successful!");
     } catch (err) {
-      setError(err.message);
+      setError("❌ " + err.message);
     }
   };
 
   const handleForgotPassword = () => {
-    setIsResetMode(true); // Switch to reset mode
+    setIsResetMode(true);
     setError(null);
     setResetMessage(null);
   };
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     if (!email) {
       setError("⚠ Please enter your email to receive the reset link.");
       return;
     }
 
-    setError(null);
-    setResetMessage("📩 Password reset instructions have been sent to your email.");
+    try {
+      const response = await fetch("resetPassword", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Reset failed");
+      }
+
+      setResetMessage("📩 Password reset instructions have been sent to your email.");
+
+    } catch (err) {
+      setError("❌ " + err.message);
+    }
   };
 
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100vh",
-      
-    }}>
-      <Container maxWidth="xs">
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Container maxWidth="sm">
         <Paper
           elevation={3}
           style={{
-            padding: "40px",
-            borderRadius: "12px",
+            padding: "50px",
+            width: "400px",
             backgroundColor: "#FFF",
+            borderRadius: "12px",
             textAlign: "center",
             boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
           }}
         >
           <Typography variant="h5" gutterBottom style={{ fontWeight: "bold", color: "#333" }}>
-            🏢 Employer Loging
+            📦 Employer Login
           </Typography>
 
           <Typography variant="body2" color="textSecondary" style={{ marginBottom: "20px" }}>
             {isResetMode ? "Enter your email to reset your password." : "Please enter your credentials to continue."}
           </Typography>
 
-          {error && <Alert severity="error" style={{ marginBottom: "15px", backgroundColor: "#FFCDD2", color: "#B71C1C" }}>{error}</Alert>}
-          {resetMessage && <Alert severity="success" style={{ marginBottom: "15px", backgroundColor: "#E8F5E9", color: "#1B5E20" }}>{resetMessage}</Alert>}
+          {error && <Alert severity="error" style={{ marginBottom: "15px" }}>{error}</Alert>}
+          {resetMessage && <Alert severity="success" style={{ marginBottom: "15px" }}>{resetMessage}</Alert>}
 
-          {/* EMAIL FIELD (Always Visible) */}
+          {/* EMAIL FIELD */}
           <TextField 
             fullWidth 
             label="Email" 
@@ -87,7 +102,6 @@ export default function EmployerLogin() {
             margin="normal" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
-            InputProps={{ style: { backgroundColor: "#FFF", borderRadius: "8px" } }} 
           />
 
           {/* PASSWORD & LOGIN BUTTON - HIDDEN IN RESET MODE */}
@@ -101,7 +115,6 @@ export default function EmployerLogin() {
                 margin="normal" 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
-                InputProps={{ style: { backgroundColor: "#FFF", borderRadius: "8px" } }} 
               />
 
               <Button 
@@ -132,35 +145,42 @@ export default function EmployerLogin() {
 
           {/* RESET PASSWORD BUTTON - ONLY VISIBLE IN RESET MODE */}
           {isResetMode && (
-            <Button 
-              fullWidth 
-              variant="contained" 
-              style={{ 
-                marginTop: "20px", 
-                padding: "12px 0", 
-                borderRadius: "8px", 
-                fontSize: "16px", 
-                fontWeight: "bold",
-                backgroundColor: "#D32F2F", 
-                color: "#FFF"
-              }} 
-              onClick={handleResetPassword}
-            >
-              SEND RESET LINK
-            </Button>
+            <>
+              <Button 
+                fullWidth 
+                variant="contained" 
+                style={{ 
+                  marginTop: "20px", 
+                  padding: "12px 0", 
+                  borderRadius: "8px", 
+                  fontSize: "16px", 
+                  fontWeight: "bold",
+                  backgroundColor: "#D32F2F", 
+                  color: "#FFF"
+                }} 
+                onClick={handleResetPassword}
+              >
+                SEND RESET LINK
+              </Button>
+              <Typography variant="body2" style={{ marginTop: "15px", color: "#B71C1C" }}>
+                📩 Check your email for password reset instructions.
+              </Typography>
+            </>
           )}
 
-          {/* Reset Password Mode Message */}
-          {isResetMode && (
-            <Typography variant="body2" style={{ marginTop: "15px", color: "#B71C1C" }}>
-              📩 Check your email for password reset instructions.
+          {/* SIGN UP LINK */}
+          {!isResetMode && (
+            <Typography variant="body2" style={{ marginTop: "20px", textAlign: "center" }}>
+              Don't have an account?{" "}
+              <Button 
+                color="inherit" 
+                onClick={() => navigate("/CustSignup")}
+                style={{ color: "#D32F2F", fontWeight: "bold" }}
+              >
+                Sign Up
+              </Button>
             </Typography>
           )}
-
-          {/* Customer Support Email */}
-          <Typography variant="body2" style={{ marginTop: "20px", color: "#888" }}>
-            Need help? Contact us at <Link href="mailto:support@yourcompany.com" style={{ fontWeight: "bold", color: "#D32F2F" }}>support@yourcompany.com</Link>
-          </Typography>
         </Paper>
       </Container>
     </div>
