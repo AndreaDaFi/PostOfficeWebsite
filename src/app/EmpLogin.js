@@ -18,7 +18,7 @@ export default function CustLogin() {
     if (!password) return setError("⚠ Please enter your password.");
 
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/ENLogin", {
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/EmployeeRLOGIN", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -168,19 +168,7 @@ export default function CustLogin() {
             </>
           )}
 
-          {/* SIGN UP LINK */}
-          {!isResetMode && (
-            <Typography variant="body2" style={{ marginTop: "20px", textAlign: "center" }}>
-              Don't have an account?{" "}
-              <Button 
-                color="inherit" 
-                onClick={() => navigate("/CustSignup")}
-                style={{ color: "#D32F2F", fontWeight: "bold" }}
-              >
-                Sign Up
-              </Button>
-            </Typography>
-          )}
+        
         </Paper>
       </Container>
     </div>
