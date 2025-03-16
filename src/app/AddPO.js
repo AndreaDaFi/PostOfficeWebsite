@@ -40,6 +40,14 @@ export default function AddPO() {
     }
   };
 
+  const states = [
+    "al", "ak", "az", "ar", "ca", "co", "ct", "de", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "ne", "nv", "nh", "nj", "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy"
+  ];
+
+  const stateNames = {
+    al: "Alabama", ak: "Alaska", az: "Arizona", ar: "Arkansas", ca: "California", co: "Colorado", ct: "Connecticut", de: "Delaware", fl: "Florida", ga: "Georgia", hi: "Hawaii", id: "Idaho", il: "Illinois", in: "Indiana", ia: "Iowa", ks: "Kansas", ky: "Kentucky", la: "Louisiana", me: "Maine", md: "Maryland", ma: "Massachusetts", mi: "Michigan", mn: "Minnesota", ms: "Mississippi", mo: "Missouri", mt: "Montana", ne: "Nebraska", nv: "Nevada", nh: "New Hampshire", nj: "New Jersey", nm: "New Mexico", ny: "New York", nc: "North Carolina", nd: "North Dakota", oh: "Ohio", ok: "Oklahoma", or: "Oregon", pa: "Pennsylvania", ri: "Rhode Island", sc: "South Carolina", sd: "South Dakota", tn: "Tennessee", tx: "Texas", ut: "Utah", vt: "Vermont", va: "Virginia", wa: "Washington", wv: "West Virginia", wi: "Wisconsin", wy: "Wyoming"
+  };
+
   return (
     <Container style={{ marginTop: "20px", textAlign: "center" }}>
       <Typography variant="h4" style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}>
@@ -55,20 +63,22 @@ export default function AddPO() {
         </Typography>
 
         <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>State</InputLabel>
-              <Select
-                value={poData.state}
-                onChange={(e) => setPoData({ ...poData, state: e.target.value })}
-                label="State"
-              >
-                {["Texas", "California", "New York", "Florida"].map((stateName, index) => (
-                  <MenuItem key={index} value={stateName}>{stateName}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+        <Grid item xs={12} sm={6}>
+  <FormControl fullWidth variant="outlined">
+    <InputLabel>State</InputLabel>
+    <Select
+      value={poData.state}
+      onChange={(e) => setPoData({ ...poData, state: e.target.value })}
+      label="State"
+    >
+      {Object.entries(stateNames).map(([abbreviation, name]) => (
+        <MenuItem key={abbreviation} value={abbreviation}>
+          {name}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</Grid>
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="City" variant="outlined" value={poData.city} onChange={(e) => setPoData({ ...poData, city: e.target.value })} />
           </Grid>
