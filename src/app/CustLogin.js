@@ -18,7 +18,7 @@ export default function CustLogin() {
     if (!password) return setError("⚠ Please enter your password.");
 
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/custLogin", {
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/EmployerLOGING", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -50,7 +50,7 @@ export default function CustLogin() {
     }
 
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/resetPassword", {
+      const response = await fetch("resetPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
