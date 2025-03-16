@@ -18,7 +18,7 @@ export default function CustLogin() {
     if (!password) return setError("⚠ Please enter your password.");
 
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/EmployeeRLOGIN", {
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/EmployeeLOGIN", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
