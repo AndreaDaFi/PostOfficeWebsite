@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import {
   Container,
   Typography,
@@ -52,7 +53,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: { xs: 2, sm: 3 } }}>{children}</Box>}
     </div>
   )
 }
@@ -63,6 +64,7 @@ const Home = () => {
   const [tabValue, setTabValue] = useState(0)
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"))
 
   useEffect(() => {
     // Simulate loading
@@ -83,28 +85,31 @@ const Home = () => {
 
   return (
     <>
-      <Container maxWidth="lg">
+      <Container maxWidth={false} disableGutters sx={{ overflow: "hidden" }}>
         {/* Header Section */}
-        <Box my={6} sx={{ textAlign: "center" }}>
+        <Box my={{ xs: 4, md: 6 }} sx={{ textAlign: "center" }}>
           <Typography
             variant="h1"
             gutterBottom
             sx={{
               fontWeight: 800,
-              fontSize: { xs: "2.5rem", md: "3.5rem" },
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
               background: `linear-gradient(45deg, ${primaryRed} 30%, ${secondaryRed} 90%)`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
+              lineHeight: 1.2,
             }}
           >
             Welcome to...
           </Typography>
 
           {/* Cougar Post logo */}
-          <figure style={{ textAlign: "center", position: "relative" }}>
+          <figure style={{ textAlign: "center", position: "relative", margin: "0 auto" }}>
             <Box
               sx={{
                 position: "relative",
+                maxWidth: { xs: "100%", sm: "90%", md: "600px" },
+                margin: "0 auto",
                 "&::after": {
                   content: '""',
                   position: "absolute",
@@ -124,7 +129,7 @@ const Home = () => {
                 alt="Logo"
                 className="hover-image"
                 style={{
-                  maxWidth: "600px",
+                  width: "100%",
                   height: "auto",
                   display: "block",
                   margin: "0 auto",
@@ -134,7 +139,7 @@ const Home = () => {
                 }}
               />
             </Box>
-            <figcaption style={{ fontSize: "12px", color: "#555", marginTop: "30px" }}>
+            <figcaption style={{ fontSize: "20px", color: "#555", marginTop: "30px" }}>
               Reference image:
               <a
                 href="https://www.dreamstime.com/cougar-growling-close-up-mountain-lion-image220929865"
@@ -149,12 +154,17 @@ const Home = () => {
 
           <style jsx>{`
           .hover-image:hover {
-            transform: translateY(-25px);
+            transform: translateY(-15px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+          }
+          @media (max-width: 600px) {
+            .hover-image:hover {
+              transform: translateY(-10px);
+            }
           }
         `}</style>
 
-          <Box my={5}>
+          <Box my={{ xs: 3, md: 5 }}>
             <Typography
               variant="h5"
               sx={{
@@ -163,6 +173,8 @@ const Home = () => {
                 maxWidth: "700px",
                 margin: "0 auto",
                 lineHeight: 1.6,
+                fontSize: { xs: "1rem", sm: "1.1rem", md: "1.25rem" },
+                px: 2,
               }}
             >
               We provide the best postal services for all your needs
@@ -189,9 +201,9 @@ const Home = () => {
           sx={{
             background: `linear-gradient(135deg, ${primaryRed} 0%, ${secondaryRed} 100%)`,
             color: "white",
-            p: { xs: 4, md: 8 },
-            borderRadius: 4,
-            mb: 8,
+            p: { xs: 3, sm: 4, md: 8 },
+            borderRadius: { xs: 3, md: 4 },
+            mb: { xs: 6, md: 8 },
             position: "relative",
             overflow: "hidden",
             "&::before": {
@@ -207,7 +219,7 @@ const Home = () => {
             },
           }}
         >
-          <Grid container spacing={6} alignItems="center">
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
             <Grid item xs={12} md={6}>
               <Typography
                 variant="h2"
@@ -216,7 +228,8 @@ const Home = () => {
                 sx={{
                   fontWeight: 800,
                   textShadow: "0 2px 10px rgba(0,0,0,0.2)",
-                  fontSize: { xs: "2rem", md: "2.75rem" },
+                  fontSize: { xs: "1.75rem", sm: "2rem", md: "2.75rem" },
+                  lineHeight: 1.2,
                 }}
               >
                 Your Reliable Postal Service Partner
@@ -226,8 +239,8 @@ const Home = () => {
                 paragraph
                 sx={{
                   opacity: 0.9,
-                  fontSize: "1.1rem",
-                  mb: 4,
+                  fontSize: { xs: "1rem", md: "1.1rem" },
+                  mb: { xs: 3, md: 4 },
                   maxWidth: "90%",
                 }}
               >
@@ -237,14 +250,16 @@ const Home = () => {
               <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
                 <Button
                   variant="contained"
-                  size="large"
+                  size={isMobile ? "medium" : "large"}
+                  component={Link}
+                  to="/cust-signup"
                   sx={{
                     backgroundColor: "white",
                     color: primaryRed,
                     "&:hover": { backgroundColor: "#f5f5f5" },
                     fontWeight: "bold",
-                    px: 4,
-                    py: 1.5,
+                    px: { xs: 3, md: 4 },
+                    py: { xs: 1, md: 1.5 },
                     borderRadius: 2,
                     boxShadow: "0 4px 14px rgba(0,0,0,0.2)",
                   }}
@@ -253,14 +268,16 @@ const Home = () => {
                 </Button>
                 <Button
                   variant="outlined"
-                  size="large"
+                  size={isMobile ? "medium" : "large"}
+                  component={Link}
+                  to="/store"
                   sx={{
                     borderColor: "white",
                     color: "white",
                     "&:hover": { borderColor: "white", backgroundColor: "rgba(255,255,255,0.1)" },
                     fontWeight: "bold",
-                    px: 4,
-                    py: 1.5,
+                    px: { xs: 3, md: 4 },
+                    py: { xs: 1, md: 1.5 },
                     borderRadius: 2,
                     borderWidth: 2,
                   }}
@@ -277,10 +294,10 @@ const Home = () => {
                 sx={{
                   maxWidth: "100%",
                   height: "auto",
-                  borderRadius: 4,
+                  borderRadius: { xs: 3, md: 4 },
                   boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
-                  transform: "rotate(2deg)",
-                  border: "8px solid white",
+                  transform: { xs: "rotate(0deg)", md: "rotate(2deg)" },
+                  border: { xs: "6px solid white", md: "8px solid white" },
                 }}
               />
             </Grid>
@@ -288,12 +305,20 @@ const Home = () => {
         </Paper>
 
         {/* Stats Section */}
-        <Box sx={{ mb: 10 }}>
-          <Grid container spacing={4} justifyContent="center">
+        <Box sx={{ mb: { xs: 6, md: 10 } }}>
+          <Grid container spacing={{ xs: 2, md: 4 }} justifyContent="center">
             <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: 3, boxShadow: 3, height: "100%" }}>
+              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
                 <CardContent>
-                  <Typography variant="h3" sx={{ color: primaryRed, fontWeight: "bold", mb: 1 }}>
+                  <Typography
+                    variant={isMobile ? "h4" : "h3"}
+                    sx={{
+                      color: primaryRed,
+                      fontWeight: "bold",
+                      mb: 1,
+                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
+                    }}
+                  >
                     5M+
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -303,9 +328,17 @@ const Home = () => {
               </Card>
             </Grid>
             <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: 3, boxShadow: 3, height: "100%" }}>
+              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
                 <CardContent>
-                  <Typography variant="h3" sx={{ color: primaryRed, fontWeight: "bold", mb: 1 }}>
+                  <Typography
+                    variant={isMobile ? "h4" : "h3"}
+                    sx={{
+                      color: primaryRed,
+                      fontWeight: "bold",
+                      mb: 1,
+                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
+                    }}
+                  >
                     98%
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -315,9 +348,17 @@ const Home = () => {
               </Card>
             </Grid>
             <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: 3, boxShadow: 3, height: "100%" }}>
+              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
                 <CardContent>
-                  <Typography variant="h3" sx={{ color: primaryRed, fontWeight: "bold", mb: 1 }}>
+                  <Typography
+                    variant={isMobile ? "h4" : "h3"}
+                    sx={{
+                      color: primaryRed,
+                      fontWeight: "bold",
+                      mb: 1,
+                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
+                    }}
+                  >
                     1,200+
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -327,9 +368,17 @@ const Home = () => {
               </Card>
             </Grid>
             <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: 3, boxShadow: 3, height: "100%" }}>
+              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
                 <CardContent>
-                  <Typography variant="h3" sx={{ color: primaryRed, fontWeight: "bold", mb: 1 }}>
+                  <Typography
+                    variant={isMobile ? "h4" : "h3"}
+                    sx={{
+                      color: primaryRed,
+                      fontWeight: "bold",
+                      mb: 1,
+                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
+                    }}
+                  >
                     24/7
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -342,8 +391,8 @@ const Home = () => {
         </Box>
 
         {/* Services Section */}
-        <Box sx={{ my: 10 }}>
-          <Box sx={{ textAlign: "center", mb: 6 }}>
+        <Box sx={{ my: { xs: 6, md: 10 } }}>
+          <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 } }}>
             <Chip
               label="OUR SERVICES"
               size="small"
@@ -362,14 +411,15 @@ const Home = () => {
                 fontWeight: 800,
                 position: "relative",
                 display: "inline-block",
+                fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem" },
                 "&::after": {
                   content: '""',
                   position: "absolute",
                   bottom: "-10px",
                   left: "50%",
                   transform: "translateX(-50%)",
-                  width: "80px",
-                  height: "4px",
+                  width: { xs: "60px", md: "80px" },
+                  height: { xs: "3px", md: "4px" },
                   backgroundColor: primaryRed,
                   borderRadius: "2px",
                 },
@@ -385,21 +435,22 @@ const Home = () => {
                 mb: 2,
                 maxWidth: 700,
                 mx: "auto",
-                fontSize: "1.1rem",
+                fontSize: { xs: "0.95rem", sm: "1rem", md: "1.1rem" },
+                px: 2,
               }}
             >
               Everything you need for your postal and shipping requirements
             </Typography>
           </Box>
 
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
+          <Grid container spacing={{ xs: 3, md: 4 }}>
+            <Grid item xs={12} sm={6} md={4}>
               <Card
                 sx={{
                   height: "100%",
                   transition: "all 0.3s",
                   "&:hover": {
-                    transform: "translateY(-12px)",
+                    transform: { xs: "translateY(-8px)", md: "translateY(-12px)" },
                     boxShadow: 6,
                     "& .service-icon": {
                       backgroundColor: primaryRed,
@@ -407,14 +458,14 @@ const Home = () => {
                       transform: "rotateY(180deg)",
                     },
                   },
-                  borderRadius: 3,
+                  borderRadius: { xs: 2, md: 3 },
                   overflow: "hidden",
                   position: "relative",
                 }}
               >
                 <Box
                   sx={{
-                    height: "8px",
+                    height: { xs: "6px", md: "8px" },
                     width: "100%",
                     backgroundColor: primaryRed,
                     position: "absolute",
@@ -422,21 +473,26 @@ const Home = () => {
                     left: 0,
                   }}
                 />
-                <CardContent sx={{ textAlign: "center", p: 4, pt: 5 }}>
+                <CardContent sx={{ textAlign: "center", p: { xs: 3, md: 4 }, pt: { xs: 4, md: 5 } }}>
                   <Avatar
                     className="service-icon"
                     sx={{
-                      width: 80,
-                      height: 80,
+                      width: { xs: 60, md: 80 },
+                      height: { xs: 60, md: 80 },
                       backgroundColor: lightRed,
                       color: primaryRed,
                       margin: "0 auto 20px",
                       transition: "all 0.5s ease",
                     }}
                   >
-                    <Inbox sx={{ fontSize: 40 }} />
+                    <Inbox sx={{ fontSize: { xs: 30, md: 40 } }} />
                   </Avatar>
-                  <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: "bold", mb: 2 }}>
+                  <Typography
+                    variant="h5"
+                    component="h3"
+                    gutterBottom
+                    sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "1.25rem", md: "1.5rem" } }}
+                  >
                     Package Shipping
                   </Typography>
                   <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
@@ -445,6 +501,8 @@ const Home = () => {
                   </Typography>
                   <Button
                     variant="outlined"
+                    component={Link}
+                    to="/CustAddPackage"
                     sx={{
                       borderColor: primaryRed,
                       color: primaryRed,
@@ -460,13 +518,13 @@ const Home = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={6} md={4}>
               <Card
                 sx={{
                   height: "100%",
                   transition: "all 0.3s",
                   "&:hover": {
-                    transform: "translateY(-12px)",
+                    transform: { xs: "translateY(-8px)", md: "translateY(-12px)" },
                     boxShadow: 6,
                     "& .service-icon": {
                       backgroundColor: primaryRed,
@@ -474,14 +532,14 @@ const Home = () => {
                       transform: "rotateY(180deg)",
                     },
                   },
-                  borderRadius: 3,
+                  borderRadius: { xs: 2, md: 3 },
                   overflow: "hidden",
                   position: "relative",
                 }}
               >
                 <Box
                   sx={{
-                    height: "8px",
+                    height: { xs: "6px", md: "8px" },
                     width: "100%",
                     backgroundColor: primaryRed,
                     position: "absolute",
@@ -489,21 +547,26 @@ const Home = () => {
                     left: 0,
                   }}
                 />
-                <CardContent sx={{ textAlign: "center", p: 4, pt: 5 }}>
+                <CardContent sx={{ textAlign: "center", p: { xs: 3, md: 4 }, pt: { xs: 4, md: 5 } }}>
                   <Avatar
                     className="service-icon"
                     sx={{
-                      width: 80,
-                      height: 80,
+                      width: { xs: 60, md: 80 },
+                      height: { xs: 60, md: 80 },
                       backgroundColor: lightRed,
                       color: primaryRed,
                       margin: "0 auto 20px",
                       transition: "all 0.5s ease",
                     }}
                   >
-                    <Mail sx={{ fontSize: 40 }} />
+                    <Mail sx={{ fontSize: { xs: 30, md: 40 } }} />
                   </Avatar>
-                  <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: "bold", mb: 2 }}>
+                  <Typography
+                    variant="h5"
+                    component="h3"
+                    gutterBottom
+                    sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "1.25rem", md: "1.5rem" } }}
+                  >
                     Mail Services
                   </Typography>
                   <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
@@ -512,6 +575,8 @@ const Home = () => {
                   </Typography>
                   <Button
                     variant="outlined"
+                    component={Link}
+                    to="/CustAddPackage"
                     sx={{
                       borderColor: primaryRed,
                       color: primaryRed,
@@ -527,13 +592,13 @@ const Home = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={6} md={4} sx={{ mx: { xs: "auto", sm: 0 }, width: { xs: "100%", sm: "auto" } }}>
               <Card
                 sx={{
                   height: "100%",
                   transition: "all 0.3s",
                   "&:hover": {
-                    transform: "translateY(-12px)",
+                    transform: { xs: "translateY(-8px)", md: "translateY(-12px)" },
                     boxShadow: 6,
                     "& .service-icon": {
                       backgroundColor: primaryRed,
@@ -541,14 +606,14 @@ const Home = () => {
                       transform: "rotateY(180deg)",
                     },
                   },
-                  borderRadius: 3,
+                  borderRadius: { xs: 2, md: 3 },
                   overflow: "hidden",
                   position: "relative",
                 }}
               >
                 <Box
                   sx={{
-                    height: "8px",
+                    height: { xs: "6px", md: "8px" },
                     width: "100%",
                     backgroundColor: primaryRed,
                     position: "absolute",
@@ -556,21 +621,26 @@ const Home = () => {
                     left: 0,
                   }}
                 />
-                <CardContent sx={{ textAlign: "center", p: 4, pt: 5 }}>
+                <CardContent sx={{ textAlign: "center", p: { xs: 3, md: 4 }, pt: { xs: 4, md: 5 } }}>
                   <Avatar
                     className="service-icon"
                     sx={{
-                      width: 80,
-                      height: 80,
+                      width: { xs: 60, md: 80 },
+                      height: { xs: 60, md: 80 },
                       backgroundColor: lightRed,
                       color: primaryRed,
                       margin: "0 auto 20px",
                       transition: "all 0.5s ease",
                     }}
                   >
-                    <LocationIcon sx={{ fontSize: 40 }} />
+                    <LocationIcon sx={{ fontSize: { xs: 30, md: 40 } }} />
                   </Avatar>
-                  <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: "bold", mb: 2 }}>
+                  <Typography
+                    variant="h5"
+                    component="h3"
+                    gutterBottom
+                    sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "1.25rem", md: "1.5rem" } }}
+                  >
                     Post Office Locations
                   </Typography>
                   <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
@@ -579,6 +649,8 @@ const Home = () => {
                   </Typography>
                   <Button
                     variant="outlined"
+                    component={Link}
+                    to="/ViewPO"
                     sx={{
                       borderColor: primaryRed,
                       color: primaryRed,
@@ -600,10 +672,10 @@ const Home = () => {
         {/* Track Package Section */}
         <Paper
           sx={{
-            p: { xs: 3, md: 6 },
-            my: 10,
+            p: { xs: 3, sm: 4, md: 6 },
+            my: { xs: 6, md: 10 },
             backgroundColor: "#f8f9fa",
-            borderRadius: 4,
+            borderRadius: { xs: 3, md: 4 },
             boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
             position: "relative",
             overflow: "hidden",
@@ -612,15 +684,15 @@ const Home = () => {
               position: "absolute",
               top: 0,
               right: 0,
-              width: "150px",
-              height: "150px",
+              width: { xs: "100px", md: "150px" },
+              height: { xs: "100px", md: "150px" },
               backgroundColor: lightRed,
               borderRadius: "0 0 0 100%",
               zIndex: 0,
             },
           }}
         >
-          <Grid container spacing={6} alignItems="center">
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
             <Grid item xs={12} md={6} sx={{ position: "relative", zIndex: 1 }}>
               <Chip
                 label="PACKAGE TRACKING"
@@ -632,10 +704,26 @@ const Home = () => {
                   mb: 2,
                 }}
               />
-              <Typography variant="h3" component="h2" gutterBottom sx={{ fontWeight: "bold" }}>
+              <Typography
+                variant="h3"
+                component="h2"
+                gutterBottom
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem" },
+                }}
+              >
                 Track Your Package
               </Typography>
-              <Typography variant="body1" color="textSecondary" paragraph sx={{ mb: 4 }}>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                paragraph
+                sx={{
+                  mb: { xs: 3, md: 4 },
+                  fontSize: { xs: "0.95rem", md: "1rem" },
+                }}
+              >
                 Enter your tracking number to get real-time updates on your package's location and delivery status. Our
                 advanced tracking system provides accurate information at every step.
               </Typography>
@@ -650,10 +738,11 @@ const Home = () => {
                   <Tabs
                     value={tabValue}
                     onChange={handleTabChange}
+                    variant={isMobile ? "fullWidth" : "standard"}
                     sx={{
                       "& .MuiTab-root": {
                         fontWeight: "bold",
-                        fontSize: "1rem",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                       "& .Mui-selected": {
                         color: primaryRed,
@@ -674,9 +763,10 @@ const Home = () => {
                       display: "flex",
                       gap: 1,
                       backgroundColor: "white",
-                      p: 2,
+                      p: { xs: 2, md: 3 },
                       borderRadius: 2,
                       boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+                      flexDirection: { xs: "column", sm: "row" },
                     }}
                   >
                     <TextField
@@ -698,12 +788,16 @@ const Home = () => {
                     />
                     <Button
                       variant="contained"
+                      component={Link}
+                      to="/TrackPackage"
                       sx={{
                         backgroundColor: primaryRed,
                         "&:hover": { backgroundColor: secondaryRed },
                         px: 3,
                         borderRadius: 2,
                         fontWeight: "bold",
+                        minWidth: { xs: "100%", sm: "auto" },
+                        mt: { xs: 1, sm: 0 },
                       }}
                       startIcon={<Search />}
                     >
@@ -715,7 +809,7 @@ const Home = () => {
                   <Box
                     sx={{
                       backgroundColor: "white",
-                      p: 3,
+                      p: { xs: 2, md: 3 },
                       borderRadius: 2,
                       boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
                     }}
@@ -746,7 +840,13 @@ const Home = () => {
                         />
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{ display: "flex", gap: 1 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 1,
+                            flexDirection: { xs: "column", sm: "row" },
+                          }}
+                        >
                           <TextField
                             fullWidth
                             placeholder="Package weight (lbs)"
@@ -759,12 +859,16 @@ const Home = () => {
                           />
                           <Button
                             variant="contained"
+                            component={Link}
+                            to="/PackageCheckOut"
                             sx={{
                               backgroundColor: primaryRed,
                               "&:hover": { backgroundColor: secondaryRed },
                               px: 3,
                               borderRadius: 2,
                               fontWeight: "bold",
+                              minWidth: { xs: "100%", sm: "auto" },
+                              mt: { xs: 1, sm: 0 },
                             }}
                             startIcon={<CarIcon />}
                           >
@@ -785,10 +889,10 @@ const Home = () => {
                 sx={{
                   maxWidth: "100%",
                   height: "auto",
-                  borderRadius: 4,
+                  borderRadius: { xs: 3, md: 4 },
                   boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
                   transform: { xs: "none", md: "rotate(-3deg)" },
-                  border: "8px solid white",
+                  border: { xs: "6px solid white", md: "8px solid white" },
                 }}
               />
             </Grid>
@@ -796,8 +900,8 @@ const Home = () => {
         </Paper>
 
         {/* Find Location Section */}
-        <Box sx={{ my: 10 }}>
-          <Grid container spacing={6} alignItems="center">
+        <Box sx={{ my: { xs: 6, md: 10 } }}>
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
             <Grid item xs={12} md={6}>
               <Chip
                 label="FIND US"
@@ -809,10 +913,26 @@ const Home = () => {
                   mb: 2,
                 }}
               />
-              <Typography variant="h3" component="h2" gutterBottom sx={{ fontWeight: "bold" }}>
+              <Typography
+                variant="h3"
+                component="h2"
+                gutterBottom
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem" },
+                }}
+              >
                 Find Your Nearest Post Office
               </Typography>
-              <Typography variant="body1" color="textSecondary" paragraph sx={{ mb: 4 }}>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                paragraph
+                sx={{
+                  mb: { xs: 3, md: 4 },
+                  fontSize: { xs: "0.95rem", md: "1rem" },
+                }}
+              >
                 With thousands of locations nationwide, there's always a post office near you. Use our locator to find
                 the closest one and get directions, hours, and available services.
               </Typography>
@@ -822,9 +942,10 @@ const Home = () => {
                   gap: 1,
                   maxWidth: 400,
                   backgroundColor: "white",
-                  p: 2,
+                  p: { xs: 2, md: 3 },
                   borderRadius: 2,
                   boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+                  flexDirection: { xs: "column", sm: "row" },
                 }}
               >
                 <TextField
@@ -846,17 +967,21 @@ const Home = () => {
                 />
                 <Button
                   variant="contained"
+                  component={Link}
+                  to="/ViewPO"
                   sx={{
                     backgroundColor: primaryRed,
                     "&:hover": { backgroundColor: secondaryRed },
                     borderRadius: 2,
                     fontWeight: "bold",
+                    minWidth: { xs: "100%", sm: "auto" },
+                    mt: { xs: 1, sm: 0 },
                   }}
                 >
                   Find
                 </Button>
               </Box>
-              <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
+              <Box sx={{ mt: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
                 <Chip
                   icon={<CheckCircle sx={{ fontSize: "1rem !important" }} />}
                   label="Extended Hours"
@@ -885,10 +1010,10 @@ const Home = () => {
                 sx={{
                   maxWidth: "100%",
                   height: "auto",
-                  borderRadius: 4,
+                  borderRadius: { xs: 3, md: 4 },
                   boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
                   transform: { xs: "none", md: "rotate(3deg)" },
-                  border: "8px solid white",
+                  border: { xs: "6px solid white", md: "8px solid white" },
                 }}
               />
             </Grid>
@@ -896,12 +1021,11 @@ const Home = () => {
         </Box>
       </Container>
 
-      {/* Footer */}
       <Box
         sx={{
           bgcolor: "#f8f9fa",
-          py: 8,
-          mt: 10,
+          py: { xs: 6, md: 8 },
+          mt: { xs: 6, md: 10 },
           borderTop: `5px solid ${primaryRed}`,
           position: "relative",
           "&::before": {
@@ -917,11 +1041,11 @@ const Home = () => {
           },
         }}
       >
-        <Container>
-          <Grid container spacing={4}>
+        <Container maxWidth={false} sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+          <Grid container spacing={{ xs: 3, md: 4 }}>
             <Grid item xs={12} md={4}>
               <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <Mail sx={{ color: primaryRed, mr: 1, fontSize: 30 }} />
+                <Mail sx={{ color: primaryRed, mr: 1, fontSize: { xs: 24, md: 30 } }} />
                 <Typography
                   variant="h5"
                   component="div"
@@ -931,6 +1055,7 @@ const Home = () => {
                     letterSpacing: "0.5px",
                     display: "flex",
                     alignItems: "center",
+                    fontSize: { xs: "1.25rem", md: "1.5rem" },
                   }}
                 >
                   COUGAR
@@ -954,113 +1079,161 @@ const Home = () => {
                 mail with care, speed, and reliability.
               </Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
-                <IconButton sx={{ color: primaryRed }}>
+                <IconButton size={isMobile ? "small" : "medium"} sx={{ color: primaryRed }}>
                   <Phone />
                 </IconButton>
-                <IconButton sx={{ color: primaryRed }}>
+                <IconButton size={isMobile ? "small" : "medium"} sx={{ color: primaryRed }}>
                   <Email />
                 </IconButton>
-                <IconButton sx={{ color: primaryRed }}>
+                <IconButton size={isMobile ? "small" : "medium"} sx={{ color: primaryRed }}>
                   <LocationIcon />
                 </IconButton>
               </Box>
             </Grid>
-            <Grid item xs={12} sm={6} md={2}>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+            <Grid item xs={6} sm={6} md={2}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ fontWeight: "bold", fontSize: { xs: "1rem", md: "1.25rem" } }}
+              >
                 Quick Links
               </Typography>
               <List dense disablePadding>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="Track Package"
+                    primary={
+                      <Link to="/TrackPackage" style={{ textDecoration: "none", color: "inherit" }}>
+                        Track Package
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="Find Locations"
+                    primary={
+                      <Link to="/ViewPO" style={{ textDecoration: "none", color: "inherit" }}>
+                        Find Locations
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="Shipping Rates"
+                    primary={
+                      <Link to="/PackageCheckOut" style={{ textDecoration: "none", color: "inherit" }}>
+                        Shipping Rates
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="Schedule Pickup"
+                    primary={
+                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
+                        Schedule Pickup
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
                 </ListItem>
               </List>
             </Grid>
-            <Grid item xs={12} sm={6} md={2}>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+            <Grid item xs={6} sm={6} md={2}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ fontWeight: "bold", fontSize: { xs: "1rem", md: "1.25rem" } }}
+              >
                 Services
               </Typography>
               <List dense disablePadding>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="Domestic Shipping"
+                    primary={
+                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
+                        Domestic Shipping
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="International Shipping"
+                    primary={
+                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
+                        International Shipping
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="Mail Services"
+                    primary={
+                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
+                        Mail Services
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 1 }}>
                   <ListItemText
-                    primary="Business Solutions"
+                    primary={
+                      <Link to="/store" style={{ textDecoration: "none", color: "inherit" }}>
+                        Business Solutions
+                      </Link>
+                    }
                     primaryTypographyProps={{
                       sx: {
                         "&:hover": { color: primaryRed },
                         cursor: "pointer",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
                       },
                     }}
                   />
@@ -1068,47 +1241,74 @@ const Home = () => {
               </List>
             </Grid>
             <Grid item xs={12} md={4}>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ fontWeight: "bold", fontSize: { xs: "1rem", md: "1.25rem" } }}
+              >
                 Contact Us
               </Typography>
               <List dense disablePadding>
                 <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
                     <HomeIcon fontSize="small" sx={{ color: primaryRed }} />
                   </ListItemIcon>
                   <ListItemText
                     primary="123 Postal Ave, City, State 12345"
-                    primaryTypographyProps={{ sx: { fontWeight: "medium" } }}
+                    primaryTypographyProps={{
+                      sx: {
+                        fontWeight: "medium",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
+                      },
+                    }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
                     <Mail fontSize="small" sx={{ color: primaryRed }} />
                   </ListItemIcon>
                   <ListItemText
                     primary="support@cougarpost.com"
-                    primaryTypographyProps={{ sx: { fontWeight: "medium" } }}
+                    primaryTypographyProps={{
+                      sx: {
+                        fontWeight: "medium",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
+                      },
+                    }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
                     <ClockIcon fontSize="small" sx={{ color: primaryRed }} />
                   </ListItemIcon>
                   <ListItemText
                     primary="Mon-Fri: 8AM-6PM, Sat: 9AM-1PM"
-                    primaryTypographyProps={{ sx: { fontWeight: "medium" } }}
+                    primaryTypographyProps={{
+                      sx: {
+                        fontWeight: "medium",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
+                      },
+                    }}
                   />
                 </ListItem>
                 <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
                     <Phone fontSize="small" sx={{ color: primaryRed }} />
                   </ListItemIcon>
-                  <ListItemText primary="1-800-COUGAR-POST" primaryTypographyProps={{ sx: { fontWeight: "medium" } }} />
+                  <ListItemText
+                    primary="1-800-COUGAR-POST"
+                    primaryTypographyProps={{
+                      sx: {
+                        fontWeight: "medium",
+                        fontSize: { xs: "0.875rem", md: "1rem" },
+                      },
+                    }}
+                  />
                 </ListItem>
               </List>
             </Grid>
           </Grid>
-          <Divider sx={{ my: 4 }} />
+          <Divider sx={{ my: { xs: 3, md: 4 } }} />
           <Box
             sx={{
               display: "flex",
