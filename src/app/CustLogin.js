@@ -57,8 +57,6 @@ export default function CustLogin() {
 
       alert("🎉 Login successful!");
       navigate("/dashboard"); // ✅ Redirects to Dashboard
-      //reload the page so users can see
-      window.location.reload();
     } catch (err) {
       setError("❌ " + err.message);
     }

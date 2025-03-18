@@ -16,11 +16,13 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
+    window.location.reload();
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    window.location.reload();
   };
 
 //ROLE VERIFICATION AND SETTING
