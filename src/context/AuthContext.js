@@ -23,8 +23,23 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
+//ROLE VERIFICATION AND SETTING
+  const hasRole =(role) =>{
+    return user && user.role === role;
+  };
+
+  const isCustomer =() => hasRole("Customer");
+  const isAdmin =() => hasRole("Admin");
+  const isManager =() => hasRole("Manager");
+  const isDriver =() => hasRole("Driver");
+  const isClerk =() => hasRole("Clerk");
+
+
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{
+      user, login, logout, isCustomer,
+      isAdmin, isManager, isDriver, isClerk }}>
       {children}
     </AuthContext.Provider>
   );

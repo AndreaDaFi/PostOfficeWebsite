@@ -16,27 +16,37 @@ export default function CustLogin() {
   const handleLogin = async () => {
     setError(null);
     setResetMessage(null);
-
+  
     if (!email) return setError("⚠ Please enter your email.");
     if (!password) return setError("⚠ Please enter your password.");
-
+  
+    // Log email and password to the console
+    console.log("Email:", email);
+    console.log("Password:", password);
+  
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/custLogin", {
+      const response = await fetch("http://localhost:3001/api/custLogin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+  
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || "Login failed");
       }
-
+  
       const data = await response.json();
-      login(data.user); // ✅ Save user in context
+
+      const customer={
+        ...data.user,
+        role: "Customer",//since a customer logged in, set role to "Customer
+      };
+      login(customer); // ✅ Save user in context
+
       alert("🎉 Login successful!");
       navigate("/dashboard"); // ✅ Redirects to Dashboard
-
+  
     } catch (err) {
       setError("❌ " + err.message);
     }

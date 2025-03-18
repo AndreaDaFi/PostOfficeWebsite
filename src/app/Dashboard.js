@@ -4,8 +4,12 @@ import { AuthContext } from "../context/AuthContext";
 import { Container, Paper, Typography, Button } from "@mui/material";
 
 export default function Dashboard() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, isCustomer } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  if(isCustomer()){
+    console.log("this is a customer logged in rn");
+  }
 
   if (!user) {
     navigate("/cust-login");
