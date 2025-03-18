@@ -1,102 +1,239 @@
-import React, { useEffect, useState } from "react";
-import { Typography, Container, Grid, Card, CardContent, CardActions, Button, Box } from "@mui/material";
-import { Link } from "react-router-dom";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import DoneIcon from "@mui/icons-material/Done";
-import TrackChangesIcon from "@mui/icons-material/TrackChanges";
+"use client"
 
-// Mock Package Data
-const mockPackages = [
-  { id: 1, trackingNumber: "123456", status: "Shipped", deliveryDate: "2025-03-15" },
-  { id: 2, trackingNumber: "654321", status: "In Transit", deliveryDate: "2025-03-18" },
-  { id: 3, trackingNumber: "789012", status: "Delivered", deliveryDate: "2025-03-05" },
-  { id: 4, trackingNumber: "456789", status: "Out for Delivery", deliveryDate: "2025-03-20" },
-  { id: 5, trackingNumber: "987654", status: "Processing", deliveryDate: "Pending" },
-];
+import { useEffect, useState, useContext } from "react"
+import { AuthContext } from "../context/AuthContext"
+import {
+  Box,
+  Paper,
+  Typography,
+  Alert,
+  Divider,
+  Chip,
+  CircularProgress,
+  Grid,
+  Card,
+  CardContent,
+  Stack,
+} from "@mui/material"
+import { LocalShipping, Person, Scale, Inventory2, ErrorOutline } from "@mui/icons-material"
 
 const MyPackages = () => {
-  const [packages, setPackages] = useState([]);
+  const { user } = useContext(AuthContext)
+  const [packages, setPackages] = useState([])
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setPackages(mockPackages);
-  }, []);
+    const fetchPackages = async () => {
+      if (!user?.customers_id) {
+        setError("⚠ Missing customer ID.")
+        setLoading(false)
+        return
+      }
+
+      try {
+        const response = await fetch("https://vercel-api-powebapp.vercel.app/api/getCustomerPackages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer_id: user.customers_id,
+          }),
+        })
+
+        const data = await response.json()
+        console.log("📦 Packages response:", data)
+
+        if (!response.ok) throw new Error(data.error || "Failed to fetch packages")
+
+        setPackages(data.packages)
+      } catch (err) {
+        setError("❌ " + err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPackages()
+  }, [user])
+
+  // Helper function to get status color
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "delivered":
+        return "success"
+      case "in transit":
+        return "error" // Changed from "info" to "error" to make it red
+      case "pending":
+        return "warning"
+      case "cancelled":
+        return "error"
+      default:
+        return "default"
+    }
+  }
 
   return (
-    <Container sx={{ my: 5 }}>
-      {/* Title */}
-      <Typography variant="h3" sx={{ fontWeight: "bold", color: "#D32F2F", mb: 3, textAlign: "center" }}>
-        📦 Your Packages
-      </Typography>
+    <Box width="100%" display="flex" flexDirection="column" alignItems="center" py={4}>
+      {/* Wide welcome banner */}
+      <Box
+        sx={{
+          width: { xs: "95%", sm: "95%", md: "95%" },
+          maxWidth: "1200px",
+          mb: 4,
+          p: 3,
+          bgcolor: "#ffebee", // Light red background
+          borderRadius: 2,
+          border: "1px solid #ffcdd2",
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          variant="h4" // Reduced from h3
+          fontWeight="bold"
+          color="error.main"
+        >
+          Welcome to your packages
+        </Typography>
+      </Box>
 
-      {/* No Packages Message */}
-      {packages.length === 0 && (
-        <Box textAlign="center" sx={{ my: 5 }}>
-          <Typography variant="h5" color="textSecondary">
-            You have no packages to display.
-          </Typography>
-        </Box>
-      )}
+      {/* Wide package container - same width as welcome banner */}
+      <Box
+        sx={{
+          width: { xs: "95%", sm: "95%", md: "95%" },
+          maxWidth: "1200px",
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            borderRadius: 2,
+            overflow: "hidden",
+            width: "100%",
+          }}
+        >
+          <Box
+            sx={{
+              bgcolor: "error.main", // Using MUI's red color
+              color: "error.contrastText",
+              p: 2.5, // Moderate padding
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5, // Moderate gap
+            }}
+          >
+            <Inventory2 sx={{ fontSize: 24 }} /> {/* Moderate icon size */}
+            <Typography variant="h5" fontWeight="bold">
+              {" "}
+              {/* Back to h5 */}
+              My Packages
+            </Typography>
+          </Box>
 
-      {/* Packages Grid */}
-      <Grid container spacing={3}>
-        {packages.map((pkg) => (
-          <Grid item xs={12} sm={6} md={4} key={pkg.id}>
-            <Card
-              sx={{
-                borderRadius: "12px",
-                boxShadow: "0px 5px 15px rgba(0,0,0,0.15)",
-                transition: "0.3s",
-                "&:hover": { transform: "scale(1.05)" },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  📌 Tracking: {pkg.trackingNumber}
+          <Box p={3}>
+            {" "}
+            {/* Moderate padding */}
+            {error && (
+              <Alert
+                severity="error"
+                sx={{
+                  mb: 3,
+                  "& .MuiAlert-message": { fontSize: "1rem" }, // Medium error text
+                }}
+                icon={<ErrorOutline />}
+              >
+                {error}
+              </Alert>
+            )}
+            {loading ? (
+              <Box display="flex" justifyContent="center" p={4}>
+                <CircularProgress size={40} /> {/* Medium loading spinner */}
+              </Box>
+            ) : packages.length === 0 ? (
+              <Box textAlign="center" p={4}>
+                <Typography variant="body1" fontSize="1rem" color="text.secondary">
+                  {" "}
+                  {/* Medium text */}🚫 No packages found.
                 </Typography>
-                <Typography variant="body1" sx={{ mt: 1 }}>
-                  <TrackChangesIcon sx={{ verticalAlign: "middle", mr: 1, color: "#D32F2F" }} />
-                  Status:{" "}
-                  <span style={{ fontWeight: "bold", color: pkg.status === "Delivered" ? "#388E3C" : "#D32F2F" }}>
-                    {pkg.status}
-                  </span>
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  📅 Estimated Delivery:{" "}
-                  <span style={{ fontWeight: "bold" }}>{pkg.deliveryDate}</span>
-                </Typography>
-              </CardContent>
+              </Box>
+            ) : (
+              <Stack spacing={2.5}>
+                {" "}
+                {/* Moderate spacing */}
+                {packages.map((pkg) => (
+                  <Card
+                    key={pkg.tracking_number}
+                    variant="outlined"
+                    sx={{
+                      borderLeft: "5px solid #d32f2f", // Moderate border
+                      boxShadow: "0 1px 4px rgba(0,0,0,0.1)", // Subtle shadow
+                    }}
+                  >
+                    <CardContent sx={{ p: 2.5 }}>
+                      {" "}
+                      {/* Moderate padding */}
+                      <Grid container spacing={2.5}>
+                        {" "}
+                        {/* Moderate spacing */}
+                        <Grid item xs={12}>
+                          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1.5}>
+                            <Typography
+                              variant="subtitle1" // Back to subtitle1
+                              fontSize="1.1rem" // Medium-sized text
+                              fontWeight="bold"
+                            >
+                              Tracking: {pkg.tracking_number}
+                            </Typography>
+                            <Chip
+                              label={pkg.status}
+                              color={getStatusColor(pkg.status)}
+                              size="medium" // Keep medium size
+                              sx={{ fontSize: "0.9rem" }} // Medium text
+                            />
+                          </Box>
+                          <Divider sx={{ borderWidth: 1 }} /> {/* Medium divider */}
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                          <Box display="flex" alignItems="center" gap={1.2}>
+                            <Scale sx={{ fontSize: 20 }} color="action" /> {/* Medium icon */}
+                            <Typography fontSize="1rem">
+                              {" "}
+                              {/* Medium text */}
+                              <strong>Weight:</strong> {pkg.weight} kg
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                          <Box display="flex" alignItems="center" gap={1.2}>
+                            <Person sx={{ fontSize: 20 }} color="action" /> {/* Medium icon */}
+                            <Typography fontSize="1rem">
+                              {" "}
+                              {/* Medium text */}
+                              <strong>Receiver:</strong> {pkg.receiver_name}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Box display="flex" alignItems="center" gap={1.2}>
+                            <LocalShipping sx={{ fontSize: 20 }} color="action" /> {/* Medium icon */}
+                            <Typography fontSize="1rem">
+                              {" "}
+                              {/* Medium text */}
+                              <strong>Type:</strong> {pkg.type}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
+            )}
+          </Box>
+        </Paper>
+      </Box>
+    </Box>
+  )
+}
 
-              <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
-                <Button
-                  component={Link}
-                  to={`/TrackPackage?tracking=${pkg.trackingNumber}`}
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#D32F2F",
-                    color: "#FFF",
-                    "&:hover": { backgroundColor: "#B71C1C" },
-                  }}
-                  startIcon={<LocalShippingIcon />}
-                >
-                  Track Package
-                </Button>
+export default MyPackages
 
-                <Button
-                  component={Link}
-                  to={`/PackageDetails?tracking=${pkg.trackingNumber}`}
-                  variant="outlined"
-                  sx={{ color: "#D32F2F", borderColor: "#D32F2F", "&:hover": { backgroundColor: "#FFEBEE" } }}
-                  startIcon={<DoneIcon />}
-                >
-                  View Details
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
-  );
-};
-
-export default MyPackages;
