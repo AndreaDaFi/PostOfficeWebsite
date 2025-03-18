@@ -1,7 +1,15 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";  // ✅ Make sure this matches your app structure
-import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
+import { AuthContext } from "../context/AuthContext"; // ✅ Make sure this matches your app structure
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Alert,
+  Link,
+} from "@mui/material";
 
 export default function CustLogin() {
   const { login } = useContext(AuthContext); // ✅ Uses AuthContext to track login
@@ -16,37 +24,41 @@ export default function CustLogin() {
   const handleLogin = async () => {
     setError(null);
     setResetMessage(null);
-  
+
     if (!email) return setError("⚠ Please enter your email.");
     if (!password) return setError("⚠ Please enter your password.");
-  
+
     // Log email and password to the console
     console.log("Email:", email);
     console.log("Password:", password);
-  
+
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/custLogin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-  
+      const response = await fetch(
+        "https://vercel-api-powebapp.vercel.app/api/custLogin",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || "Login failed");
       }
-  
+
       const data = await response.json();
 
-      const customer={
+      const customer = {
         ...data.user,
-        role: "Customer",//since a customer logged in, set role to "Customer
+        role: "Customer", //since a customer logged in, set role to "Customer
       };
       login(customer); // ✅ Save user in context
 
       alert("🎉 Login successful!");
       navigate("/dashboard"); // ✅ Redirects to Dashboard
-  
+      //reload the page so users can see
+      window.location.reload();
     } catch (err) {
       setError("❌ " + err.message);
     }
@@ -76,15 +88,23 @@ export default function CustLogin() {
         throw new Error(data.error || "Reset failed");
       }
 
-      setResetMessage("📩 Password reset instructions have been sent to your email.");
-
+      setResetMessage(
+        "📩 Password reset instructions have been sent to your email."
+      );
     } catch (err) {
       setError("❌ " + err.message);
     }
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
       <Container maxWidth="sm">
         <Paper
           elevation={3}
@@ -97,53 +117,71 @@ export default function CustLogin() {
             boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
           }}
         >
-          <Typography variant="h5" gutterBottom style={{ fontWeight: "bold", color: "#333" }}>
+          <Typography
+            variant="h5"
+            gutterBottom
+            style={{ fontWeight: "bold", color: "#333" }}
+          >
             📦 Customer Login
           </Typography>
 
-          <Typography variant="body2" color="textSecondary" style={{ marginBottom: "20px" }}>
-            {isResetMode ? "Enter your email to reset your password." : "Please enter your credentials to continue."}
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            style={{ marginBottom: "20px" }}
+          >
+            {isResetMode
+              ? "Enter your email to reset your password."
+              : "Please enter your credentials to continue."}
           </Typography>
 
-          {error && <Alert severity="error" style={{ marginBottom: "15px" }}>{error}</Alert>}
-          {resetMessage && <Alert severity="success" style={{ marginBottom: "15px" }}>{resetMessage}</Alert>}
+          {error && (
+            <Alert severity="error" style={{ marginBottom: "15px" }}>
+              {error}
+            </Alert>
+          )}
+          {resetMessage && (
+            <Alert severity="success" style={{ marginBottom: "15px" }}>
+              {resetMessage}
+            </Alert>
+          )}
 
           {/* EMAIL FIELD */}
-          <TextField 
-            fullWidth 
-            label="Email" 
-            type="email" 
-            variant="outlined" 
-            margin="normal" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
+          <TextField
+            fullWidth
+            label="Email"
+            type="email"
+            variant="outlined"
+            margin="normal"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           {/* PASSWORD & LOGIN BUTTON - HIDDEN IN RESET MODE */}
           {!isResetMode && (
             <>
-              <TextField 
-                fullWidth 
-                label="Password" 
-                type="password" 
-                variant="outlined" 
-                margin="normal" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                variant="outlined"
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
 
-              <Button 
-                fullWidth 
-                variant="contained" 
-                style={{ 
-                  marginTop: "20px", 
-                  padding: "12px 0", 
-                  borderRadius: "8px", 
-                  fontSize: "16px", 
+              <Button
+                fullWidth
+                variant="contained"
+                style={{
+                  marginTop: "20px",
+                  padding: "12px 0",
+                  borderRadius: "8px",
+                  fontSize: "16px",
                   fontWeight: "bold",
-                  backgroundColor: "#D32F2F", 
-                  color: "#FFF"
-                }} 
+                  backgroundColor: "#D32F2F",
+                  color: "#FFF",
+                }}
                 onClick={handleLogin}
               >
                 LOGIN
@@ -151,7 +189,11 @@ export default function CustLogin() {
 
               {/* Forgot Password Link */}
               <Typography variant="body2" style={{ marginTop: "15px" }}>
-                <Link href="#" onClick={handleForgotPassword} style={{ fontSize: "14px", color: "#B71C1C" }}>
+                <Link
+                  href="#"
+                  onClick={handleForgotPassword}
+                  style={{ fontSize: "14px", color: "#B71C1C" }}
+                >
                   Forgot Password?
                 </Link>
               </Typography>
@@ -161,23 +203,26 @@ export default function CustLogin() {
           {/* RESET PASSWORD BUTTON - ONLY VISIBLE IN RESET MODE */}
           {isResetMode && (
             <>
-              <Button 
-                fullWidth 
-                variant="contained" 
-                style={{ 
-                  marginTop: "20px", 
-                  padding: "12px 0", 
-                  borderRadius: "8px", 
-                  fontSize: "16px", 
+              <Button
+                fullWidth
+                variant="contained"
+                style={{
+                  marginTop: "20px",
+                  padding: "12px 0",
+                  borderRadius: "8px",
+                  fontSize: "16px",
                   fontWeight: "bold",
-                  backgroundColor: "#D32F2F", 
-                  color: "#FFF"
-                }} 
+                  backgroundColor: "#D32F2F",
+                  color: "#FFF",
+                }}
                 onClick={handleResetPassword}
               >
                 SEND RESET LINK
               </Button>
-              <Typography variant="body2" style={{ marginTop: "15px", color: "#B71C1C" }}>
+              <Typography
+                variant="body2"
+                style={{ marginTop: "15px", color: "#B71C1C" }}
+              >
                 📩 Check your email for password reset instructions.
               </Typography>
             </>
@@ -185,10 +230,13 @@ export default function CustLogin() {
 
           {/* SIGN UP LINK */}
           {!isResetMode && (
-            <Typography variant="body2" style={{ marginTop: "20px", textAlign: "center" }}>
+            <Typography
+              variant="body2"
+              style={{ marginTop: "20px", textAlign: "center" }}
+            >
               Don't have an account?{" "}
-              <Button 
-                color="inherit" 
+              <Button
+                color="inherit"
                 onClick={() => navigate("/CustSignup")}
                 style={{ color: "#D32F2F", fontWeight: "bold" }}
               >

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { Container, TextField, Button, Typography, Paper, Alert, Grid, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 
 export default function AddStaff() {
+  const { user } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -10,6 +12,8 @@ export default function AddStaff() {
     hire_date: new Date().toISOString().split("T")[0], // Set current date as default
     ssn: "",
     role: "",
+    email: "",
+    phone: "",
     postOfficeID: "",
     street: "",
     streetLine2: "",
@@ -46,6 +50,8 @@ export default function AddStaff() {
     if (!formData.password.trim() || formData.password.length > 10) return "⚠ Password must be up to 10 characters.";
     if (!formData.securityQuestion) return "⚠ Please select a security question.";
     if (!formData.securityAnswer.trim() || formData.securityAnswer.length > 10) return "⚠ Security answer must be up to 10 characters.";
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) return "⚠ Please enter a valid email address.";
+    if (!formData.phone.trim() || !/^\d{10}$/.test(formData.phone)) return "⚠ Please enter a valid phone number (10 digits).";
     return null;
   };
 
@@ -57,10 +63,20 @@ export default function AddStaff() {
     if (errorMsg) return setError(errorMsg);
 
     try {
-      const response = await fetch("https://your-api-url.com/add-staff", {
+      // gets the employees_id of the manager that's currently logged in
+      const mngrID = user?.employees_id;
+      const po_id = user?.po_id;
+      // adds this id to the data that needs to be passed to the api
+      const newStaffData = {
+        ...formData, // the actual employee data collected
+        mngr_id: mngrID, // pass the current manager's id to the api
+        po_id: po_id,
+      };
+
+      const response = await fetch("http://localhost:3001/api/AddStaff", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(newStaffData),
       });
 
       const data = await response.json();
@@ -75,8 +91,9 @@ export default function AddStaff() {
 
   // List of U.S. states for the dropdown
   const states = [
-    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+    "al", "ak", "az", "ar", "ca", "co", "ct", "de", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "ne", "nv", "nh", "nj", "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy"
   ];
+  
 
   return (
     <div style={{
@@ -103,9 +120,30 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 30 }} helperText="Up to 30 characters" />
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth type="date" label="Birthdate" name="birthdate" onChange={handleChange} required 
-                InputLabelProps={{ shrink: true }} helperText="YYYY-MM-DD format" />
+              <TextField
+                fullWidth
+                type="date"
+                label="Birthdate"
+                name="birthdate"
+                onChange={handleChange}
+                required
+                value={formData.birthdate}
+                InputLabelProps={{ shrink: true }}
+                helperText="YYYY-MM-DD format"
+              />
             </Grid>
+            <Grid item xs={12}>
+            <TextField
+    fullWidth
+    type="date"
+    label="Hire Date"
+    name="hire_date"
+    value={formData.hire_date} // This is set to the default current date
+    disabled
+    InputLabelProps={{ shrink: true }}
+    helperText="Current date"
+  />
+</Grid>
             <Grid item xs={12}>
               <TextField fullWidth type="number" label="Salary" name="salary" onChange={handleChange} required 
                 helperText="Decimal number" inputProps={{ min: 0 }} />
@@ -126,10 +164,6 @@ export default function AddStaff() {
                   <MenuItem value="Clerk">Clerk</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField fullWidth label="Post Office ID" name="postOfficeID" onChange={handleChange} required 
-                inputProps={{ maxLength: 6 }} helperText="Exactly 6 digits" />
             </Grid>
 
             {/* Address Fields */}
@@ -182,6 +216,16 @@ export default function AddStaff() {
             <Grid item xs={6}>
               <TextField fullWidth label="Security Answer" name="securityAnswer" onChange={handleChange} required 
                 inputProps={{ maxLength: 10 }} helperText="Up to 10 characters" />
+            </Grid>
+
+            {/* Email and Phone Fields */}
+            <Grid item xs={12}>
+              <TextField fullWidth label="Email" name="email" onChange={handleChange} required 
+                inputProps={{ maxLength: 50 }} helperText="Valid email address" />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Phone" name="phone" onChange={handleChange} required 
+                inputProps={{ maxLength: 10 }} helperText="10 digits (e.g., 1234567890)" />
             </Grid>
           </Grid>
 
