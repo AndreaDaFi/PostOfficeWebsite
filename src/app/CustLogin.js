@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "./AuthContext";  // ✅ Make sure this matches your app structure
+import { AuthContext } from "../context/AuthContext";  // ✅ Make sure this matches your app structure
 import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
 
 export default function CustLogin() {

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import { Container, Paper, Typography, Button } from "@mui/material";
 
 export default function Dashboard() {

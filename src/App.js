@@ -29,7 +29,7 @@ import DeliveredMessagesPage from './app/delivered';
 import AskPostOfficeForStore from './app/ask_postof_for_store';
 import WorkHours from "./app/h_w";
 import Dashboard from "./app/Dashboard";
-import { AuthProvider, AuthContext } from "./app/AuthContext";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
 
 const App = () => {
   const [anchorElCustomer, setAnchorElCustomer] = useState(null);
@@ -115,6 +115,7 @@ const App = () => {
                   <Route path="/" element={<Home />} />
                   {!user && <Route path="/cust-login" element={<CustLogin />} />}
                   {!user && <Route path="/CustSignup" element={<CustSignup />} />}
+
                   <Route path="/emp-login" element={<EmpLogin />} />
 
                   {/* Protected Route - Dashboard Only if Logged In */}
