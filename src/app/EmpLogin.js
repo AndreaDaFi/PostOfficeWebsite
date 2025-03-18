@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
 
 export default function CustLogin() {
+  const { login } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -17,6 +20,10 @@ export default function CustLogin() {
     if (!email) return setError("⚠ Please enter your email.");
     if (!password) return setError("⚠ Please enter your password.");
 
+    // Log email and password to the console
+    console.log("Email:", email);
+    console.log("Password:", password);
+
     try {
       const response = await fetch("https://vercel-api-powebapp.vercel.app/api/EmployeeLOGIN", {
         method: "POST",
@@ -29,8 +36,16 @@ export default function CustLogin() {
         throw new Error(data.error || "Login failed");
       }
 
+      const data = await response.json();
+
+      const employee={
+        ...data.user,
+        role: data.user.role,//fetches the role attribute of the employee
+      }
+      login(employee);
+
       alert("🎉 Login successful!");
-      navigate("/dashboard"); // Use React Router for navigation
+      navigate("/EmpDashboard"); // Use React Router for navigation
 
     } catch (err) {
       setError("❌ " + err.message);

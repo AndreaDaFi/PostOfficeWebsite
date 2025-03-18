@@ -30,6 +30,7 @@ import AskPostOfficeForStore from './app/ask_postof_for_store';
 import WorkHours from "./app/h_w";
 import Dashboard from "./app/Dashboard";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
+import EmpDashboard from "./app/EmpDashboard";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk } = useContext(AuthContext);
@@ -65,6 +66,7 @@ const App = () => {
                       <>
                         <Button color="inherit" component={Link} to="/cust-login">Customer Login</Button>
                         <Button color="inherit" component={Link} to="/CustSignup">Sign Up</Button>
+                        <Button color="inherit" component={Link} to="/EmpLogin">Employee Login</Button>
                       </>
                     )}
 
@@ -79,6 +81,14 @@ const App = () => {
                         <Button color="inherit" component={Link} to="/MyPackages">My Packages</Button>
                         <Button color="inherit" component={Link} to="/delivered-messages">Delivered Packages</Button>
                         <Button color="inherit" component={Link} to="/CustAddPackage">Ship a New Packag3</Button>
+                      </>
+                    )}
+
+                    {/*if there's a user logged in, and it's not a customer, then its an employee*/}
+                    {/*LINK TO EMPLOYEE DASHBOARD*/}
+                    {user && !isCustomer() && (
+                      <>
+                        <Button color="inherit" component={Link} to="/EmpDashboard">EmpDashboard</Button>
                       </>
                     )}
 
@@ -118,8 +128,15 @@ const App = () => {
                   <Route path="/" element={<Home />} />
                   {!user && <Route path="/cust-login" element={<CustLogin />} />}
                   {!user && <Route path="/CustSignup" element={<CustSignup />} />}
+                  {!user && <Route path="/EmpLogin" element={<EmpLogin />} />}
 
-                  <Route path="/emp-login" element={<EmpLogin />} />
+                  {/*if there's a user logged in, and it's not a customer, then its an employee*/}
+                  {/*LINK TO EMPLOYEE DASHBOARD*/}
+                  {user && !isCustomer() && (
+                    <>
+                      <Route path="/EmpDashboard" element={<EmpDashboard />} />
+                    </>
+                  )}
 
                   {/* Protected Route - Dashboard Only if Logged In */}
                   {isCustomer() && <Route path="/dashboard" element={<Dashboard />} />}
