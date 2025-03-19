@@ -1,9 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import { Container, TextField, Button, Typography, Paper, MenuItem, FormControlLabel, Checkbox, Alert, Grid } from "@mui/material";
-
+//http://localhost:58406/CustAddPackage
 export default function CustomerPackageEntry() {
+  const { user } = useContext(AuthContext);
+  //const navigate = useNavigate();
+
+  const states = [
+    "al", "ak", "az", "ar", "ca", "co", "ct", "de", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "ne", "nv", "nh", "nj", "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy"
+  ];
+
+  const stateNames = {
+    al: "Alabama", ak: "Alaska", az: "Arizona", ar: "Arkansas", ca: "California", co: "Colorado", ct: "Connecticut", de: "Delaware", fl: "Florida", ga: "Georgia", hi: "Hawaii", id: "Idaho", il: "Illinois", in: "Indiana", ia: "Iowa", ks: "Kansas", ky: "Kentucky", la: "Louisiana", me: "Maine", md: "Maryland", ma: "Massachusetts", mi: "Michigan", mn: "Minnesota", ms: "Mississippi", mo: "Missouri", mt: "Montana", ne: "Nebraska", nv: "Nevada", nh: "New Hampshire", nj: "New Jersey", nm: "New Mexico", ny: "New York", nc: "North Carolina", nd: "North Dakota", oh: "Ohio", ok: "Oklahoma", or: "Oregon", pa: "Pennsylvania", ri: "Rhode Island", sc: "South Carolina", sd: "South Dakota", tn: "Tennessee", tx: "Texas", ut: "Utah", vt: "Vermont", va: "Virginia", wa: "Washington", wv: "West Virginia", wi: "Wisconsin", wy: "Wyoming"
+  };
+  const [selectedState, setSelectedState] = useState("");
+  const [postOffices, setPostOffices] = useState([]);
+  const [selectedPostOffice, setSelectedPostOffice] = useState("");
+  useEffect(() => {
+    if (selectedState) {
+      fetch(`/api/postOffices?state=${selectedState}`)
+        .then((res) => res.json())
+        .then((data) => setPostOffices(data))
+        .catch((error) => console.error("Error fetching post offices:", error));
+    }
+  }, [selectedState]);
+
   const navigate = useNavigate();
+  const customersId = user?.customers_id; // Get customer ID
+  const originAddressId = user?.address_id; // Get customer address ID
+
+  const newCustData = {
+    ...FormData,
+    customersId: customersId,
+    originAddressId: originAddressId,
+  };
 
   const [packageData, setPackageData] = useState({
     receiverName: "",
@@ -12,13 +43,11 @@ export default function CustomerPackageEntry() {
     receiverCity: "",
     receiverState: "",
     receiverZip: "",
-    serviceType: "",
+    packageType: "Envelope",
+    weight: "",
     fragile: false,
     insurance: false,
     fastdelivery: false,
-    packageType: "Envelope",
-    weight: "",
-    size: "",
   });
 
   const [error, setError] = useState(null);
@@ -97,9 +126,9 @@ export default function CustomerPackageEntry() {
     return basePrice.toFixed(2);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError(null);
-
+  
     // Adjusted validation logic:
     if (
       (!validateStreetAddress(packageData.receiverStreet) &&
@@ -117,11 +146,52 @@ export default function CustomerPackageEntry() {
       setError("⚠ Please fill in all required fields correctly.");
       return;
     }
-
+  
     const totalPrice = calculateTotalPrice();
-
-    // Use the navigate function to pass the data
-    navigate("/PackageCheckOut", { state: { totalPrice, packageData } });
+  
+    // Prepare data for backend API
+    const payload = {
+      receiverName: packageData.receiverName,
+      receiverStreet: packageData.receiverStreet,
+      receiverApartment: packageData.receiverApartment,
+      receiverCity: packageData.receiverCity,
+      receiverState: packageData.receiverState,
+      receiverZip: packageData.receiverZip,
+      weight: parseFloat(packageData.weight),
+      status: "Pending",
+      customersId: 1, // Replace with actual customer ID
+      originAddressId: 1, // Replace with actual origin address ID
+      destinationAddressId: null, // Will be created in the backend
+      purchasedInsurance: packageData.insurance ? "Y" : "N",
+      fastDelivery: packageData.fastdelivery ? "Y" : "N",
+      fragile: packageData.fragile ? "Y" : "N",
+      poId: 1, // Replace with actual post office ID
+      type: packageData.packageType,
+      totalAmount: totalPrice,
+      transactionDate: new Date().toISOString().split('T')[0],
+      totalTax: (totalPrice * 0.1).toFixed(2), // Example tax calculation (10%)
+    };
+  
+    try {
+      const response = await fetch('/api/handler', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        console.log("✅ Package added successfully:", result);
+        navigate("/PackageCheckOut", { state: { totalPrice, packageData } });
+      } else {
+        console.error("❌ Error adding package:", result.error);
+        setError(result.error || "An error occurred while processing your request.");
+      }
+    } catch (error) {
+      console.error("❌ Network error:", error);
+      setError("An error occurred while connecting to the server. Please try again later.");
+    }
   };
 
   return (
@@ -259,6 +329,7 @@ export default function CustomerPackageEntry() {
                 <MenuItem key={index} value={option.label}>{option.label} (+${option.price})</MenuItem>
               ))}
             </TextField>
+            
           </>
         )}
 
@@ -281,11 +352,56 @@ export default function CustomerPackageEntry() {
           💲 Total: ${calculateTotalPrice()}
         </Typography>
 
+      
+      </Paper>
+      <Paper elevation={3} style={{ padding: 20 }}>
+        <Typography variant="h5">📍 Select Drop-Off Location</Typography>
+
+        <Grid container spacing={2}>
+          {/* State Dropdown */}
+          <Grid item xs={6}>
+            <TextField
+              select
+              fullWidth
+              label="Select State"
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
+            >
+              {states.map((stateCode) => (
+                <MenuItem key={stateCode} value={stateCode}>
+                  {stateCode.toUpperCase()}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          {/* Post Office Dropdown */}
+          <Grid item xs={6}>
+            <TextField
+              select
+              fullWidth
+              label="Select Post Office"
+              value={selectedPostOffice}
+              onChange={(e) => setSelectedPostOffice(e.target.value)}
+            >
+              {postOffices.map((po) => (
+                <MenuItem key={po.id} value={po.id}>
+                  {po.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
+
+        {/* Submit Button */}
         {/* Checkout Button */}
         <Button fullWidth variant="contained" sx={{ color: '#ffffff', backgroundColor: '#D32F2F' }} style={{ marginTop: "15px" }} onClick={handleSubmit}>
           🛒 Proceed to Checkout
         </Button>
+        
       </Paper>
+
     </Container>
+    
   );
 }
