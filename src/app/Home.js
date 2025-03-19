@@ -133,9 +133,9 @@ const Home = () => {
                   height: "auto",
                   display: "block",
                   margin: "0 auto",
-                  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                  transition: "transform 0.3s ease-in-out",
                   borderRadius: "8px",
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+                  boxShadow: "none"
                 }}
               />
             </Box>

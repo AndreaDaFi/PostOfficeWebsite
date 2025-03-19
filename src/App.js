@@ -1,13 +1,18 @@
 import React, { useState, useContext } from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import Cougar from "./components/Cougar.png";
+import MenuIcon from "@mui/icons-material/Menu";
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
   Button,
   Container,
-  Menu,
-  MenuItem,
+  Drawer,
+  List,
+  ListItem,
   Box,
+  Divider,
+  IconButton,
 } from "@mui/material";
 import CustLogin from "./app/CustLogin";
 import EmpLogin from "./app/EmpLogin";
@@ -41,7 +46,7 @@ import { AuthProvider, AuthContext } from "./context/AuthContext";
 import EmpDashboard from "./app/EmpDashboard";
 
 const App = () => {
-  const { isCustomer, isAdmin, isManager, isDriver, isClerk } =
+  const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
     useContext(AuthContext);
 
   const [anchorElCustomer, setAnchorElCustomer] = useState(null);
@@ -50,9 +55,21 @@ const App = () => {
   const [anchorElClerk, setAnchorElClerk] = useState(null);
   const [anchorElDriver, setAnchorElDriver] = useState(null);
 
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const navigate = useNavigate();
+
+  const toggleDrawer = () => {
+    setOpenDrawer(!openDrawer);
+  };
+
+  const goLogout = () =>{
+    logout();
+    navigate("/");//navigate home when you log out
+    window.location.reload();
+  }
+
   return (
     <AuthProvider>
-      <Router>
         <AuthContext.Consumer>
           {({ user, logout }) => (
             <>
@@ -61,32 +78,152 @@ const App = () => {
                 sx={{ color: "#ffffff", backgroundColor: "#D32F2F" }}
               >
                 <Toolbar>
-                  {/* LEFT SIDE - Stays Consistent */}
-                  <Box sx={{ flexGrow: 1, display: "flex" }}>
-                    <Button color="inherit" component={Link} to="/">
-                      Home
+                  {/* Hamburger Menu Icon for Small Screens */}
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                    onClick={toggleDrawer}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  {user && (
+                    <Button
+                      sx={{
+                        backgroundColor: "#D32F2F",
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "#C62828", // Darker red on hover
+                        },
+                        borderRadius: 1,
+                        padding: "10px 20px",
+                        width: "auto",
+                        textAlign: "center",
+                        ml: "auto",
+                        display: "block",
+                        height: "auto",
+                        minWidth: "100px",
+                      }}
+                      onClick={goLogout}
+                    >
+                      Logout
                     </Button>
+                  )}
+                </Toolbar>
+              </AppBar>
+              <Drawer
+                sx={{
+                  width: 240,
+                  flexShrink: 0,
+                  "& .MuiDrawer-paper": {
+                    width: 240,
+                    boxSizing: "border-box",
+                    display: "flex",
+                    flexDirection: "column",
+                    backgroundColor: "#D32F2F",
+                    justifyContent: "space-between", // Ensures buttons are spaced out
+                  },
+                }}
+                variant="temporary"
+                anchor="left"
+                open={openDrawer}
+                onClose={toggleDrawer}
+              >
+                <img
+                  src={Cougar || "/placeholder.svg"}
+                  alt="Logo"
+                  className="image"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                    margin: "0 auto",
+                    borderRadius: "8px",
+                  }}
+                />
+                <Box sx={{ flexGrow: 1 }}>
+                  <List sx={{ paddingTop: 2 }}>
+                    <ListItem>
+                      <Button
+                        sx={{
+                          backgroundColor: "#D32F2F",
+                          color: "white",
+                          "&:hover": {
+                            backgroundColor: "#C62828", // Darker red on hover
+                          },
+                          borderRadius: 1,
+                          padding: "10px 20px",
+                          width: "100%",
+                          textAlign: "left",
+                        }}
+                        component={Link}
+                        to="/"
+                      >
+                        Home
+                      </Button>
+                    </ListItem>
 
                     {/* Show Login & Signup Only When NOT Logged In */}
                     {!user && (
                       <>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/cust-login"
-                        >
-                          Customer Login
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/CustSignup"
-                        >
-                          Sign Up
-                        </Button>
-                        <Button color="inherit" component={Link} to="/EmpLogin">
-                          Employee Login
-                        </Button>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/cust-login"
+                          >
+                            Customer Login
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/CustSignup"
+                          >
+                            Sign Up
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/EmpLogin"
+                          >
+                            Employee Login
+                          </Button>
+                        </ListItem>
                       </>
                     )}
 
@@ -95,44 +232,120 @@ const App = () => {
                     {/* ONLY VISIBLE/ACCESSIBLE WHEN A CUSTOMER IS LOGGED IN */}
                     {user && isCustomer() && (
                       <>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/dashboard"
-                        >
-                          Dashboard
-                        </Button>
-                        <Button color="inherit" component={Link} to="/store">
-                          Store
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/ask-store-location"
-                        >
-                          Select Store Location
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/MyPackages"
-                        >
-                          My Packages
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/delivered-messages"
-                        >
-                          Delivered Packages
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/CustAddPackage"
-                        >
-                          Ship a New Packag3
-                        </Button>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/dashboard"
+                          >
+                            Dashboard
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/store"
+                          >
+                            Store
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/ask-store-location"
+                          >
+                            Select Store Location
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/MyPackages"
+                          >
+                            My Packages
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/delivered-messages"
+                          >
+                            Delivered Packages
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/CustAddPackage"
+                          >
+                            Ship a New Packag3
+                          </Button>
+                        </ListItem>
                       </>
                     )}
 
@@ -140,89 +353,234 @@ const App = () => {
                     {/*LINK TO EMPLOYEE DASHBOARD*/}
                     {user && !isCustomer() && (
                       <>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/EmpDashboard"
-                        >
-                          Employee Dashboard
-                        </Button>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/EmpDashboard"
+                          >
+                            Employee Dashboard
+                          </Button>
+                        </ListItem>
                       </>
                     )}
 
                     {/* Admin Pages */}
                     {user && isAdmin() && (
                       <>
-                        <Button color="inherit" component={Link} to="/AddPO">
-                          Add a Post Office
-                        </Button>
-                        <Button color="inherit" component={Link} to="/ViewPO">
-                          View Post Offices
-                        </Button>
-                        <Button color="inherit" component={Link} to="/AddMngr">
-                          Add Manager
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/ViewStaff"
-                        >
-                          View Staff
-                        </Button>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/AddPO"
+                          >
+                            Add a Post Office
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/ViewPO"
+                          >
+                            View Post Offices
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/AddMngr"
+                          >
+                            Add Manager
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/ViewStaff"
+                          >
+                            View Staff
+                          </Button>
+                        </ListItem>
                       </>
                     )}
 
                     {/* Manager Pages */}
                     {user && isManager() && (
                       <>
-                        <Button color="inherit" component={Link} to="/AddStore">
-                          Add Items to Store
-                        </Button>
-                        <Button color="inherit" component={Link} to="/AddStaff">
-                          Add Staff Member
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/MngrViewStaff"
-                        >
-                          View My Staff
-                        </Button>
-                        <Button
-                          color="inherit"
-                          component={Link}
-                          to="/ViewStaffActivity"
-                        >
-                          View Staff Activity
-                        </Button>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/AddStore"
+                          >
+                            Add Items to Store
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/AddStaff"
+                          >
+                            Add Staff Member
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/MngrViewStaff"
+                          >
+                            View My Staff
+                          </Button>
+                        </ListItem>
+                        <ListItem>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/ViewStaffActivity"
+                          >
+                            View Staff Activity
+                          </Button>
+                        </ListItem>
                       </>
                     )}
-                  </Box>
 
-                  {/* DRIVER AND CLERK Pages */}
-                  {user && (isClerk() || isDriver()) && (
+                    {/* DRIVER AND CLERK Pages */}
+                    {user && (isClerk() || isDriver()) && (
                       <>
-                        <Button color="inherit" component={Link} to="/ReStock">
+                        <Button
+                          sx={{
+                            backgroundColor: "#D32F2F",
+                            color: "white",
+                            "&:hover": {
+                              backgroundColor: "#C62828", // Darker red on hover
+                            },
+                            borderRadius: 1,
+                            padding: "10px 20px",
+                            width: "100%",
+                            textAlign: "left",
+                          }}
+                          component={Link}
+                          to="/ReStock"
+                        >
                           update store item stock
                         </Button>
-                        <Button color="inherit" component={Link} to="/PackageStatus">
+                        <Button
+                          sx={{
+                            backgroundColor: "#D32F2F",
+                            color: "white",
+                            "&:hover": {
+                              backgroundColor: "#C62828", // Darker red on hover
+                            },
+                            borderRadius: 1,
+                            padding: "10px 20px",
+                            width: "100%",
+                            textAlign: "left",
+                          }}
+                          component={Link}
+                          to="/PackageStatus"
+                        >
                           update status of a package
                         </Button>
                       </>
                     )}
-
-                  {/* RIGHT SIDE - Logout Button Stays Here */}
-                  {user && (
-                    <Button
-                      color="inherit"
-                      onClick={logout}
-                      style={{ color: "#FFD700" }}
-                    >
-                      🚪 Logout
-                    </Button>
-                  )}
-                </Toolbar>
-              </AppBar>
+                  </List>
+                </Box>
+              </Drawer>
 
               <Container style={{ marginTop: 20 }}>
                 <Routes>
@@ -315,8 +673,14 @@ const App = () => {
                       <Route path="/ReStock" element={<ReStock />} />
                       <Route path="/low_stock" element={<LowStockPage />} />
                       <Route path="/work-hours" element={<WorkHours />} />
-                      <Route path="/ClerkAddPackage" element={<ClerkAddPackage />} />
-                      <Route path="/PackageStatus" element={<PackageStatus />} />
+                      <Route
+                        path="/ClerkAddPackage"
+                        element={<ClerkAddPackage />}
+                      />
+                      <Route
+                        path="/PackageStatus"
+                        element={<PackageStatus />}
+                      />
                     </>
                   )}
                 </Routes>
@@ -324,7 +688,6 @@ const App = () => {
             </>
           )}
         </AuthContext.Consumer>
-      </Router>
     </AuthProvider>
   );
 };

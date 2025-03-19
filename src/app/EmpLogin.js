@@ -46,6 +46,7 @@ export default function CustLogin() {
 
       alert("🎉 Login successful!");
       navigate("/EmpDashboard"); // Use React Router for navigation
+      window.location.reload();
 
     } catch (err) {
       setError("❌ " + err.message);
