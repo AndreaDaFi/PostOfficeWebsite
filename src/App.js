@@ -25,11 +25,11 @@ import AddPO from "./app/AddPO";
 import AddMngr from "./app/AddMngr";
 import ViewPO from "./app/ViewPO";
 import ViewStaff from "./app/ViewStaff";
-import AddStore from "./app/AddStore";
+import AddStore from "./app/ManagerPages/AddStore";
 import ReStock from "./app/ReStock";
-import AddStaff from "./app/AddStaff";
-import MngrViewStaff from "./app/MngrViewStaff";
-import ViewStaffActivity from "./app/ViewStaffActivity";
+import AddStaff from "./app/ManagerPages/AddStaff";
+import MngrViewStaff from "./app/ManagerPages/MngrViewStaff";
+import ViewStaffActivity from "./app/ManagerPages/ViewStaffActivity";
 import PackageStatus from "./app/PackageStatus";
 import PackageDetails from "./app/PackageDetails";
 import CustSignup from "./app/CustSignup";
@@ -46,6 +46,7 @@ import Dashboard from "./app/Dashboard";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import EmpDashboard from "./app/EmpDashboard";
 import DropMenuButton from "./components/DropMenuButton";
+import ViewStore from "./app/ManagerPages/ViewStore";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -462,7 +463,7 @@ const App = () => {
                         <ListItem>
                           <DropMenuButton buttonText="online store" menuItems={
                           [{label:"ADD ITEMS TO STORE", to:"/AddStore"},
-                            {label:"VIEW CURRENT ITEMS FOR SALE"},
+                            {label:"VIEW CURRENT ITEMS FOR SALE", to:"/ViewStore"},
                             {label:"VIEW ONLINE STORE SALES"},
                             {label:"REMOVE ITEMS FROM THE STORE"}
                           ]}
@@ -472,7 +473,8 @@ const App = () => {
                           <DropMenuButton buttonText="Staff" menuItems={
                           [{label:"ADD A STAFF MEMBER", to:"/AddStaff"},
                             {label:"VIEW MY STAFF", to:"/MngrViewStaff"},
-                            {label:"VIEW MY STAFF ACTIVITY", to:"/ViewStaffActivity"}
+                            {label:"VIEW MY STAFF ACTIVITY", to:"/ViewStaffActivity"},
+                            {label:"FIRE STAFF MEMBER"}
                           ]}
                           />
                         </ListItem>
@@ -595,14 +597,9 @@ const App = () => {
                     <>
                       <Route path="/AddStore" element={<AddStore />} />
                       <Route path="/AddStaff" element={<AddStaff />} />
-                      <Route
-                        path="/MngrViewStaff"
-                        element={<MngrViewStaff />}
-                      />
-                      <Route
-                        path="/ViewStaffActivity"
-                        element={<ViewStaffActivity />}
-                      />
+                      <Route path="/MngrViewStaff" element={<MngrViewStaff />} />
+                      <Route path="/ViewStaffActivity" element={<ViewStaffActivity />} />
+                      <Route path="/ViewStore" element={<ViewStore />} />
                     </>
                   )}
 
