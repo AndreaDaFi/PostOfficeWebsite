@@ -20,7 +20,7 @@ export default function AddPO() {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/state_id");
+        const response = await fetch("https://vercel-api-powebapp.vercel.app/api/state_id");
         const result = await response.json();
 
         if (response.ok) {
