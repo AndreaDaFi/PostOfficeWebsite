@@ -1,47 +1,121 @@
-import React, { useState } from "react";
-import { Container, Typography, Paper, TextField, Button, MenuItem, Select, FormControl, InputLabel, Alert } from "@mui/material";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import {
+  Container,
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Alert,
+} from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 export default function AddStoreItem() {
-  const [itemName, setItemName] = useState("");
-  const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const { user } = useContext(AuthContext);
+
+  const [formData, setFormData] = useState({
+    itemName: "",
+    category: "",
+    price: "",
+    quantity: "",
+  });
+
   const [message, setMessage] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const categories = [
     "Packing Supplies",
     "Envelopes & Mailers",
     "Boxes & Sizes",
-    
   ];
 
-  const handleAddItem = () => {
-    if (!itemName) return setMessage({ type: "error", text: "⚠ Please enter the item name." });
-    if (!category) return setMessage({ type: "error", text: "⚠ Please select a category." });
-    if (!price) return setMessage({ type: "error", text: "⚠ Please enter the price." });
-    if (!quantity) return setMessage({ type: "error", text: "⚠ Please enter the quantity." });
+  const validateData = () =>{
+    if (!formData.itemName)
+      return "⚠ Please enter item name.";
+    if (formData.itemName.trim().length > 20)
+      return "⚠ item's name has to be less than 20 characters";
+    if (!formData.category)
+      return setMessage({ type: "error", text: "⚠ Please select a category" });
+    if (!formData.price || formData.price <= 0 || isNaN(formData.price))
+      return "⚠ Please enter valid price";
+    const quantity = parseInt(formData.quantity, 10);
+    if (!quantity || isNaN(quantity) || quantity <= 0 || quantity.toString() != formData.quantity)
+      return "⚠ Please enter valid quantity (positive integers only)";
+  }
 
-    setMessage({ type: "success", text: `✅ Item "${itemName}" added successfully!` });
-    setItemName("");
-    setCategory("");
-    setPrice("");
-    setQuantity("");
+  const handleAddItem = async () => {
+      
+    const errorMsg = validateData();
+    if (errorMsg) return setMessage({type:"error", text:errorMsg});
+
+    try {
+      const po_id = user?.po_id;
+      // adds this id to the data that needs to be passed to the api
+      const newItem = {
+        ...formData, // the actual employee data collected
+        po_id: po_id,
+      };
+      console.log('Form Data:', newItem);
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/AddStore", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItem),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) throw new Error(data.message || "item creation failed");
+
+    setFormData({
+      itemName: "",
+      category: "",
+      price: "",
+      quantity: "",
+    });
+    } catch (err) {
+      setMessage(err.message);
+    }
   };
 
   return (
     <Container style={{ marginTop: "20px", textAlign: "center" }}>
-      <Typography variant="h4" style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}>
+      <Typography
+        variant="h4"
+        style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}
+      >
         🛒 Add New Store Item
       </Typography>
-      <Typography variant="body1" style={{ color: "#555", marginBottom: "20px" }}>
-        Managers can add new items to the post office store.
+      <Typography
+        variant="body1"
+        style={{ color: "#555", marginBottom: "20px" }}
+      >
+        Add new items to your post office's online store and initialize their
+        stock
       </Typography>
 
-      <Paper elevation={3} style={{ padding: "30px", borderRadius: "12px", backgroundColor: "#FFF", maxWidth: "400px", margin: "0 auto" }}>
-        <AddShoppingCartIcon style={{ fontSize: "50px", color: "#D32F2F", marginBottom: "15px" }} />
+      <Paper
+        elevation={3}
+        style={{
+          padding: "30px",
+          borderRadius: "12px",
+          backgroundColor: "#FFF",
+          maxWidth: "400px",
+          margin: "0 auto",
+        }}
+      >
+        <AddShoppingCartIcon
+          style={{ fontSize: "50px", color: "#D32F2F", marginBottom: "15px" }}
+        />
 
         {/* Item Name Input */}
         <TextField
@@ -49,19 +123,40 @@ export default function AddStoreItem() {
           variant="outlined"
           label="Item Name"
           placeholder="Enter item name"
-          value={itemName}
-          onChange={(e) => setItemName(e.target.value)}
-          InputProps={{ startAdornment: <InventoryIcon style={{ marginRight: "10px", color: "#D32F2F" }} /> }}
-          style={{ marginBottom: "20px", backgroundColor: "#fff", borderRadius: "8px" }}
+          name="itemName"
+          value={formData.itemName}
+          onChange={handleChange}
+          helperText="Up to 20 characters"
+          InputProps={{
+            startAdornment: (
+              <InventoryIcon
+                style={{ marginRight: "10px", color: "#D32F2F" }}
+              />
+            ),
+          }}
+          style={{
+            marginBottom: "20px",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+          }}
         />
 
         {/* Select Category */}
-        <FormControl fullWidth variant="outlined" style={{ marginBottom: "20px" }}>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          style={{ marginBottom: "20px" }}
+        >
           <InputLabel>Category</InputLabel>
-          <Select value={category} onChange={(e) => setCategory(e.target.value)} label="Category">
-            {categories.map((cat, index) => (
-              <MenuItem key={index} value={cat}>
-                {cat}
+          <Select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            label="category"
+          >
+            {categories.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
               </MenuItem>
             ))}
           </Select>
@@ -74,10 +169,22 @@ export default function AddStoreItem() {
           label="Price ($)"
           placeholder="Enter price"
           type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          InputProps={{ startAdornment: <AttachMoneyIcon style={{ marginRight: "10px", color: "#D32F2F" }} /> }}
-          style={{ marginBottom: "20px", backgroundColor: "#fff", borderRadius: "8px" }}
+          name="price"
+          value={formData.price}
+          onChange={handleChange}
+          helperText="has to be a number (integer or decimal)"
+          InputProps={{
+            startAdornment: (
+              <AttachMoneyIcon
+                style={{ marginRight: "10px", color: "#D32F2F" }}
+              />
+            ),
+          }}
+          style={{
+            marginBottom: "20px",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+          }}
         />
 
         {/* Quantity Input */}
@@ -87,10 +194,22 @@ export default function AddStoreItem() {
           label="Stock Quantity"
           placeholder="Enter quantity"
           type="number"
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          InputProps={{ startAdornment: <InventoryIcon style={{ marginRight: "10px", color: "#D32F2F" }} /> }}
-          style={{ marginBottom: "20px", backgroundColor: "#fff", borderRadius: "8px" }}
+          name="quantity"
+          value={formData.quantity}
+          onChange={handleChange}
+          helperText="has to be an integer"
+          InputProps={{
+            startAdornment: (
+              <InventoryIcon
+                style={{ marginRight: "10px", color: "#D32F2F" }}
+              />
+            ),
+          }}
+          style={{
+            marginBottom: "20px",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+          }}
         />
 
         {/* Add Item Button */}
@@ -103,7 +222,7 @@ export default function AddStoreItem() {
             padding: "12px",
             fontSize: "16px",
             fontWeight: "bold",
-            borderRadius: "8px"
+            borderRadius: "8px",
           }}
           onClick={handleAddItem}
         >
@@ -111,7 +230,18 @@ export default function AddStoreItem() {
         </Button>
 
         {/* Success/Error Message */}
-        {message && <Alert severity={message.type} style={{ marginTop: "20px", backgroundColor: message.type === "error" ? "#FFCDD2" : "#E8F5E9", color: message.type === "error" ? "#B71C1C" : "#1B5E20" }}>{message.text}</Alert>}
+        {message && (
+          <Alert
+            severity={message.type}
+            style={{
+              marginTop: "20px",
+              backgroundColor: message.type === "error" ? "#FFCDD2" : "#E8F5E9",
+              color: message.type === "error" ? "#B71C1C" : "#1B5E20",
+            }}
+          >
+            {message.text}
+          </Alert>
+        )}
       </Paper>
     </Container>
   );
