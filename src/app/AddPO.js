@@ -156,8 +156,6 @@ export default function AddPO() {
     // Mark step as completed if it has a value
     if (value) {
       setCompleted((prev) => ({ ...prev, [stepIndex]: true }))
-
-      // REMOVED automatic advancement to next step
     } else {
       setCompleted((prev) => ({ ...prev, [stepIndex]: false }))
     }
@@ -204,8 +202,23 @@ export default function AddPO() {
     }
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Make a real API call to your backend
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/addPostOffice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(poData),
+      })
+
+      // Check if the response is successful
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to add post office")
+      }
+
+      const result = await response.json()
+      console.log("API Response:", result)
 
       setMessage({ type: "success", text: "Post Office added successfully!" })
       setFormSubmitted(true)
@@ -222,6 +235,7 @@ export default function AddPO() {
         })
       }, 5000)
     } catch (error) {
+      console.error("Error adding post office:", error)
       setMessage({ type: "error", text: `Error: ${error.message}` })
     } finally {
       setLoading(false)
@@ -398,6 +412,14 @@ export default function AddPO() {
           {message.text}
         </Alert>
       )}
+
+      {/* Debug Information - Remove in production */}
+      <Box sx={{ mt: 2, p: 2, bgcolor: "#f5f5f5", borderRadius: 1, display: "none" }}>
+        <Typography variant="caption">
+          API Endpoint: https://vercel-api-powebapp.vercel.app/api/addPostOffice
+        </Typography>
+        <pre style={{ fontSize: "12px", marginTop: "8px" }}>{JSON.stringify(poData, null, 2)}</pre>
+      </Box>
     </Container>
   )
 }
