@@ -64,12 +64,12 @@ export default function ViewStaff() {
   return (
     <Container style={{ marginTop: "20px", textAlign: "center" }}>
       <Typography variant="h4" style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}>
-        👥 View All Staff Members
+        View All Staff Members
       </Typography>
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="🔍 Search by name, ID, location ID, or role..."
+        placeholder="Search by name, ID, location ID, or role..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         InputProps={{

@@ -263,9 +263,14 @@ export default function AddStaff() {
     >
       <Container maxWidth="sm">
         <Paper
-          elevation={3}
-          style={{ padding: "30px", borderRadius: "12px", textAlign: "center" }}
-        >
+                elevation={5}
+                style={{
+                  padding: "20px",
+                  backgroundColor: "#FFF",
+                  maxWidth: "550px",
+                  marginLeft: "0",
+                }}
+              >
           <Typography variant="h5" style={{ fontWeight: "bold" }}>
             👨‍💼 Add New Staff Member
           </Typography>

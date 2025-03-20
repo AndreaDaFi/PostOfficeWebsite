@@ -9,11 +9,12 @@ import {
   Container,
   Drawer,
   List,
-  ListItem,
   Box,
   Divider,
   IconButton,
+  MenuItem, ListItem, Menu
 } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
 import CustLogin from "./app/CustLogin";
 import EmpLogin from "./app/EmpLogin";
 import Store from "./app/Store";
@@ -44,16 +45,11 @@ import WorkHours from "./app/h_w";
 import Dashboard from "./app/Dashboard";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import EmpDashboard from "./app/EmpDashboard";
+import DropMenuButton from "./components/DropMenuButton";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
-    useContext(AuthContext);
-
-  const [anchorElCustomer, setAnchorElCustomer] = useState(null);
-  const [anchorElAdmin, setAnchorElAdmin] = useState(null);
-  const [anchorElManager, setAnchorElManager] = useState(null);
-  const [anchorElClerk, setAnchorElClerk] = useState(null);
-  const [anchorElDriver, setAnchorElDriver] = useState(null);
+  useContext(AuthContext);
 
   const [openDrawer, setOpenDrawer] = useState(false);
   const navigate = useNavigate();
@@ -104,10 +100,12 @@ const App = () => {
                         display: "block",
                         height: "auto",
                         minWidth: "100px",
+                        display: "flex"
                       }}
                       onClick={goLogout}
                     >
                       Logout
+                      <LogoutIcon sx={{ marginLeft: "8px" }} />
                     </Button>
                   )}
                 </Toolbar>
@@ -130,6 +128,7 @@ const App = () => {
                 open={openDrawer}
                 onClose={toggleDrawer}
               >
+                <div style={{ height: "30px" }} />
                 <img
                   src={Cougar || "/placeholder.svg"}
                   alt="Logo"
@@ -461,80 +460,21 @@ const App = () => {
                     {user && isManager() && (
                       <>
                         <ListItem>
-                          <Button
-                            sx={{
-                              backgroundColor: "#D32F2F",
-                              color: "white",
-                              "&:hover": {
-                                backgroundColor: "#C62828", // Darker red on hover
-                              },
-                              borderRadius: 1,
-                              padding: "10px 20px",
-                              width: "100%",
-                              textAlign: "left",
-                            }}
-                            component={Link}
-                            to="/AddStore"
-                          >
-                            Add Items to Store
-                          </Button>
+                          <DropMenuButton buttonText="online store" menuItems={
+                          [{label:"ADD ITEMS TO STORE", to:"/AddStore"},
+                            {label:"VIEW CURRENT ITEMS FOR SALE"},
+                            {label:"VIEW ONLINE STORE SALES"},
+                            {label:"REMOVE ITEMS FROM THE STORE"}
+                          ]}
+                          />
                         </ListItem>
                         <ListItem>
-                          <Button
-                            sx={{
-                              backgroundColor: "#D32F2F",
-                              color: "white",
-                              "&:hover": {
-                                backgroundColor: "#C62828", // Darker red on hover
-                              },
-                              borderRadius: 1,
-                              padding: "10px 20px",
-                              width: "100%",
-                              textAlign: "left",
-                            }}
-                            component={Link}
-                            to="/AddStaff"
-                          >
-                            Add Staff Member
-                          </Button>
-                        </ListItem>
-                        <ListItem>
-                          <Button
-                            sx={{
-                              backgroundColor: "#D32F2F",
-                              color: "white",
-                              "&:hover": {
-                                backgroundColor: "#C62828", // Darker red on hover
-                              },
-                              borderRadius: 1,
-                              padding: "10px 20px",
-                              width: "100%",
-                              textAlign: "left",
-                            }}
-                            component={Link}
-                            to="/MngrViewStaff"
-                          >
-                            View My Staff
-                          </Button>
-                        </ListItem>
-                        <ListItem>
-                          <Button
-                            sx={{
-                              backgroundColor: "#D32F2F",
-                              color: "white",
-                              "&:hover": {
-                                backgroundColor: "#C62828", // Darker red on hover
-                              },
-                              borderRadius: 1,
-                              padding: "10px 20px",
-                              width: "100%",
-                              textAlign: "left",
-                            }}
-                            component={Link}
-                            to="/ViewStaffActivity"
-                          >
-                            View Staff Activity
-                          </Button>
+                          <DropMenuButton buttonText="Staff" menuItems={
+                          [{label:"ADD A STAFF MEMBER", to:"/AddStaff"},
+                            {label:"VIEW MY STAFF", to:"/MngrViewStaff"},
+                            {label:"VIEW MY STAFF ACTIVITY", to:"/ViewStaffActivity"}
+                          ]}
+                          />
                         </ListItem>
                       </>
                     )}
