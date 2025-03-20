@@ -85,6 +85,7 @@ export default function AddPO() {
           variant="outlined"
           value={poData.city_name}
           onChange={handleFieldChange}
+          placeholder="Enter city name"
           InputProps={{
             startAdornment: <LocationCityIcon sx={{ mr: 1, color: "text.secondary" }} />,
           }}
@@ -123,6 +124,7 @@ export default function AddPO() {
           variant="outlined"
           value={poData.zip}
           onChange={handleFieldChange}
+          placeholder="5-digit zip code"
           error={poData.zip !== "" && !/^\d{5}$/.test(poData.zip)}
           helperText={poData.zip !== "" && !/^\d{5}$/.test(poData.zip) ? "Zip code must be 5 digits" : ""}
           InputProps={{
@@ -155,10 +157,7 @@ export default function AddPO() {
     if (value) {
       setCompleted((prev) => ({ ...prev, [stepIndex]: true }))
 
-      // If this is the current active step, move to the next step
-      if (stepIndex === activeStep && activeStep < steps.length - 1) {
-        setActiveStep(activeStep + 1)
-      }
+      // REMOVED automatic advancement to next step
     } else {
       setCompleted((prev) => ({ ...prev, [stepIndex]: false }))
     }
