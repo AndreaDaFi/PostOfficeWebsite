@@ -1,3 +1,4 @@
+"use client"
 
 import { useState, useEffect } from "react"
 import {
@@ -102,6 +103,8 @@ export default function AddPO() {
           variant="outlined"
           value={poData.street}
           onChange={handleFieldChange}
+          placeholder="Enter full street address (e.g., 123 Main Street)"
+          inputProps={{ maxLength: 100 }}
           InputProps={{
             startAdornment: <HomeIcon sx={{ mr: 1, color: "text.secondary" }} />,
           }}
