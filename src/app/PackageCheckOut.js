@@ -25,7 +25,7 @@ export default function PackageCheckout() {
       try {
         console.log("origin address id:", payload.origin_address_id);
         const response = await fetch(
-          `http://localhost:3000/api/GetTax?address_id=${payload.origin_address_id}`
+          `https://vercel-api-powebapp.vercel.app/api/GetTax?address_id=${payload.origin_address_id}`
         );
         const data = await response.json();
 
