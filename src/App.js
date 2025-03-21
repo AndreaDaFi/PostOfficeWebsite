@@ -47,6 +47,7 @@ import { AuthProvider, AuthContext } from "./context/AuthContext";
 import EmpDashboard from "./app/EmpDashboard";
 import DropMenuButton from "./components/DropMenuButton";
 import ViewStore from "./app/ManagerPages/ViewStore";
+import StoreSales from "./app/ManagerPages/StoreSales";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -464,8 +465,8 @@ const App = () => {
                           <DropMenuButton buttonText="online store" menuItems={
                           [{label:"ADD ITEMS TO STORE", to:"/AddStore"},
                             {label:"VIEW CURRENT ITEMS FOR SALE", to:"/ViewStore"},
-                            {label:"VIEW ONLINE STORE SALES"},
-                            {label:"REMOVE ITEMS FROM THE STORE"}
+                            {label:"VIEW ONLINE STORE SALES", to:"/StoreSales"},
+                            {label:"REMOVE ITEMS FROM STORE"}
                           ]}
                           />
                         </ListItem>
@@ -600,6 +601,7 @@ const App = () => {
                       <Route path="/MngrViewStaff" element={<MngrViewStaff />} />
                       <Route path="/ViewStaffActivity" element={<ViewStaffActivity />} />
                       <Route path="/ViewStore" element={<ViewStore />} />
+                      <Route path="/StoreSales" element={<StoreSales />} />
                     </>
                   )}
 

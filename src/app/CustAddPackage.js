@@ -111,12 +111,12 @@ export default function CustomerPackageEntry() {
     }
 
     // Add fragile charge
-    if (packageData.fragile) basePrice += 25;
+    if (packageData.fragile) basePrice += 5;
 
     // Add insurance charge
-    if (packageData.insurance) basePrice += 50;
+    if (packageData.insurance) basePrice += 10;
 
-    if (packageData.fastdelivery) basePrice += 30;
+    if (packageData.fastdelivery) basePrice += 12;
 
 
     // Add service charge
@@ -336,15 +336,15 @@ export default function CustomerPackageEntry() {
         {/* Extra Services */}
         <FormControlLabel
           control={<Checkbox checked={packageData.fragile} onChange={(e) => setPackageData({ ...packageData, fragile: e.target.checked })} />}
-          label="Fragile Item (+$25)"
+          label="Fragile Item (+$5)"
         />
         <FormControlLabel
           control={<Checkbox checked={packageData.insurance} onChange={(e) => setPackageData({ ...packageData, insurance: e.target.checked })} />}
-          label="Add Insurance (+$50)"
+          label="Add Insurance (+$10)"
         />
         <FormControlLabel
           control={<Checkbox checked={packageData.fastdelivery} onChange={(e) => setPackageData({ ...packageData, fastdelivery : e.target.checked })} />}
-          label="fast delivery (+$30)"
+          label="fast delivery (+$12)"
         />
 
         {/* Total Price */}

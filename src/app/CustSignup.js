@@ -187,8 +187,8 @@ export default function CustSignin() {
                 <InputLabel>Security Question</InputLabel>
                 <Select name="securityQuestion" value={formData.securityQuestion} onChange={handleChange}>
                   <MenuItem value="Pet name">Pet name?</MenuItem>
-                  <MenuItem value="Mother name">Mother name?</MenuItem>
-                  <MenuItem value="Favorite book">Favorite book?</MenuItem>
+                  <MenuItem value="Moms name">Mother name?</MenuItem>
+                  <MenuItem value="Fav book">Favorite book?</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

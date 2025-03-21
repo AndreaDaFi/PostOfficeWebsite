@@ -28,7 +28,7 @@ export default function ViewStore() {
       const po_id = user?.po_id; // Get the manager's ID
       try {
         const response = await fetch(
-          `http://localhost:3001/api/ViewStore?po_id=${po_id}`,
+          `http://localhost:3001/api/StoreSales?po_id=${po_id}`,
           {
             method: "GET", // Use GET method
           }
