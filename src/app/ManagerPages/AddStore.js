@@ -41,8 +41,8 @@ export default function AddStoreItem() {
 
   const validateData = () => {
     if (!formData.itemName) return "⚠ Please enter item name.";
-    if (formData.itemName.trim().length > 20)
-      return "⚠ item's name has to be less than 20 characters";
+    if (formData.itemName.trim().length > 45)
+      return "⚠ item's name has to be less than 45 characters";
     if (!formData.category)
       return setMessage({ type: "error", text: "⚠ Please select a category" });
     if (!formData.price || formData.price <= 0 || isNaN(formData.price))
@@ -134,7 +134,7 @@ export default function AddStoreItem() {
           name="itemName"
           value={formData.itemName}
           onChange={handleChange}
-          helperText="Up to 20 characters"
+          helperText="Up to 45 characters"
           InputProps={{
             startAdornment: (
               <InventoryIcon

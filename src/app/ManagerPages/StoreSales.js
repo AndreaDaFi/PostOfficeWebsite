@@ -28,7 +28,7 @@ export default function ViewStore() {
       const po_id = user?.po_id; // Get the manager's ID
       try {
         const response = await fetch(
-          `http://localhost:3001/api/StoreSales?po_id=${po_id}`,
+          `https://vercel-api-powebapp.vercel.app/api/StoreSales?po_id=${po_id}`,
           {
             method: "GET", // Use GET method
           }
@@ -55,7 +55,7 @@ export default function ViewStore() {
 
   // Filter items based on the search input
   const filteredItems = items.filter((item) =>
-    `${item.item_name} ${item.item_price} ${item.stock} ${item.item_category}`
+    `${item.transactions_id} ${item.total_amount} ${item.transaction_date} ${item.total_tax} ${item.customers_id_fk} ${item.packages_tracking_number}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
@@ -66,14 +66,13 @@ export default function ViewStore() {
         variant="h4"
         style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}
       >
-        All items currently for sale
+        packages in the system
       </Typography>
       <Typography
         variant="body1"
         style={{ color: "#555", marginBottom: "20px" }}
       >
-        The following shows all items currently available for sale at your post office location. If you'd like to alter
-        this selection, please visit "add items to store" or "remove items from store"
+        all packages currently in the system alongside their their data.
       </Typography>
       <TextField
         fullWidth
@@ -118,13 +117,16 @@ export default function ViewStore() {
               <TableHead>
                 <TableRow style={{ backgroundColor: "#D32F2F" }}>
                   <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
-                    NAME
+                    TRANSACTION ID
                   </TableCell>
                   <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
-                    PRICE
+                    TOTAL AMOUNT
                   </TableCell>
                   <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
-                    STOCK
+                    TOTAL WITH NO TAX
+                  </TableCell>
+                  <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
+                    TRRANSACTION DATE
                   </TableCell>
                   <TableCell style={{ color: "#FFF", fontWeight: "bold" }}>
                     CATEGORY
@@ -135,10 +137,10 @@ export default function ViewStore() {
                 {filteredItems.length > 0 ? (
                   filteredItems.map((item, index) => (
                     <TableRow key={index} hover>
-                      <TableCell>{item.item_name}</TableCell>
-                      <TableCell>{item.item_price}</TableCell>
-                      <TableCell>{item.stock}</TableCell>
-                      <TableCell>{item.item_category}</TableCell>
+                      <TableCell>{item.transactions_id}</TableCell>
+                      <TableCell>{item.total_amount}</TableCell>
+                      <TableCell>{(item.total_amount - item.total_tax).toFixed(2)}</TableCell>
+                      <TableCell>{item.transaction_date}</TableCell>
                     </TableRow>
                   ))
                 ) : (

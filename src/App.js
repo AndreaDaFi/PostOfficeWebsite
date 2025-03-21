@@ -461,11 +461,17 @@ const App = () => {
                     {/* Manager Pages */}
                     {user && isManager() && (
                       <>
+                      <ListItem>
+                          <DropMenuButton buttonText="Package statistics" menuItems={
+                          [{label:"PACKAGES REPORT", to:"/StoreSales"}
+                          ]}
+                          />
+                        </ListItem>
                         <ListItem>
                           <DropMenuButton buttonText="online store" menuItems={
                           [{label:"ADD ITEMS TO STORE", to:"/AddStore"},
                             {label:"VIEW CURRENT ITEMS FOR SALE", to:"/ViewStore"},
-                            {label:"VIEW ONLINE STORE SALES", to:"/StoreSales"},
+                            {label:"VIEW ONLINE STORE SALES"},
                             {label:"REMOVE ITEMS FROM STORE"}
                           ]}
                           />
