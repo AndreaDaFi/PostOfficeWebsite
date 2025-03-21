@@ -224,7 +224,7 @@ export default function CustomerPackageEntry() {
         (w) => w.value === parseFloat(packageData.weight)
       );
       const selectedSize = sizeOptions.find(
-        (s) => s.label === packageData.size
+        (s) => s.value === packageData.size
       );
       basePrice = (selectedWeight?.price || 0) + (selectedSize?.price || 0);
     }
