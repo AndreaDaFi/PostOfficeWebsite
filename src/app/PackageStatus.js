@@ -17,23 +17,35 @@ export default function UpdatePackageStatus() {
     "Out for Delivery",
     "Delivered",
     "Returned",
-    "missing"
+    "issing"
   ];
 
   const handleUpdateStatus = async () => {
     setError(null);
     setSuccessMessage(null);
-
+  
     if (!trackingNumber.trim()) return setError("⚠ Please enter the tracking number.");
     if (!employeeId.trim()) return setError("⚠ Please enter the employee ID.");
     if (!status.trim()) return setError("⚠ Please select a package status.");
-
+  
     try {
-      setSuccessMessage("✅ Package status updated successfully!");
+      const response = await fetch("http://localhost:3000/api/updatePackage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trackingNumber, employeeId, status }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) throw new Error(data.error || "Failed to update package status.");
+  
+      setSuccessMessage(data.message);
     } catch (err) {
       setError(err.message);
     }
   };
+
+  
 
   return (
     <Container maxWidth="sm" sx={{ p: 3 }}>
