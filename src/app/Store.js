@@ -1,5 +1,4 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
@@ -27,8 +26,10 @@ import {
   KeyboardArrowDown,
   LocalShipping,
 } from "@mui/icons-material";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Store() {
+  const { user } = useContext(AuthContext);
   const [cart, setCart] = useState([]);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [expandedSections, setExpandedSections] = useState({});
@@ -53,7 +54,7 @@ export default function Store() {
       if (!selectedPostOffice) return;
       try {
         const response = await fetch(
-          `http://localhost:3001/api/ViewStore?po_id=${selectedPostOffice}`,
+          `https://vercel-api-powebapp.vercel.app/api/ViewStore?po_id=${selectedPostOffice}`,
           {
             method: "GET",
           }
@@ -82,14 +83,19 @@ export default function Store() {
           }, {});
 
           // Convert grouped items into the storeItems format
-          const updatedStoreItems = Object.keys(groupedItems).map((category) => {
-            return {
-              category: category === "Boxes & Sizes" ? "Boxes & Sizes" : 
-                        category === "Packing Supplies" ? "Packing Supplies" : 
-                        "Envelopes & Mailers",
-              items: groupedItems[category],
-            };
-          });
+          const updatedStoreItems = Object.keys(groupedItems).map(
+            (category) => {
+              return {
+                category:
+                  category === "Boxes & Sizes"
+                    ? "Boxes & Sizes"
+                    : category === "Packing Supplies"
+                    ? "Packing Supplies"
+                    : "Envelopes & Mailers",
+                items: groupedItems[category],
+              };
+            }
+          );
 
           setStoreItems(updatedStoreItems);
         } else {
@@ -115,10 +121,8 @@ export default function Store() {
     setExpandedSections(initialExpandedState);
   }, []);
 
-  // Calculate cart total
   const cartTotal = cart.reduce((total, item) => {
-    const price = Number.parseFloat(item.price.replace("$", ""));
-    return total + price * item.quantity;
+    return total + item.price * item.quantity;
   }, 0);
 
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
@@ -183,23 +187,6 @@ export default function Store() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Success Alert */}
-      <Collapse in={showSuccessAlert}>
-        <Alert
-          icon={<CheckCircle fontSize="inherit" />}
-          severity="success"
-          sx={{
-            mb: 2,
-            borderRadius: 2,
-            "& .MuiAlert-icon": {
-              color: primaryRed,
-            },
-          }}
-        >
-          Item added to cart successfully!
-        </Alert>
-      </Collapse>
-
       {/* Header */}
       <Box sx={{ textAlign: "center", mb: 4 }}>
         <Typography
@@ -221,12 +208,151 @@ export default function Store() {
             mx: "auto",
           }}
         >
-          Find all your packaging and mailing essentials in one place!
+          Please select your items and head to the checkout!
         </Typography>
       </Box>
 
       {/* Cart Summary */}
-      <Paper
+      {loading && (
+        <div>
+          <Typography
+            variant="h5"
+            sx={{
+              color: "text.secondary",
+              maxWidth: "700px",
+              mx: "auto",
+            }}
+          >
+            Loading...
+          </Typography>
+        </div>
+      )}
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: "column"
+        }}
+      >
+        <Box>
+        {/* Store Items */}
+        {storeItems.map((section, index) => (
+          <Paper
+            key={index}
+            elevation={3}
+            sx={{
+              p: 3,
+              mb: 4,
+              borderRadius: 2,
+              overflow: "hidden",
+              border: `1px solid ${lightRed}`,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                cursor: "pointer",
+                mb: expandedSections[index] ? 2 : 0,
+              }}
+              onClick={() => toggleSection(index)}
+            >
+              <Typography
+                variant="h4"
+                component="h2"
+                sx={{
+                  fontWeight: "bold",
+                  color: primaryRed,
+                }}
+              >
+                {section.category}
+              </Typography>
+              <IconButton>
+                {expandedSections[index] ? (
+                  <KeyboardArrowUp />
+                ) : (
+                  <KeyboardArrowDown />
+                )}
+              </IconButton>
+            </Box>
+
+            <Collapse in={expandedSections[index]}>
+              <Grid container spacing={3}>
+                {section.items.map((item, idx) => (
+                  <Grid item xs={12} sm={6} md={4} key={idx}>
+                    <Card
+                      sx={{
+                        height: "100%",
+                        borderRadius: 2,
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          transform: "translateY(-5px)",
+                          boxShadow: 4,
+                        },
+                        border: `1px solid ${lightRed}`,
+                      }}
+                    >
+                      <CardContent sx={{ p: 3 }}>
+                        <Typography
+                          variant="h6"
+                          component="h3"
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#333",
+                            mb: 1,
+                          }}
+                        >
+                          {item.name}
+                        </Typography>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mt: "auto",
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontWeight: "bold",
+                              color: primaryRed,
+                            }}
+                          >
+                            {item.price}
+                          </Typography>
+
+                          <Button
+                            variant="contained"
+                            onClick={() =>
+                              handleAddToCart({
+                                ...item,
+                                id: item.id || `${section.category}-${idx}`,
+                              })
+                            }
+                            sx={{
+                              bgcolor: primaryRed,
+                              "&:hover": { bgcolor: secondaryRed },
+                            }}
+                            startIcon={<Add />}
+                          >
+                            Add
+                          </Button>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Collapse>
+          </Paper>
+        ))}
+</Box>
+
+        <Paper
         elevation={3}
         sx={{
           p: 3,
@@ -247,18 +373,7 @@ export default function Store() {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Badge
-              badgeContent={cartItemCount}
-              color="error"
-              sx={{
-                "& .MuiBadge-badge": {
-                  bgcolor: primaryRed,
-                  fontWeight: "bold",
-                },
-              }}
-            >
-              <ShoppingCart sx={{ color: primaryRed, mr: 2, fontSize: 28 }} />
-            </Badge>
+            <ShoppingCart sx={{ color: primaryRed, mr: 2, fontSize: 28 }} />
             <Box>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 Your Cart
@@ -314,10 +429,7 @@ export default function Store() {
                         gutterBottom
                       >
                         {item.price} × {item.quantity} = $
-                        {(
-                          Number.parseFloat(item.price.replace("$", "")) *
-                          item.quantity
-                        ).toFixed(2)}
+                        {(item.price * item.quantity).toFixed(2)}
                       </Typography>
                       <Box
                         sx={{
@@ -362,203 +474,6 @@ export default function Store() {
           </>
         )}
       </Paper>
-
-      {/* Store Items */}
-      {storeItems.map((section, index) => (
-        <Paper
-          key={index}
-          elevation={3}
-          sx={{
-            p: 3,
-            mb: 4,
-            borderRadius: 2,
-            overflow: "hidden",
-            border: `1px solid ${lightRed}`,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              cursor: "pointer",
-              mb: expandedSections[index] ? 2 : 0,
-            }}
-            onClick={() => toggleSection(index)}
-          >
-            <Typography
-              variant="h4"
-              component="h2"
-              sx={{
-                fontWeight: "bold",
-                color: primaryRed,
-              }}
-            >
-              {section.category}
-            </Typography>
-            <IconButton>
-              {expandedSections[index] ? (
-                <KeyboardArrowUp />
-              ) : (
-                <KeyboardArrowDown />
-              )}
-            </IconButton>
-          </Box>
-
-          <Collapse in={expandedSections[index]}>
-            <Grid container spacing={3}>
-              {section.items.map((item, idx) => (
-                <Grid item xs={12} sm={6} md={4} key={idx}>
-                  <Card
-                    sx={{
-                      height: "100%",
-                      borderRadius: 2,
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        transform: "translateY(-5px)",
-                        boxShadow: 4,
-                      },
-                      border: `1px solid ${lightRed}`,
-                    }}
-                  >
-                    <CardContent sx={{ p: 3 }}>
-                      <Typography
-                        variant="h6"
-                        component="h3"
-                        sx={{
-                          fontWeight: "bold",
-                          color: "#333",
-                          mb: 1,
-                        }}
-                      >
-                        {item.name}
-                      </Typography>
-
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mt: "auto",
-                        }}
-                      >
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: "bold",
-                            color: primaryRed,
-                          }}
-                        >
-                          {item.price}
-                        </Typography>
-
-                        <Button
-                          variant="contained"
-                          onClick={() =>
-                            handleAddToCart({
-                              ...item,
-                              id: item.id || `${section.category}-${idx}`,
-                            })
-                          }
-                          sx={{
-                            bgcolor: primaryRed,
-                            "&:hover": { bgcolor: secondaryRed },
-                          }}
-                          startIcon={<Add />}
-                        >
-                          Add
-                        </Button>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Collapse>
-        </Paper>
-      ))}
-
-      {/* Store Benefits */}
-      <Paper
-        sx={{
-          p: 3,
-          mb: 4,
-          borderRadius: 2,
-          bgcolor: "#f9f9f9",
-          border: `1px solid ${lightRed}`,
-        }}
-      >
-        <Typography
-          variant="h5"
-          component="h2"
-          gutterBottom
-          sx={{
-            fontWeight: "bold",
-            color: primaryRed,
-            mb: 3,
-            textAlign: "center",
-          }}
-        >
-          Why Shop With Us
-        </Typography>
-
-        <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: "center" }}>
-              <Chip
-                label="Fast Shipping"
-                sx={{
-                  bgcolor: lightRed,
-                  color: primaryRed,
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  py: 2,
-                  px: 1,
-                }}
-                icon={<LocalShipping sx={{ color: primaryRed }} />}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: "center" }}>
-              <Chip
-                label="Quality Products"
-                sx={{
-                  bgcolor: lightRed,
-                  color: primaryRed,
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  py: 2,
-                  px: 1,
-                }}
-                icon={<CheckCircle sx={{ color: primaryRed }} />}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ textAlign: "center" }}>
-              <Chip
-                label="Bulk Discounts"
-                sx={{
-                  bgcolor: lightRed,
-                  color: primaryRed,
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  py: 2,
-                  px: 1,
-                }}
-                icon={<ShoppingCart sx={{ color: primaryRed }} />}
-              />
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      <Box sx={{ mt: 4, textAlign: "center" }}>
-        <Typography variant="body2" color="text.secondary">
-          © {new Date().getFullYear()} Cougar Post Office Store. All rights
-          reserved.
-        </Typography>
       </Box>
     </Container>
   );

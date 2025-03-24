@@ -268,28 +268,9 @@ const App = () => {
                               textAlign: "left",
                             }}
                             component={Link}
-                            to="/store"
-                          >
-                            Store
-                          </Button>
-                        </ListItem>
-                        <ListItem>
-                          <Button
-                            sx={{
-                              backgroundColor: "#D32F2F",
-                              color: "white",
-                              "&:hover": {
-                                backgroundColor: "#C62828", // Darker red on hover
-                              },
-                              borderRadius: 1,
-                              padding: "10px 20px",
-                              width: "100%",
-                              textAlign: "left",
-                            }}
-                            component={Link}
                             to="/ask-store-location"
                           >
-                            Select Store Location
+                            Store
                           </Button>
                         </ListItem>
                         <ListItem>
@@ -374,7 +355,9 @@ const App = () => {
                           >
                             Employee Dashboard
                           </Button>
-                          <Button
+                        </ListItem>
+                        <ListItem>
+                        <Button
                             sx={{
                               backgroundColor: "#D32F2F",
                               color: "white",
@@ -391,7 +374,7 @@ const App = () => {
                           >
                             Record my work hours
                           </Button>
-                        </ListItem>
+                          </ListItem>
                       </>
                     )}
 

@@ -24,7 +24,7 @@ export default function LowStockPage() {
     const fetchPostOffices = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3001/api/CustAddPackage"
+          "https://vercel-api-powebapp.vercel.app/api/CustAddPackage"
         ); // Your API endpoint
         const result = await response.json();
 
@@ -55,7 +55,7 @@ export default function LowStockPage() {
            Choose Your Store
         </Typography>
         <Typography variant="body1" style={{ marginBottom: "25px", color: "#555" }}>
-          Different locations will have different items available. Please select your Post Office location to see available items.
+          Different locations will have different items available. Please select a Post Office location to see available items.
         </Typography>
 
         <Grid item xs={6}>
