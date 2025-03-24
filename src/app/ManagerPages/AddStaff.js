@@ -272,7 +272,7 @@ export default function AddStaff() {
                 }}
               >
           <Typography variant="h5" style={{ fontWeight: "bold" }}>
-            👨‍💼 Add New Staff Member
+            Add New Staff Member
           </Typography>
           <Typography variant="body2" color="textSecondary">
             Add a new staff member to the system.
