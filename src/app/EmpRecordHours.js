@@ -1,19 +1,35 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext'; // Assuming AuthContext is defined elsewhere
 
-function EmpRecordHours() {
+const EmpRecordHours = () => {
   const [date, setDate] = useState('');
   const [hours, setHours] = useState('');
-  const { employeeId, postOfficeId } = useContext(AuthContext); // Fetching IDs from AuthContext
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext); // Fetching user object from AuthContext
+
+  useEffect(() => {
+    if (!user?.employees_id || !user?.po_id) {
+      setError("⚠ Missing employee ID or post office ID.");
+      setLoading(false);
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!date || !hours) {
+      setError("⚠ Please fill in both date and hours worked.");
+      return;
+    }
+
+    setLoading(true);
+
     const data = {
       date,
       hours,
-      employees_id: employeeId,
-      po_id: postOfficeId,
+      employees_id: user.employees_id,
+      po_id: user.po_id,
     };
 
     try {
@@ -26,13 +42,14 @@ function EmpRecordHours() {
       });
 
       const result = await response.json();
-      if (result.success) {
-        alert('Hours recorded successfully!');
-      } else {
-        alert(`Error: ${result.error}`);
-      }
-    } catch (error) {
-      console.error('Error submitting data:', error);
+      if (!response.ok) throw new Error(result.error || "Failed to record hours");
+
+      setError(null);
+      alert('Hours recorded successfully!');
+    } catch (err) {
+      setError("❌ " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,10 +77,11 @@ function EmpRecordHours() {
           />
         </label>
         <br />
+        {error && <div style={{ color: 'red' }}>{error}</div>}
         <button type="submit">Submit</button>
       </form>
     </div>
   );
-}
+};
 
 export default EmpRecordHours;
