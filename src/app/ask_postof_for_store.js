@@ -1,17 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Paper, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
+  Alert,
+  Grid,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function LowStockPage() {
-  const [locations, setLocations] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedPostOffice, setSelectedPostOffice] = useState("");
+  const [postOffices, setPostOffices] = useState([]);
+  const [error, setError] = useState(null);
+
 
   useEffect(() => {
-    fetch("https://your-api-url.com/locations")
-      .then(res => res.json())
-      .then(data => setLocations(data))
-      .catch(err => console.error("Failed to fetch locations", err));
+    // Fetch data from the API when the component mounts
+    const fetchPostOffices = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/CustAddPackage"
+        ); // Your API endpoint
+        const result = await response.json();
+
+        if (result.success) {
+          setPostOffices(result.data); // Set the fetched data to state
+        } else {
+          setError("Failed to load post office data.");
+        }
+      } catch (error) {
+        setError(error.message); // Set error if fetch fails
+      }
+    };
+
+    fetchPostOffices();
   }, []);
+
+  const handlePostOfficeChange = (e) => {
+    const selectedPoId = e.target.value;
+    console.log("Selected Post Office ID:", selectedPoId);  // Debugging line
+    setSelectedPostOffice(selectedPoId);  // Update state with selected post office ID
+  };
+
 
   return (
     <Container maxWidth="sm" style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
@@ -20,33 +55,38 @@ export default function LowStockPage() {
            Choose Your Store
         </Typography>
         <Typography variant="body1" style={{ marginBottom: "25px", color: "#555" }}>
-          Select your Post Office location to see available items.
+          Different locations will have different items available. Please select your Post Office location to see available items.
         </Typography>
 
-        <FormControl fullWidth variant="outlined" style={{ marginBottom: "20px" }}>
-          <InputLabel style={{ color: "#d32f2f" }}>Select Location</InputLabel>
-          <Select
-            value={selectedLocation}
-            label="Select Location"
-            onChange={(e) => setSelectedLocation(e.target.value)}
+        <Grid item xs={6}>
+          <TextField
+            select
+            fullWidth
+            label="Select Post Office"
+            value={selectedPostOffice}
+            onChange={handlePostOfficeChange}
           >
-            {locations.map((location) => (
-              <MenuItem key={location.id} value={location.id}>{location.name}</MenuItem>
-            ))}
-            <MenuItem value="Texas">Houston</MenuItem>
-            <MenuItem value="California">Los Angeles</MenuItem>
-            <MenuItem value="Florida">Orlando</MenuItem>
-          </Select>
-        </FormControl>
+            {/* Show a loading message while postOffices is empty or undefined */}
+            {postOffices.length === 0 ? (
+              <MenuItem disabled>No Post Offices Available</MenuItem>
+            ) : (
+              postOffices.map((po) => (
+                <MenuItem key={po.po_id} value={po.po_id}>
+                  {po.address}
+                </MenuItem>
+              ))
+            )}
+          </TextField>
+        </Grid>
 
         <Button
           component={Link}
-          to={`/Store?location=${selectedLocation}`}
+          to={`/Store?selectedPostOffice=${selectedPostOffice}`}
           variant="contained"
           style={{ padding: "12px 30px", fontSize: "16px", backgroundColor: "#d32f2f", color: "#ffffff", borderRadius: "8px" }}
-          disabled={!selectedLocation}
+          disabled={!selectedPostOffice}
         >
-          🛒 Visit Store
+          view Store
         </Button>
       </Paper>
     </Container>
