@@ -61,7 +61,7 @@ export default function UpdatePackageStatus() {
           fullWidth
           label="Employee ID"
           name="employeeId"
-          inputProps={{ maxLength: 6 }}
+          
           onChange={(e) => setEmployeeId(e.target.value)}
           sx={{ mt: 2 }}
           InputProps={{
@@ -80,7 +80,7 @@ export default function UpdatePackageStatus() {
           fullWidth
           label="Tracking Number"
           name="trackingNumber"
-          inputProps={{ maxLength: 10 }}
+          
           onChange={(e) => setTrackingNumber(e.target.value)}
           sx={{ mt: 2 }}
           InputProps={{
