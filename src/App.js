@@ -49,6 +49,7 @@ import DropMenuButton from "./components/DropMenuButton";
 import ViewStore from "./app/ManagerPages/ViewStore";
 import StoreSales from "./app/ManagerPages/StoreSales";
 import ViewPOPackages from "./app/ViewPOPackages";
+import EmpRecordHours from "./app/EmpRecordHours";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -373,6 +374,23 @@ const App = () => {
                           >
                             Employee Dashboard
                           </Button>
+                          <Button
+                            sx={{
+                              backgroundColor: "#D32F2F",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "#C62828", // Darker red on hover
+                              },
+                              borderRadius: 1,
+                              padding: "10px 20px",
+                              width: "100%",
+                              textAlign: "left",
+                            }}
+                            component={Link}
+                            to="/EmpRecordHours"
+                          >
+                            Record my work hours
+                          </Button>
                         </ListItem>
                       </>
                     )}
@@ -566,6 +584,7 @@ const App = () => {
                   {user && !isCustomer() && (
                     <>
                       <Route path="/EmpDashboard" element={<EmpDashboard />} />
+                      <Route path="/EmpRecordHours" element={<EmpRecordHours />} />
                     </>
                   )}
 
