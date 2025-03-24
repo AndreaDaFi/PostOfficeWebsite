@@ -48,6 +48,7 @@ import EmpDashboard from "./app/EmpDashboard";
 import DropMenuButton from "./components/DropMenuButton";
 import ViewStore from "./app/ManagerPages/ViewStore";
 import StoreSales from "./app/ManagerPages/StoreSales";
+import ViewPOPackages from "./app/ViewPOPackages";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -525,6 +526,23 @@ const App = () => {
                         >
                           update status of a package
                         </Button>
+                        <Button
+                          sx={{
+                            backgroundColor: "#D32F2F",
+                            color: "white",
+                            "&:hover": {
+                              backgroundColor: "#C62828", // Darker red on hover
+                            },
+                            borderRadius: 1,
+                            padding: "10px 20px",
+                            width: "100%",
+                            textAlign: "left",
+                          }}
+                          component={Link}
+                          to="/ViewPOPackages"
+                        >
+                          View packages at my location
+                        </Button>
                       </>
                     )}
                   </List>
@@ -618,6 +636,7 @@ const App = () => {
                       <Route path="/ReStock" element={<ReStock />} />
                       <Route path="/low_stock" element={<LowStockPage />} />
                       <Route path="/work-hours" element={<WorkHours />} />
+                      <Route path="/ViewPOPackages" element={<ViewPOPackages />} />
                       <Route
                         path="/ClerkAddPackage"
                         element={<ClerkAddPackage />}
