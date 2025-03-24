@@ -1,3 +1,266 @@
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Container,
+  Typography,
+  Grid,
+  Paper,
+  Card,
+  CardContent,
+  Box,
+  Button,
+  IconButton,
+  Divider,
+  Badge,
+  Collapse,
+  Alert,
+} from "@mui/material";
+import { ShoppingCart, Add, Remove, DeleteOutline, CheckCircle } from "@mui/icons-material";
+
+export default function StorePage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const selectedLocation = queryParams.get("location"); // Get the 'location' query parameter
+
+  // Mock data for items and their quantities based on the store
+  const storeData = {
+    Texas: [
+      { id: 1, name: "Item A", description: "High-quality item A.", price: "$5.00", quantity: 10 },
+      { id: 2, name: "Item B", description: "Durable item B.", price: "$3.00", quantity: 5 },
+    ],
+    California: [
+      { id: 1, name: "Item A", description: "High-quality item A.", price: "$5.00", quantity: 7 },
+      { id: 2, name: "Item B", description: "Durable item B.", price: "$3.00", quantity: 3 },
+    ],
+    Florida: [
+      { id: 1, name: "Item A", description: "High-quality item A.", price: "$5.00", quantity: 12 },
+      { id: 2, name: "Item B", description: "Durable item B.", price: "$3.00", quantity: 8 },
+    ],
+  };
+
+  // Get the items for the selected store, or default to an empty array
+  const items = storeData[selectedLocation] || [];
+
+  // Cart state
+  const [cart, setCart] = useState([]);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
+  // Add item to cart
+  const handleAddToCart = (item) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
+      if (existingItem) {
+        return prevCart.map((cartItem) =>
+          cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
+        );
+      } else {
+        return [...prevCart, { ...item, quantity: 1 }];
+      }
+    });
+
+    // Show success alert
+    setShowSuccessAlert(true);
+    setTimeout(() => setShowSuccessAlert(false), 2000);
+  };
+
+  // Remove item from cart
+  const handleRemoveFromCart = (item) => {
+    setCart((prevCart) => {
+      const existingItemIndex = prevCart.findIndex((cartItem) => cartItem.id === item.id);
+      if (existingItemIndex >= 0) {
+        const updatedCart = [...prevCart];
+        updatedCart[existingItemIndex].quantity -= 1;
+        if (updatedCart[existingItemIndex].quantity === 0) {
+          updatedCart.splice(existingItemIndex, 1);
+        }
+        return updatedCart;
+      }
+      return prevCart;
+    });
+  };
+
+  // Delete item from cart
+  const handleDeleteFromCart = (item) => {
+    setCart((prevCart) => prevCart.filter((cartItem) => cartItem.id !== item.id));
+  };
+
+  //Checkout
+  const handleCheckout = () => {
+    navigate("/checkout", { state: { cart, selectedLocation } });
+  };
+
+  // Calculate cart total
+  const cartTotal = cart.reduce((total, item) => {
+    const price = Number.parseFloat(item.price.replace("$", ""));
+    return total + price * item.quantity;
+  }, 0);
+
+  const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
+
+  return (
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      {/* Success Alert */}
+      <Collapse in={showSuccessAlert}>
+        <Alert
+          icon={<CheckCircle fontSize="inherit" />}
+          severity="success"
+          sx={{
+            mb: 2,
+            borderRadius: 2,
+            "& .MuiAlert-icon": {
+              color: "#D32F2F",
+            },
+          }}
+        >
+          Item added to cart successfully!
+        </Alert>
+      </Collapse>
+
+      {/* Header */}
+      <Box sx={{ textAlign: "center", mb: 4 }}>
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{
+            fontWeight: "bold",
+            color: "#D32F2F",
+            mb: 1,
+          }}
+        >
+          📦 {selectedLocation ? `Store: ${selectedLocation}` : "Unknown Store"}
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: "text.secondary",
+            maxWidth: "700px",
+            mx: "auto",
+          }}
+        >
+          Browse items available at this location.
+        </Typography>
+      </Box>
+
+      {/* Cart Summary */}
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3,
+          mb: 4,
+          borderRadius: 2,
+          border: `1px solid #FFCDD2`,
+        }}
+      >
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Badge
+              badgeContent={cartItemCount}
+              color="error"
+              sx={{
+                "& .MuiBadge-badge": {
+                  bgcolor: "#D32F2F",
+                  fontWeight: "bold",
+                },
+              }}
+            >
+              <ShoppingCart sx={{ color: "#D32F2F", mr: 2, fontSize: 28 }} />
+            </Badge>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                Your Cart
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {cartItemCount} {cartItemCount === 1 ? "item" : "items"} - Total: ${cartTotal.toFixed(2)}
+              </Typography>
+            </Box>
+          </Box>
+          <Button
+            variant="contained"
+            disabled={cart.length === 0}
+            onClick={handleCheckout}
+            sx={{
+              bgcolor: "#D32F2F",
+              "&:hover": { bgcolor: "#B71C1C" },
+              fontWeight: "bold",
+              px: 3,
+            }}
+            startIcon={<ShoppingCart />}
+          >
+            Checkout
+          </Button>
+        </Box>
+      </Paper>
+
+      {/* Store Items */}
+      <Grid container spacing={3}>
+        {items.map((item) => (
+          <Grid item xs={12} sm={6} md={4} key={item.id}>
+            <Card
+              sx={{
+                height: "100%",
+                borderRadius: 2,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  transform: "translateY(-5px)",
+                  boxShadow: 4,
+                },
+                border: `1px solid #FFCDD2`,
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Typography
+                  variant="h6"
+                  component="h3"
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#333",
+                    mb: 1,
+                  }}
+                >
+                  {item.name}
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  {item.description}
+                </Typography>
+
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: "auto" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: "bold",
+                      color: "#D32F2F",
+                    }}
+                  >
+                    {item.price}
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    onClick={() => handleAddToCart(item)}
+                    sx={{
+                      bgcolor: "#D32F2F",
+                      "&:hover": { bgcolor: "#B71C1C" },
+                    }}
+                    startIcon={<Add />}
+                  >
+                    Add
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
+  );
+}
+
+
+
+
+/*  CURRENT SHIT
 "use client"
 
 import { useState, useEffect } from "react"
@@ -136,8 +399,9 @@ export default function Store() {
   const lightRed = "#FFCDD2"
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Success Alert */}
+    <Container maxWidth="lg" sx={{ py: 4 }}>  */
+     // {/* Success Alert */ }
+      /* CURRENT SHIT
       <Collapse in={showSuccessAlert}>
         <Alert
           icon={<CheckCircle fontSize="inherit" />}
@@ -153,8 +417,9 @@ export default function Store() {
           Item added to cart successfully!
         </Alert>
       </Collapse>
-
-      {/* Header */}
+        */
+      //{/* Header */}
+      /* CURRENT SHIT
       <Box sx={{ textAlign: "center", mb: 4 }}>
         <Typography
           variant="h3"
@@ -178,8 +443,9 @@ export default function Store() {
           Find all your packaging and mailing essentials in one place!
         </Typography>
       </Box>
-
-      {/* Cart Summary */}
+        */
+      //{/* Cart Summary */}
+      /*CURRENT SHIT
       <Paper
         elevation={3}
         sx={{
@@ -282,8 +548,9 @@ export default function Store() {
           </>
         )}
       </Paper>
-
-      {/* Store Items */}
+        */
+      //{/* Store Items */}
+      /* CURRENT SHIT
       {storeItems.map((section, index) => (
         <Paper
           key={index}
@@ -383,8 +650,9 @@ export default function Store() {
           </Collapse>
         </Paper>
       ))}
-
-      {/* Store Benefits */}
+      */
+      //{/* Store Benefits */}
+      /* CURRENT SHIT
       <Paper
         sx={{
           p: 3,
@@ -468,4 +736,4 @@ export default function Store() {
     </Container>
   )
 }
-
+*/

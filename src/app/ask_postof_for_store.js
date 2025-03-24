@@ -33,9 +33,9 @@ export default function LowStockPage() {
             {locations.map((location) => (
               <MenuItem key={location.id} value={location.id}>{location.name}</MenuItem>
             ))}
-            <MenuItem value="testing1">Texas</MenuItem>
-            <MenuItem value="testing2">California</MenuItem>
-            <MenuItem value="testing3">New York</MenuItem>
+            <MenuItem value="Texas">Houston</MenuItem>
+            <MenuItem value="California">Los Angeles</MenuItem>
+            <MenuItem value="Florida">Orlando</MenuItem>
           </Select>
         </FormControl>
 

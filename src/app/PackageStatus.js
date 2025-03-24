@@ -17,23 +17,35 @@ export default function UpdatePackageStatus() {
     "Out for Delivery",
     "Delivered",
     "Returned",
-    "missing"
+    "issing"
   ];
 
   const handleUpdateStatus = async () => {
     setError(null);
     setSuccessMessage(null);
-
+  
     if (!trackingNumber.trim()) return setError("⚠ Please enter the tracking number.");
     if (!employeeId.trim()) return setError("⚠ Please enter the employee ID.");
     if (!status.trim()) return setError("⚠ Please select a package status.");
-
+  
     try {
-      setSuccessMessage("✅ Package status updated successfully!");
+      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/updatePackage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trackingNumber, employeeId, status }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) throw new Error(data.error || "Failed to update package status.");
+  
+      setSuccessMessage(data.message);
     } catch (err) {
       setError(err.message);
     }
   };
+
+  
 
   return (
     <Container maxWidth="sm" sx={{ p: 3 }}>
@@ -49,7 +61,7 @@ export default function UpdatePackageStatus() {
           fullWidth
           label="Employee ID"
           name="employeeId"
-          inputProps={{ maxLength: 6 }}
+          
           onChange={(e) => setEmployeeId(e.target.value)}
           sx={{ mt: 2 }}
           InputProps={{
@@ -68,7 +80,7 @@ export default function UpdatePackageStatus() {
           fullWidth
           label="Tracking Number"
           name="trackingNumber"
-          inputProps={{ maxLength: 10 }}
+          
           onChange={(e) => setTrackingNumber(e.target.value)}
           sx={{ mt: 2 }}
           InputProps={{
