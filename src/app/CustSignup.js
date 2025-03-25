@@ -111,7 +111,7 @@ export default function CustSignin() {
     }}>
       <Container maxWidth="sm">
         <Paper elevation={3} style={{ padding: "30px", borderRadius: "12px", textAlign: "center" }}>
-          <Typography variant="h5" style={{ fontWeight: "bold" }}>📦 Customer Sign-Up</Typography>
+          <Typography variant="h5" style={{ fontWeight: "bold" }}>Customer Sign-Up</Typography>
           <Typography variant="body2" color="textSecondary">Create an account to continue.</Typography>
 
           {error && <Alert severity="error" style={{ marginTop: "15px" }}>{error}</Alert>}
@@ -198,12 +198,12 @@ export default function CustSignin() {
             </Grid>
           </Grid>
 
-          <Button fullWidth variant="contained" color="primary" style={{ marginTop: "20px", padding: "12px" }} onClick={handleSignup}>
+          <Button fullWidth variant="contained" sx={{ marginTop: "20px", padding: "12px", backgroundColor: "#C8102E" }} onClick={handleSignup}>
             SIGN UP
           </Button>
 
           <Typography variant="body2" style={{ marginTop: "15px" }}>
-            Already have an account? <Link href="/cust-login">Sign In</Link>
+            Already have an account? <Link href="/cust-login" style={{ color: "#C8102E" }}>Sign In</Link>
           </Typography>
         </Paper>
       </Container>
