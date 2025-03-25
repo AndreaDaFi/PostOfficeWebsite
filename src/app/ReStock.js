@@ -60,7 +60,7 @@ export default function ReStock() {
     }
 
     if (isNaN(newStock) || newStock <= 0) {
-      return setError("⚠ Stock quantity must be a positive number.");
+      return setError("⚠ stock quantity must be a positive number.");
     }
 
     try {
