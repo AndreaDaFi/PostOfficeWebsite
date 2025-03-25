@@ -626,7 +626,7 @@ const Home = () => {
                   fontSize: { xs: "0.95rem", md: "1rem" },
                 }}
               >
-                With thousands of hundreds accross the U.S., there's always a post office near you
+                With hundreds of locations accross the U.S., there's always a post office near you
               </Typography>
             </Grid>
             <Grid item xs={12} md={6} sx={{ textAlign: "center" }}>
