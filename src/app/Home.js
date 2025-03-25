@@ -244,15 +244,14 @@ const Home = () => {
                   maxWidth: "90%",
                 }}
               >
-                Fast, secure, and reliable postal services for all your shipping needs. Track packages, find locations,
-                and more with Cougar Post.
+                Fast, secure, and reliable postal services for all your shipping needs. You can trust us to deliver your packages in a timely manner!
               </Typography>
               <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
                 <Button
                   variant="contained"
                   size={isMobile ? "medium" : "large"}
                   component={Link}
-                  to="/cust-signup"
+                  to="/CustSignup"
                   sx={{
                     backgroundColor: "white",
                     color: primaryRed,
@@ -265,24 +264,6 @@ const Home = () => {
                   }}
                 >
                   Get Started
-                </Button>
-                <Button
-                  variant="outlined"
-                  size={isMobile ? "medium" : "large"}
-                  component={Link}
-                  to="/store"
-                  sx={{
-                    borderColor: "white",
-                    color: "white",
-                    "&:hover": { borderColor: "white", backgroundColor: "rgba(255,255,255,0.1)" },
-                    fontWeight: "bold",
-                    px: { xs: 3, md: 4 },
-                    py: { xs: 1, md: 1.5 },
-                    borderRadius: 2,
-                    borderWidth: 2,
-                  }}
-                >
-                  Learn More
                 </Button>
               </Box>
             </Grid>
@@ -304,105 +285,9 @@ const Home = () => {
           </Grid>
         </Paper>
 
-        {/* Stats Section */}
-        <Box sx={{ mb: { xs: 6, md: 10 } }}>
-          <Grid container spacing={{ xs: 2, md: 4 }} justifyContent="center">
-            <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
-                <CardContent>
-                  <Typography
-                    variant={isMobile ? "h4" : "h3"}
-                    sx={{
-                      color: primaryRed,
-                      fontWeight: "bold",
-                      mb: 1,
-                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
-                    }}
-                  >
-                    5M+
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Packages Delivered
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
-                <CardContent>
-                  <Typography
-                    variant={isMobile ? "h4" : "h3"}
-                    sx={{
-                      color: primaryRed,
-                      fontWeight: "bold",
-                      mb: 1,
-                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
-                    }}
-                  >
-                    98%
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    On-time Delivery
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
-                <CardContent>
-                  <Typography
-                    variant={isMobile ? "h4" : "h3"}
-                    sx={{
-                      color: primaryRed,
-                      fontWeight: "bold",
-                      mb: 1,
-                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
-                    }}
-                  >
-                    1,200+
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Locations
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <Card sx={{ textAlign: "center", py: { xs: 2, md: 3 }, boxShadow: 3, height: "100%" }}>
-                <CardContent>
-                  <Typography
-                    variant={isMobile ? "h4" : "h3"}
-                    sx={{
-                      color: primaryRed,
-                      fontWeight: "bold",
-                      mb: 1,
-                      fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
-                    }}
-                  >
-                    24/7
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Customer Support
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
-
         {/* Services Section */}
         <Box sx={{ my: { xs: 6, md: 10 } }}>
           <Box sx={{ textAlign: "center", mb: { xs: 4, md: 6 } }}>
-            <Chip
-              label="OUR SERVICES"
-              size="small"
-              sx={{
-                backgroundColor: lightRed,
-                color: primaryRed,
-                fontWeight: "bold",
-                mb: 2,
-              }}
-            />
             <Typography
               variant="h3"
               component="h2"
@@ -425,7 +310,7 @@ const Home = () => {
                 },
               }}
             >
-              What We Offer
+              Our Services
             </Typography>
             <Typography
               variant="body1"
@@ -493,16 +378,16 @@ const Home = () => {
                     gutterBottom
                     sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "1.25rem", md: "1.5rem" } }}
                   >
-                    Package Shipping
+                    Ship packages
                   </Typography>
                   <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                    Send packages domestically and internationally with our reliable shipping services. We offer
+                    Send packages within the U.S. with our reliable shipping services. We offer
                     competitive rates and fast delivery times.
                   </Typography>
                   <Button
                     variant="outlined"
                     component={Link}
-                    to="/CustAddPackage"
+                    to="/cust-login"
                     sx={{
                       borderColor: primaryRed,
                       color: primaryRed,
@@ -567,28 +452,11 @@ const Home = () => {
                     gutterBottom
                     sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "1.25rem", md: "1.5rem" } }}
                   >
-                    Mail Services
+                    Stay updated
                   </Typography>
                   <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                    From letters to postcards, we offer a variety of mail services to meet your needs. Reliable delivery
-                    for all your correspondence.
+                  You can view your packages and their status at any time, and stay up to date on their current whereabouts.
                   </Typography>
-                  <Button
-                    variant="outlined"
-                    component={Link}
-                    to="/CustAddPackage"
-                    sx={{
-                      borderColor: primaryRed,
-                      color: primaryRed,
-                      "&:hover": {
-                        backgroundColor: primaryRed,
-                        color: "white",
-                        borderColor: primaryRed,
-                      },
-                    }}
-                  >
-                    Learn More
-                  </Button>
                 </CardContent>
               </Card>
             </Grid>
@@ -641,16 +509,15 @@ const Home = () => {
                     gutterBottom
                     sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "1.25rem", md: "1.5rem" } }}
                   >
-                    Post Office Locations
+                    Online store
                   </Typography>
                   <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                    Find the nearest post office location with our easy-to-use locator tool. Thousands of locations
-                    nationwide to serve you.
+                  Buy any shipping materials you could ever need through our online store!
                   </Typography>
                   <Button
                     variant="outlined"
                     component={Link}
-                    to="/ViewPO"
+                    to="/cust-login"
                     sx={{
                       borderColor: primaryRed,
                       color: primaryRed,
@@ -694,16 +561,6 @@ const Home = () => {
         >
           <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
             <Grid item xs={12} md={6} sx={{ position: "relative", zIndex: 1 }}>
-              <Chip
-                label="PACKAGE TRACKING"
-                size="small"
-                sx={{
-                  backgroundColor: lightRed,
-                  color: primaryRed,
-                  fontWeight: "bold",
-                  mb: 2,
-                }}
-              />
               <Typography
                 variant="h3"
                 component="h2"
@@ -724,162 +581,8 @@ const Home = () => {
                   fontSize: { xs: "0.95rem", md: "1rem" },
                 }}
               >
-                Enter your tracking number to get real-time updates on your package's location and delivery status. Our
-                advanced tracking system provides accurate information at every step.
+                You'll always have access to your package locations through our website. Just log in, and you'll have access to anything you could need.
               </Typography>
-              <Box sx={{ maxWidth: 800 }}>
-                <Box
-                  sx={{
-                    borderBottom: 1,
-                    borderColor: "divider",
-                    mb: 3,
-                  }}
-                >
-                  <Tabs
-                    value={tabValue}
-                    onChange={handleTabChange}
-                    variant={isMobile ? "fullWidth" : "standard"}
-                    sx={{
-                      "& .MuiTab-root": {
-                        fontWeight: "bold",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                      "& .Mui-selected": {
-                        color: primaryRed,
-                      },
-                      "& .MuiTabs-indicator": {
-                        backgroundColor: primaryRed,
-                        height: 3,
-                      },
-                    }}
-                  >
-                    <Tab label="Track Package" />
-                    <Tab label="Shipping Estimate" />
-                  </Tabs>
-                </Box>
-                <TabPanel value={tabValue} index={0}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 1,
-                      backgroundColor: "white",
-                      p: { xs: 2, md: 3 },
-                      borderRadius: 2,
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-                      flexDirection: { xs: "column", sm: "row" },
-                    }}
-                  >
-                    <TextField
-                      fullWidth
-                      placeholder="Enter tracking number"
-                      variant="outlined"
-                      InputProps={{
-                        startAdornment: (
-                          <Box component="span" sx={{ color: "text.secondary", mr: 1 }}>
-                            <LocalShipping fontSize="small" />
-                          </Box>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: 2,
-                        },
-                      }}
-                    />
-                    <Button
-                      variant="contained"
-                      component={Link}
-                      to="/TrackPackage"
-                      sx={{
-                        backgroundColor: primaryRed,
-                        "&:hover": { backgroundColor: secondaryRed },
-                        px: 3,
-                        borderRadius: 2,
-                        fontWeight: "bold",
-                        minWidth: { xs: "100%", sm: "auto" },
-                        mt: { xs: 1, sm: 0 },
-                      }}
-                      startIcon={<Search />}
-                    >
-                      Track
-                    </Button>
-                  </Box>
-                </TabPanel>
-                <TabPanel value={tabValue} index={1}>
-                  <Box
-                    sx={{
-                      backgroundColor: "white",
-                      p: { xs: 2, md: 3 },
-                      borderRadius: 2,
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-                    }}
-                  >
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          placeholder="From ZIP code"
-                          variant="outlined"
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: 2,
-                            },
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          placeholder="To ZIP code"
-                          variant="outlined"
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderRadius: 2,
-                            },
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: 1,
-                            flexDirection: { xs: "column", sm: "row" },
-                          }}
-                        >
-                          <TextField
-                            fullWidth
-                            placeholder="Package weight (lbs)"
-                            variant="outlined"
-                            sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                              },
-                            }}
-                          />
-                          <Button
-                            variant="contained"
-                            component={Link}
-                            to="/PackageCheckOut"
-                            sx={{
-                              backgroundColor: primaryRed,
-                              "&:hover": { backgroundColor: secondaryRed },
-                              px: 3,
-                              borderRadius: 2,
-                              fontWeight: "bold",
-                              minWidth: { xs: "100%", sm: "auto" },
-                              mt: { xs: 1, sm: 0 },
-                            }}
-                            startIcon={<CarIcon />}
-                          >
-                            Calculate
-                          </Button>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </TabPanel>
-              </Box>
             </Grid>
             <Grid item xs={12} md={6}>
               <Box
@@ -903,16 +606,6 @@ const Home = () => {
         <Box sx={{ my: { xs: 6, md: 10 } }}>
           <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Chip
-                label="FIND US"
-                size="small"
-                sx={{
-                  backgroundColor: lightRed,
-                  color: primaryRed,
-                  fontWeight: "bold",
-                  mb: 2,
-                }}
-              />
               <Typography
                 variant="h3"
                 component="h2"
@@ -933,74 +626,8 @@ const Home = () => {
                   fontSize: { xs: "0.95rem", md: "1rem" },
                 }}
               >
-                With thousands of locations nationwide, there's always a post office near you. Use our locator to find
-                the closest one and get directions, hours, and available services.
+                With thousands of hundreds accross the U.S., there's always a post office near you
               </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 1,
-                  maxWidth: 400,
-                  backgroundColor: "white",
-                  p: { xs: 2, md: 3 },
-                  borderRadius: 2,
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-                  flexDirection: { xs: "column", sm: "row" },
-                }}
-              >
-                <TextField
-                  fullWidth
-                  placeholder="Enter ZIP code"
-                  variant="outlined"
-                  InputProps={{
-                    startAdornment: (
-                      <Box component="span" sx={{ color: "text.secondary", mr: 1 }}>
-                        <LocationIcon fontSize="small" />
-                      </Box>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 2,
-                    },
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  component={Link}
-                  to="/ViewPO"
-                  sx={{
-                    backgroundColor: primaryRed,
-                    "&:hover": { backgroundColor: secondaryRed },
-                    borderRadius: 2,
-                    fontWeight: "bold",
-                    minWidth: { xs: "100%", sm: "auto" },
-                    mt: { xs: 1, sm: 0 },
-                  }}
-                >
-                  Find
-                </Button>
-              </Box>
-              <Box sx={{ mt: 3, display: "flex", gap: 2, flexWrap: "wrap" }}>
-                <Chip
-                  icon={<CheckCircle sx={{ fontSize: "1rem !important" }} />}
-                  label="Extended Hours"
-                  size="small"
-                  sx={{ backgroundColor: "#f0f0f0" }}
-                />
-                <Chip
-                  icon={<CheckCircle sx={{ fontSize: "1rem !important" }} />}
-                  label="Package Pickup"
-                  size="small"
-                  sx={{ backgroundColor: "#f0f0f0" }}
-                />
-                <Chip
-                  icon={<CheckCircle sx={{ fontSize: "1rem !important" }} />}
-                  label="Self-Service"
-                  size="small"
-                  sx={{ backgroundColor: "#f0f0f0" }}
-                />
-              </Box>
             </Grid>
             <Grid item xs={12} md={6} sx={{ textAlign: "center" }}>
               <Box
@@ -1041,310 +668,7 @@ const Home = () => {
           },
         }}
       >
-        <Container maxWidth={false} sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-          <Grid container spacing={{ xs: 3, md: 4 }}>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <Mail sx={{ color: primaryRed, mr: 1, fontSize: { xs: 24, md: 30 } }} />
-                <Typography
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: primaryRed,
-                    fontWeight: "bold",
-                    letterSpacing: "0.5px",
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: { xs: "1.25rem", md: "1.5rem" },
-                  }}
-                >
-                  COUGAR
-                  <Box
-                    component="span"
-                    sx={{
-                      backgroundColor: primaryRed,
-                      color: "white",
-                      px: 1,
-                      ml: 1,
-                      borderRadius: 1,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    POST
-                  </Box>
-                </Typography>
-              </Box>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                Your reliable postal service partner for all your shipping and mailing needs. We deliver packages and
-                mail with care, speed, and reliability.
-              </Typography>
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <IconButton size={isMobile ? "small" : "medium"} sx={{ color: primaryRed }}>
-                  <Phone />
-                </IconButton>
-                <IconButton size={isMobile ? "small" : "medium"} sx={{ color: primaryRed }}>
-                  <Email />
-                </IconButton>
-                <IconButton size={isMobile ? "small" : "medium"} sx={{ color: primaryRed }}>
-                  <LocationIcon />
-                </IconButton>
-              </Box>
-            </Grid>
-            <Grid item xs={6} sm={6} md={2}>
-              <Typography
-                variant="h6"
-                gutterBottom
-                sx={{ fontWeight: "bold", fontSize: { xs: "1rem", md: "1.25rem" } }}
-              >
-                Quick Links
-              </Typography>
-              <List dense disablePadding>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/TrackPackage" style={{ textDecoration: "none", color: "inherit" }}>
-                        Track Package
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/ViewPO" style={{ textDecoration: "none", color: "inherit" }}>
-                        Find Locations
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/PackageCheckOut" style={{ textDecoration: "none", color: "inherit" }}>
-                        Shipping Rates
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
-                        Schedule Pickup
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={6} sm={6} md={2}>
-              <Typography
-                variant="h6"
-                gutterBottom
-                sx={{ fontWeight: "bold", fontSize: { xs: "1rem", md: "1.25rem" } }}
-              >
-                Services
-              </Typography>
-              <List dense disablePadding>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
-                        Domestic Shipping
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
-                        International Shipping
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/CustAddPackage" style={{ textDecoration: "none", color: "inherit" }}>
-                        Mail Services
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 1 }}>
-                  <ListItemText
-                    primary={
-                      <Link to="/store" style={{ textDecoration: "none", color: "inherit" }}>
-                        Business Solutions
-                      </Link>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        "&:hover": { color: primaryRed },
-                        cursor: "pointer",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Typography
-                variant="h6"
-                gutterBottom
-                sx={{ fontWeight: "bold", fontSize: { xs: "1rem", md: "1.25rem" } }}
-              >
-                Contact Us
-              </Typography>
-              <List dense disablePadding>
-                <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
-                    <HomeIcon fontSize="small" sx={{ color: primaryRed }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="123 Postal Ave, City, State 12345"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontWeight: "medium",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
-                    <Mail fontSize="small" sx={{ color: primaryRed }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="support@cougarpost.com"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontWeight: "medium",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
-                    <ClockIcon fontSize="small" sx={{ color: primaryRed }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Mon-Fri: 8AM-6PM, Sat: 9AM-1PM"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontWeight: "medium",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ pb: 2 }}>
-                  <ListItemIcon sx={{ minWidth: { xs: 30, md: 36 } }}>
-                    <Phone fontSize="small" sx={{ color: primaryRed }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="1-800-COUGAR-POST"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontWeight: "medium",
-                        fontSize: { xs: "0.875rem", md: "1rem" },
-                      },
-                    }}
-                  />
-                </ListItem>
-              </List>
-            </Grid>
-          </Grid>
-          <Divider sx={{ my: { xs: 3, md: 4 } }} />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="body2" color="textSecondary" align="center">
-              © {new Date().getFullYear()} Cougar Post. All rights reserved.
-            </Typography>
-            <Box sx={{ display: "flex", gap: 2, mt: { xs: 2, md: 0 } }}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                sx={{ cursor: "pointer", "&:hover": { color: primaryRed } }}
-              >
-                Privacy Policy
-              </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                sx={{ cursor: "pointer", "&:hover": { color: primaryRed } }}
-              >
-                Terms of Service
-              </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                sx={{ cursor: "pointer", "&:hover": { color: primaryRed } }}
-              >
-                Sitemap
-              </Typography>
-            </Box>
-          </Box>
-        </Container>
+        
       </Box>
     </>
   )
