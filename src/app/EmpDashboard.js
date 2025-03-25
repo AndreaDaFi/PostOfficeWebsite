@@ -66,34 +66,6 @@ const EmpDashboard = () => {
         pb: 8,
       }}
     >
-      {/* Help Button - Fixed Position */}
-      <Box
-        sx={{
-          position: "fixed",
-          bottom: 30,
-          right: 30,
-          zIndex: 1000,
-        }}
-      >
-        <Button
-          variant="contained"
-          startIcon={<HelpIcon />}
-          onClick={handleEmailSupport}
-          sx={{
-            bgcolor: "#ff0000",
-            "&:hover": {
-              bgcolor: "#cc0000",
-            },
-            borderRadius: 28,
-            px: 3,
-            py: 1.5,
-            boxShadow: "0 4px 12px rgba(255, 0, 0, 0.3)",
-          }}
-        >
-          Get Help
-        </Button>
-      </Box>
-
       <Container maxWidth="md">
         {/* Logo and Branding */}
         <Box sx={{ textAlign: "center", mb: 4 }}>
@@ -226,64 +198,13 @@ const EmpDashboard = () => {
                   color: "#ff0000",
                 }}
               >
-                Welcome to CougarPost
+                Welcome back
               </Typography>
             </Box>
 
             <Typography variant="body1" sx={{ fontSize: "1.1rem", mb: 3, lineHeight: 1.6 }}>
-            This dashboard is designed to streamline your postal operations, whether you're handling shipments, tracking deliveries, or managing mailing services. Easily access the tools you need to stay organized and efficient.
+            At CougarPost, we acknowledge that it's people like you that keep the business running. Keep up the good work!
             </Typography>
-
-            <Box
-              sx={{
-                p: 3,
-                bgcolor: "rgba(255, 0, 0, 0.05)",
-                borderRadius: 4,
-                border: "1px solid rgba(255, 0, 0, 0.1)",
-                display: "flex",
-                alignItems: "center",
-                mb: 3,
-              }}
-            >
-              <MapPinIcon sx={{ fontSize: 24, color: "#ff0000", mr: 2, flexShrink: 0 }} />
-              <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              At CougarPost, we know that efficiency drives success. Stay ahead, keep things moving, and make every delivery count. Your work keeps the world connected let’s make it seamless together.
-              </Typography>
-            </Box>
-
-            {/* Email Support Section */}
-            <Box
-              sx={{
-                p: 3,
-                bgcolor: "rgba(255, 0, 0, 0.05)", // Changed from darker red to lighter
-                borderRadius: 4,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", mb: { xs: 2, sm: 0 } }}>
-                <MailIcon sx={{ fontSize: 24, color: "#ff0000", mr: 2, flexShrink: 0 }} />
-                <Typography variant="body1" sx={{ fontWeight: "medium" }}>
-                  Need assistance with your postal services? Contact us.
-                </Typography>
-              </Box>
-              <Button
-                variant="contained"
-                onClick={handleEmailSupport}
-                sx={{
-                  bgcolor: "#ff0000",
-                  "&:hover": {
-                    bgcolor: "#cc0000",
-                  },
-                  borderRadius: 4,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Email Support
-              </Button>
-            </Box>
           </CardContent>
         </Card>
 
@@ -313,37 +234,6 @@ const EmpDashboard = () => {
             </Button>
           </Box>
         )}
-
-        <Box
-          sx={{
-            textAlign: "center",
-            mt: 8,
-            p: 3,
-            borderRadius: 4,
-            bgcolor: "rgba(255, 0, 0, 0.05)",
-          }}
-        >
-          <Typography variant="body2" sx={{ color: "#ff0000" }}>
-            © {new Date().getFullYear()} CougarPost • All rights reserved
-          </Typography>
-          <Typography
-            variant="body2"
-            component="a"
-            onClick={handleEmailSupport}
-            sx={{
-              color: "#ff0000",
-              mt: 1,
-              display: "inline-block",
-              cursor: "pointer",
-              textDecoration: "underline",
-              "&:hover": {
-                color: "#cc0000",
-              },
-            }}
-          >
-            support@cougarpost.com
-          </Typography>
-        </Box>
       </Container>
     </Box>
   )

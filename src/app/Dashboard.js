@@ -353,7 +353,7 @@ export default function Dashboard() {
                   variant="contained"
                   color="error"
                   size="large"
-                  onClick={() => navigate("/store")}
+                  onClick={() => navigate("/ask-store-location")}
                   sx={{
                     fontWeight: "bold",
                     py: { xs: 1, sm: 1.5 },
@@ -495,54 +495,6 @@ export default function Dashboard() {
             }}
           >
             SHIP A NEW PACKAGE
-          </Button>
-        </Paper>
-
-        {/* Help & Support */}
-        <Paper
-          elevation={3}
-          sx={{
-            p: { xs: 2, sm: 3 },
-            borderRadius: { xs: 2, sm: 3 },
-            bgcolor: "#ffebee",
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: { xs: 2, sm: 2 },
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              alignItems: { xs: "center", sm: "center" },
-              gap: 2,
-              textAlign: { xs: "center", sm: "left" },
-            }}
-          >
-            <Avatar sx={{ bgcolor: "#d32f2f" }}>
-              <Help />
-            </Avatar>
-            <Box>
-              <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}>
-                Need Help?
-              </Typography>
-              <Typography variant="body2">Our support team is available 24/7 to assist you.</Typography>
-            </Box>
-          </Box>
-          <Button
-            variant="contained"
-            color="error"
-            href="mailto:cougarpost@hotmail.com"
-            sx={{
-              fontWeight: "bold",
-              borderRadius: { xs: 1, sm: 2 },
-              boxShadow: "0 4px 12px rgba(211, 47, 47, 0.3)",
-              alignSelf: { xs: "stretch", sm: "center" },
-            }}
-          >
-            CONTACT SUPPORT
           </Button>
         </Paper>
       </Container>
