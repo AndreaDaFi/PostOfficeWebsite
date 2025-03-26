@@ -83,7 +83,7 @@ export default function CustLogin() {
   const handleResetPassword = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/CustEmailExists?email=${email}`,
+        `https://vercel-api-powebapp.vercel.app/api/CustEmailExists?email=${email}`,
         {
           method: "GET",
         }
@@ -111,7 +111,7 @@ export default function CustLogin() {
   const handleNewPass = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/CustNewPass",
+        "https://vercel-api-powebapp.vercel.app/api/CustNewPass",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -271,7 +271,11 @@ export default function CustLogin() {
 
           {isNewPassMode && (
             <>
-            <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ fontWeight: "bold" }}
+              >
                 Security Question
               </Typography>
               <Typography variant="body2" style={{ marginBottom: "20px" }}>
