@@ -20,6 +20,10 @@ export default function CustLogin() {
   const [error, setError] = useState(null);
   const [resetMessage, setResetMessage] = useState(null);
   const [isResetMode, setIsResetMode] = useState(false);
+  const [isNewPassMode, setIsNewPassMode] = useState(false);
+  const [tempUserData, setTempUserData] = useState([]);
+  const [secAnswer, setSecAnswer] = useState("");
+  const [newPass, setNewPass] = useState("");
 
   const handleLogin = async () => {
     setError(null);
@@ -67,31 +71,64 @@ export default function CustLogin() {
     setIsResetMode(true);
     setError(null);
     setResetMessage(null);
+    setIsNewPassMode(null);
+  };
+  const handleContinue = () => {
+    setIsResetMode(false);
+    setError(null);
+    setResetMessage(null);
+    setIsNewPassMode(true);
   };
 
   const handleResetPassword = async () => {
-    if (!email) {
-      setError("⚠ Please enter your email to receive the reset link.");
-      return;
-    }
-
     try {
-      const response = await fetch("resetPassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/CustEmailExists?email=${email}`,
+        {
+          method: "GET",
+        }
+      );
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Reset failed");
+        throw new Error(data.error || "failure");
       }
 
-      setResetMessage(
-        "📩 Password reset instructions have been sent to your email."
-      );
+      const userData = await response.json();
+      setTempUserData(userData.user);
+
+      if (userData.success === true) {
+        alert("account exists with this email");
+        handleContinue();
+      } else {
+        setError(userData.message);
+      }
     } catch (err) {
-      setError("❌ " + err.message);
+      setError(err.message);
+    }
+  };
+
+  const handleNewPass = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/CustNewPass",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, secAnswer, newPass }),
+        }
+      );
+
+      const res = await response.json();
+
+      if (res.success === true) {
+        alert("Updated password successfully");
+        window.location.reload();
+      } else {
+        setError(res.message);
+      }
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -116,24 +153,6 @@ export default function CustLogin() {
             boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
           }}
         >
-          <Typography
-            variant="h5"
-            gutterBottom
-            style={{ fontWeight: "bold", color: "#333" }}
-          >
-            📦 Customer Login
-          </Typography>
-
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            style={{ marginBottom: "20px" }}
-          >
-            {isResetMode
-              ? "Enter your email to reset your password."
-              : "Please enter your credentials to continue."}
-          </Typography>
-
           {error && (
             <Alert severity="error" style={{ marginBottom: "15px" }}>
               {error}
@@ -146,19 +165,32 @@ export default function CustLogin() {
           )}
 
           {/* EMAIL FIELD */}
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            variant="outlined"
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
           {/* PASSWORD & LOGIN BUTTON - HIDDEN IN RESET MODE */}
-          {!isResetMode && (
+          {!isResetMode && !isNewPassMode && (
             <>
+              <Typography
+                variant="h5"
+                gutterBottom
+                style={{ fontWeight: "bold", color: "#333" }}
+              >
+                Customer Login
+              </Typography>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                style={{ marginBottom: "20px" }}
+              >
+                Please enter your credentials to continue
+              </Typography>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                variant="outlined"
+                margin="normal"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <TextField
                 fullWidth
                 label="Password"
@@ -200,8 +232,24 @@ export default function CustLogin() {
           )}
 
           {/* RESET PASSWORD BUTTON - ONLY VISIBLE IN RESET MODE */}
-          {isResetMode && (
+          {isResetMode && !isNewPassMode && (
             <>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                style={{ marginBottom: "20px" }}
+              >
+                Please enter your email to reset your password
+              </Typography>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                variant="outlined"
+                margin="normal"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <Button
                 fullWidth
                 variant="contained"
@@ -216,19 +264,59 @@ export default function CustLogin() {
                 }}
                 onClick={handleResetPassword}
               >
-                SEND RESET LINK
+                continue
               </Button>
-              <Typography
-                variant="body2"
-                style={{ marginTop: "15px", color: "#B71C1C" }}
-              >
-                📩 Check your email for password reset instructions.
+            </>
+          )}
+
+          {isNewPassMode && (
+            <>
+            <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
+                Security Question
               </Typography>
+              <Typography variant="body2" style={{ marginBottom: "20px" }}>
+                {tempUserData.security_question}
+              </Typography>
+
+              {/* Security Answer Input */}
+              <TextField
+                fullWidth
+                label="Answer"
+                variant="outlined"
+                margin="normal"
+                value={secAnswer}
+                onChange={(e) => setSecAnswer(e.target.value)} // Store the answer in secAnswer state
+              />
+              <TextField
+                fullWidth
+                label="New password"
+                variant="outlined"
+                margin="normal"
+                value={newPass}
+                onChange={(e) => setNewPass(e.target.value)} // Store the answer in secAnswer state
+              />
+
+              <Button
+                fullWidth
+                variant="contained"
+                style={{
+                  marginTop: "20px",
+                  padding: "12px 0",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  backgroundColor: "#D32F2F",
+                  color: "#FFF",
+                }}
+                onClick={handleNewPass}
+              >
+                Submit Answer
+              </Button>
             </>
           )}
 
           {/* SIGN UP LINK */}
-          {!isResetMode && (
+          {!isResetMode && !isNewPassMode && (
             <Typography
               variant="body2"
               style={{ marginTop: "20px", textAlign: "center" }}
