@@ -17,7 +17,7 @@ import {
   Badge,
   LinearProgress,
 } from "@mui/material"
-import { LocalShipping, ShoppingCart, Person, Logout, ArrowForward, AddBox, Help } from "@mui/icons-material"
+import { LocalShipping, ShoppingCart, Person, Logout, ArrowForward, AddBox } from "@mui/icons-material"
 
 export default function Dashboard() {
   const { user, logout, isCustomer } = useContext(AuthContext)
@@ -25,6 +25,26 @@ export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [loading, setLoading] = useState(false)
   const [packages, setPackages] = useState([])
+  const [messages, setMessages] = useState([])
+  // State for controlling the notification
+  const [showNotification, setShowNotification] = useState(false)
+
+  // FOR TESTING ONLY - Remove in production
+  useEffect(() => {
+    console.log("Creating test messages")
+    setTimeout(() => {
+      // Simulate messages for testing
+      setMessages([
+        {
+          origin_state: "TX",
+          destination_address: "123 Main St, Houston TX 77001",
+        },
+      ])
+      // Force notification to show
+      setShowNotification(true)
+      console.log("Notification activated for testing")
+    }, 2000) // Will appear 2 seconds after loading
+  }, []) // Runs only once on load
 
   useEffect(() => {
     // Update time every minute
@@ -70,6 +90,43 @@ export default function Dashboard() {
     fetchPackages()
   }, [user])
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!user?.customers_id) return
+
+      try {
+        const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/messages/${user.customers_id}`)
+        const data = await res.json()
+        setMessages(data || [])
+        // Show notification if there are messages
+        if (data && data.length > 0) {
+          setShowNotification(true)
+        }
+      } catch (err) {
+        console.error("Error fetching messages:", err)
+      }
+    }
+
+    fetchMessages()
+  }, [user])
+
+  const clearMessages = async () => {
+    try {
+      await fetch(`https://vercel-api-powebapp.vercel.app/api/messages/${user.customers_id}`, {
+        method: "DELETE",
+      })
+      setMessages([])
+      setShowNotification(false)
+    } catch (err) {
+      console.error("Failed to clear messages:", err)
+    }
+  }
+
+  // Function to close the notification
+  const handleCloseNotification = () => {
+    setShowNotification(false)
+  }
+
   if (isCustomer()) {
     console.log("this is a customer logged in rn")
   }
@@ -81,6 +138,204 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ bgcolor: "#ffffff", minHeight: "100vh", py: { xs: 2, sm: 4 } }}>
+      {/* CENTERED NOTIFICATION */}
+      {messages.length > 0 && showNotification && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent dark background
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff", // White background
+              color: "#333333", // Dark text for contrast
+              padding: "30px",
+              borderRadius: "12px",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+              maxWidth: "500px",
+              width: "90%",
+              position: "relative",
+              animation: "fadeIn 0.3s ease-out",
+              border: "none",
+              overflow: "hidden",
+            }}
+          >
+            {/* Decorative top border */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: "linear-gradient(to right, #d32f2f, #f44336)",
+              }}
+            />
+
+            <button
+              onClick={handleCloseNotification}
+              style={{
+                position: "absolute",
+                top: "15px",
+                right: "15px",
+                background: "#f5f5f5",
+                border: "none",
+                color: "#666666",
+                fontSize: "16px",
+                cursor: "pointer",
+                padding: "0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "28px",
+                height: "28px",
+                borderRadius: "50%",
+                transition: "background-color 0.2s",
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#f5f5f5")}
+            >
+              ×
+            </button>
+
+            <div style={{ textAlign: "center", marginBottom: "25px" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "50%",
+                  backgroundColor: "#fef8f8",
+                  marginBottom: "15px",
+                }}
+              >
+                <LocalShipping style={{ fontSize: "30px", color: "#d32f2f" }} />
+              </div>
+
+              <div
+                style={{
+                  fontWeight: "bold",
+                  fontSize: "24px",
+                  marginBottom: "10px",
+                  color: "#d32f2f",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                PACKAGE UPDATE
+              </div>
+
+              <div
+                style={{
+                  fontSize: "16px",
+                  marginBottom: "20px",
+                  color: "#555555",
+                  maxWidth: "80%",
+                  margin: "0 auto",
+                }}
+              >
+                You have {messages.length} new package {messages.length === 1 ? "update" : "updates"}.
+              </div>
+
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  style={{
+                    textAlign: "left",
+                    backgroundColor: "#fafafa",
+                    padding: "15px 20px",
+                    borderRadius: "8px",
+                    marginBottom: "12px",
+                    fontSize: "15px",
+                    border: "1px solid #f0f0f0",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "12px",
+                  }}
+                >
+                  <div style={{ marginTop: "2px" }}>
+                    <LocalShipping style={{ fontSize: "20px", color: "#d32f2f" }} />
+                  </div>
+                  <div>
+                    Your package from <strong>{msg.origin_state}</strong> has arrived at{" "}
+                    <strong>{msg.destination_address}</strong>.
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "center",
+                marginTop: "10px",
+              }}
+            >
+              <button
+                onClick={() => {
+                  navigate("/MyPackages")
+                  handleCloseNotification()
+                }}
+                style={{
+                  backgroundColor: "#d32f2f",
+                  color: "white",
+                  border: "none",
+                  padding: "12px 24px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  letterSpacing: "0.5px",
+                  boxShadow: "0 4px 12px rgba(211, 47, 47, 0.2)",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#b71c1c"
+                  e.currentTarget.style.boxShadow = "0 6px 14px rgba(211, 47, 47, 0.3)"
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "#d32f2f"
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(211, 47, 47, 0.2)"
+                }}
+              >
+                VIEW DETAILS
+              </button>
+              <button
+                onClick={clearMessages}
+                style={{
+                  backgroundColor: "#f5f5f5",
+                  color: "#555555",
+                  border: "none",
+                  padding: "12px 24px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  letterSpacing: "0.5px",
+                  transition: "background-color 0.2s",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#f5f5f5")}
+              >
+                DISMISS
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Container maxWidth="lg">
         {loading ? (
           <LinearProgress color="error" sx={{ mb: { xs: 2, sm: 4 } }} />
