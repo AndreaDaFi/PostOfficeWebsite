@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
+import { useNavigate } from "react-router-dom"
 import {
   Box,
   Paper,
@@ -14,11 +15,14 @@ import {
   Card,
   CardContent,
   Stack,
+  Button,
+  Tooltip,
 } from "@mui/material"
-import { LocalShipping, Person, Scale, Inventory2, ErrorOutline } from "@mui/icons-material"
+import { LocalShipping, Person, Scale, Inventory2, ErrorOutline, ArrowForward } from "@mui/icons-material"
 
 const MyPackages = () => {
   const { user } = useContext(AuthContext)
+  const navigate = useNavigate()
   const [packages, setPackages] = useState([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -70,6 +74,11 @@ const MyPackages = () => {
       default:
         return "default"
     }
+  }
+
+  // Function to navigate to package history page
+  const viewPackageHistory = (trackingNumber) => {
+    navigate(`/package-history/${trackingNumber}`)
   }
 
   return (
@@ -166,7 +175,14 @@ const MyPackages = () => {
                     sx={{
                       borderLeft: "5px solid #d32f2f", // Moderate border
                       boxShadow: "0 1px 4px rgba(0,0,0,0.1)", // Subtle shadow
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      "&:hover": {
+                        transform: "translateY(-4px)",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                        cursor: "pointer",
+                      },
                     }}
+                    onClick={() => viewPackageHistory(pkg.tracking_number)}
                   >
                     <CardContent sx={{ p: 2.5 }}>
                       {" "}
@@ -220,6 +236,24 @@ const MyPackages = () => {
                               {/* Medium text */}
                               <strong>Type:</strong> {pkg.type}
                             </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Box display="flex" justifyContent="flex-end" mt={1}>
+                            <Tooltip title="View package history">
+                              <Button
+                                variant="text"
+                                color="error"
+                                size="small"
+                                endIcon={<ArrowForward />}
+                                onClick={(e) => {
+                                  e.stopPropagation() // Prevent card click event
+                                  viewPackageHistory(pkg.tracking_number)
+                                }}
+                              >
+                                View History
+                              </Button>
+                            </Tooltip>
                           </Box>
                         </Grid>
                       </Grid>

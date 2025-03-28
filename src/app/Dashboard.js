@@ -16,8 +16,27 @@ import {
   Paper,
   Badge,
   LinearProgress,
+  IconButton,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material"
-import { LocalShipping, ShoppingCart, Person, Logout, ArrowForward, AddBox } from "@mui/icons-material"
+import {
+  LocalShipping,
+  ShoppingCart,
+  Person,
+  Logout,
+  ArrowForward,
+  AddBox,
+  Notifications,
+  Delete,
+} from "@mui/icons-material"
+
+// Set to false to use real API calls instead of test data
+const TEST_MODE = false
 
 export default function Dashboard() {
   const { user, logout, isCustomer } = useContext(AuthContext)
@@ -28,23 +47,51 @@ export default function Dashboard() {
   const [messages, setMessages] = useState([])
   // State for controlling the notification
   const [showNotification, setShowNotification] = useState(false)
+  // State for the debug dialog
+  const [debugDialogOpen, setDebugDialogOpen] = useState(false)
+  const [debugInfo, setDebugInfo] = useState("")
+  // State for tracking API calls
+  const [apiCallInProgress, setApiCallInProgress] = useState(false)
 
-  // FOR TESTING ONLY - Remove in production
+  // Create test messages for development/testing
+  const testMessages = [
+    {
+      id: "test-1",
+      message: "Your package has been delivered",
+      created_at: new Date().toISOString(),
+      is_read: 0,
+      tracking_number: "TEST123456",
+      status: "Delivered",
+      origin_state: "TX",
+      destination_address: "123 Test St, Austin, TX 78701",
+    },
+    {
+      id: "test-2",
+      message: "Your package is out for delivery",
+      created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+      is_read: 0,
+      tracking_number: "TEST789012",
+      status: "Out for Delivery",
+      origin_state: "CA",
+      destination_address: "456 Demo Ave, Los Angeles, CA 90001",
+    },
+  ]
+
+  // Force test messages in TEST_MODE
   useEffect(() => {
-    console.log("Creating test messages")
-    setTimeout(() => {
-      // Simulate messages for testing
-      setMessages([
-        {
-          origin_state: "TX",
-          destination_address: "123 Main St, Houston TX 77001",
-        },
-      ])
-      // Force notification to show
+    if (TEST_MODE) {
+      console.log("🧪 TEST MODE ENABLED - Forcing test notifications to appear")
+      setMessages(testMessages)
       setShowNotification(true)
-      console.log("Notification activated for testing")
-    }, 2000) // Will appear 2 seconds after loading
-  }, []) // Runs only once on load
+    }
+  }, [])
+
+  // Function to manually show test notifications
+  const showTestNotifications = () => {
+    console.log("🔔 Manually showing test notifications")
+    setMessages(testMessages)
+    setShowNotification(true)
+  }
 
   useEffect(() => {
     // Update time every minute
@@ -63,7 +110,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchPackages = async () => {
-      if (!user?.customers_id) {
+      if (!user?.customers_id || TEST_MODE) {
         return
       }
 
@@ -88,47 +135,203 @@ export default function Dashboard() {
     }
 
     fetchPackages()
-  }, [user])
+  }, [user, TEST_MODE])
 
+  // Fetch messages from the database
   useEffect(() => {
+    // Skip API call in TEST_MODE
+    if (TEST_MODE) {
+      console.log("🧪 TEST MODE ENABLED - Skipping API call for messages")
+      return
+    }
+
     const fetchMessages = async () => {
-      if (!user?.customers_id) return
+      if (!user?.customers_id) {
+        console.log("⚠️ No user ID available, skipping message fetch")
+        return
+      }
 
       try {
-        const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/messages/${user.customers_id}`)
+        console.log(`🔍 Fetching messages for user ID: ${user.customers_id}`)
+
+        // Call the getCustomerMessages API directly
+        const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/getCustomerMessages/${user.customers_id}`)
+
+        console.log(`📡 API Response status: ${res.status}`)
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch messages: ${res.status}`)
+        }
+
         const data = await res.json()
-        setMessages(data || [])
-        // Show notification if there are messages
-        if (data && data.length > 0) {
-          setShowNotification(true)
+        console.log(`📊 API Response data:`, data)
+
+        if (data.success) {
+          const newMessages = data.messages || []
+          console.log(`📨 Messages received: ${newMessages.length}`)
+
+          setMessages(newMessages)
+
+          // Only show notification if there are new messages
+          if (newMessages.length > 0) {
+            console.log("📢 Setting showNotification to true")
+            setShowNotification(true)
+          } else {
+            console.log("🔕 No new messages to show")
+          }
+        } else {
+          console.error("API returned error:", data.error)
         }
       } catch (err) {
-        console.error("Error fetching messages:", err)
+        console.error("❌ Error fetching messages:", err)
       }
     }
 
     fetchMessages()
-  }, [user])
+  }, [user, TEST_MODE])
 
-  const clearMessages = async () => {
+  // Debug logging for messages and notification state
+  useEffect(() => {
+    console.log(`📊 Current messages state:`, messages)
+    console.log(`🔔 showNotification: ${showNotification}`)
+  }, [messages, showNotification])
+
+  // Function to manually clear all messages from the database
+  const manuallyDeleteAllMessages = async () => {
+    if (apiCallInProgress) {
+      console.log("⚠️ API call already in progress, skipping")
+      return
+    }
+
     try {
-      await fetch(`https://vercel-api-powebapp.vercel.app/api/messages/${user.customers_id}`, {
+      if (!user?.customers_id) {
+        setDebugInfo("⚠️ No user ID available")
+        setDebugDialogOpen(true)
+        return
+      }
+
+      setApiCallInProgress(true)
+      setDebugInfo("🔄 Sending DELETE request to API...")
+      setDebugDialogOpen(true)
+
+      if (TEST_MODE) {
+        // Simulate successful deletion in test mode
+        setTimeout(() => {
+          setDebugInfo(`
+            TEST MODE: Simulated successful deletion
+            Status: 200
+            Success: true
+            Message: Messages deleted (simulated).
+            Deleted Count: ${messages.length}
+            Remaining Count: 0
+          `)
+
+          // Clear messages and hide notification
+          setMessages([])
+          setShowNotification(false)
+          setApiCallInProgress(false)
+        }, 1000)
+        return
+      }
+
+      // Call the getCustomerMessages API directly with DELETE method
+      const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/getCustomerMessages/${user.customers_id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
+
+      const data = await res.json()
+
+      const debugMessage = `
+        Status: ${res.status}
+        Success: ${data.success}
+        Message: ${data.message}
+        Deleted Count: ${data.deletedCount || "N/A"}
+        Remaining Count: ${data.remainingCount || "N/A"}
+        Error: ${data.error || "None"}
+        
+        Raw Response:
+        ${JSON.stringify(data, null, 2)}
+      `
+
+      setDebugInfo(debugMessage)
+
+      // Clear messages and hide notification
       setMessages([])
       setShowNotification(false)
     } catch (err) {
-      console.error("Failed to clear messages:", err)
+      setDebugInfo(`❌ Error: ${err.message}`)
+    } finally {
+      setApiCallInProgress(false)
+    }
+  }
+
+  // Function to delete messages from the database
+  const clearMessages = async () => {
+    if (apiCallInProgress) {
+      console.log("⚠️ API call already in progress, skipping")
+      return
+    }
+
+    try {
+      if (!user?.customers_id) {
+        console.log("⚠️ No user ID available, skipping message deletion")
+        return
+      }
+
+      setApiCallInProgress(true)
+      console.log(`🗑️ Deleting messages for user ID: ${user.customers_id}`)
+
+      if (TEST_MODE) {
+        // Simulate successful deletion in test mode
+        console.log("🧪 TEST MODE: Simulating successful deletion")
+        setTimeout(() => {
+          // Clear messages and hide notification
+          setMessages([])
+          setShowNotification(false)
+          setApiCallInProgress(false)
+        }, 500)
+        return
+      }
+
+      // Call the getCustomerMessages API directly with DELETE method
+      const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/getCustomerMessages/${user.customers_id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      console.log(`📡 Delete API Response status: ${res.status}`)
+
+      const data = await res.json()
+      console.log(`📊 Delete API Response data:`, data)
+
+      if (data.success) {
+        console.log(`✅ Successfully deleted ${data.deletedCount || 0} messages from database`)
+
+        // Clear messages and hide notification
+        setMessages([])
+        setShowNotification(false)
+      } else {
+        throw new Error(data.error || "Unknown error when deleting messages")
+      }
+    } catch (err) {
+      console.error("❌ Failed to clear messages:", err)
+
+      // Still hide the notification even if the API call fails
+      setMessages([])
+      setShowNotification(false)
+    } finally {
+      setApiCallInProgress(false)
     }
   }
 
   // Function to close the notification
   const handleCloseNotification = () => {
-    setShowNotification(false)
-  }
-
-  if (isCustomer()) {
-    console.log("this is a customer logged in rn")
+    clearMessages() // This will delete the messages from the database
   }
 
   if (!user) {
@@ -138,8 +341,21 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ bgcolor: "#ffffff", minHeight: "100vh", py: { xs: 2, sm: 4 } }}>
+      {/* Debug Dialog */}
+      <Dialog open={debugDialogOpen} onClose={() => setDebugDialogOpen(false)}>
+        <DialogTitle>API Debug Information</DialogTitle>
+        <DialogContent>
+          <DialogContentText component="pre" sx={{ whiteSpace: "pre-wrap" }}>
+            {debugInfo}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDebugDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
       {/* CENTERED NOTIFICATION */}
-      {messages.length > 0 && showNotification && (
+      {showNotification && messages.length > 0 && (
         <div
           style={{
             position: "fixed",
@@ -268,8 +484,12 @@ export default function Dashboard() {
                     <LocalShipping style={{ fontSize: "20px", color: "#d32f2f" }} />
                   </div>
                   <div>
-                    Your package from <strong>{msg.origin_state}</strong> has arrived at{" "}
-                    <strong>{msg.destination_address}</strong>.
+                    Your package {msg.tracking_number && <strong>{msg.tracking_number}</strong>} from{" "}
+                    <strong>{msg.origin_state || "Unknown"}</strong> has arrived at{" "}
+                    <strong>{msg.destination_address || "your destination"}</strong>.
+                    {msg.status && (
+                      <div style={{ fontSize: "12px", color: "#d32f2f", marginTop: "4px" }}>Status: {msg.status}</div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -328,13 +548,53 @@ export default function Dashboard() {
                 }}
                 onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
                 onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#f5f5f5")}
+                disabled={apiCallInProgress}
               >
-                DISMISS
+                {apiCallInProgress ? "PROCESSING..." : "DISMISS"}
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Test Notification Button */}
+      <Box sx={{ position: "fixed", bottom: 20, right: 20, zIndex: 100 }}>
+        <Tooltip title="Show Test Notifications">
+          <IconButton
+            onClick={showTestNotifications}
+            sx={{
+              bgcolor: "#d32f2f",
+              color: "white",
+              "&:hover": { bgcolor: "#b71c1c" },
+              width: 56,
+              height: 56,
+              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+            }}
+          >
+            <Notifications />
+          </IconButton>
+        </Tooltip>
+      </Box>
+
+      {/* Debug Button */}
+      <Box sx={{ position: "fixed", bottom: 20, left: 20, zIndex: 100 }}>
+        <Tooltip title="Delete All Messages (Debug)">
+          <IconButton
+            onClick={manuallyDeleteAllMessages}
+            sx={{
+              bgcolor: "#333",
+              color: "white",
+              "&:hover": { bgcolor: "#555" },
+              width: 56,
+              height: 56,
+              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+            }}
+            disabled={apiCallInProgress}
+          >
+            <Delete />
+          </IconButton>
+        </Tooltip>
+      </Box>
 
       <Container maxWidth="lg">
         {loading ? (
@@ -399,7 +659,7 @@ export default function Dashboard() {
                     fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" },
                   }}
                 >
-                  Welcome, {user.email.split("@")[0]}!
+                  Welcome, {user.email ? user.email.split("@")[0] : "User"}!
                 </Typography>
                 <Typography variant="subtitle1">
                   {currentTime.toLocaleDateString("en-US", {
@@ -752,6 +1012,20 @@ export default function Dashboard() {
             SHIP A NEW PACKAGE
           </Button>
         </Paper>
+
+        {/* Show Test Notification Button */}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Button
+            variant="contained"
+            color="error"
+            size="large"
+            onClick={showTestNotifications}
+            startIcon={<Notifications />}
+            sx={{ fontWeight: "bold", py: 1.5, px: 4 }}
+          >
+            Show Test Notifications
+          </Button>
+        </Box>
       </Container>
     </Box>
   )
