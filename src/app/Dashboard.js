@@ -35,6 +35,18 @@ import {
   Delete,
 } from "@mui/icons-material"
 
+// Add this after imports
+const spinKeyframes = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`
+
 // Set to false to use real API calls instead of test data
 const TEST_MODE = false
 
@@ -53,7 +65,7 @@ export default function Dashboard() {
   // State for tracking API calls
   const [apiCallInProgress, setApiCallInProgress] = useState(false)
 
-  // Create test messages for development/testing\
+  // Create test messages for development/testing
   const testMessages = [
     {
       id: "test-1",
@@ -76,6 +88,8 @@ export default function Dashboard() {
       destination_address: "456 Demo Ave, Los Angeles, CA 90001",
     },
   ]
+
+  // Using the logout function from AuthContext
 
   // Force test messages in TEST_MODE
   useEffect(() => {
@@ -237,12 +251,15 @@ export default function Dashboard() {
       }
 
       // Call the getCustomerMessages API directly with DELETE method
-      const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/getCustomerMessages/${user.customers_id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `https://vercel-api-powebapp.vercel.app/api/getCustomerMessages?id=${user.customers_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      })
+      )
 
       const data = await res.json()
 
@@ -299,12 +316,15 @@ export default function Dashboard() {
       }
 
       // Call the getCustomerMessages API directly with DELETE method
-      const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/getCustomerMessages/${user.customers_id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `https://vercel-api-powebapp.vercel.app/api/getCustomerMessages?id=${user.customers_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      })
+      )
 
       console.log(`📡 Delete API Response status: ${res.status}`)
 
@@ -363,8 +383,8 @@ export default function Dashboard() {
       for (const msg of messages) {
         console.log(`📝 Marking message with tracking number ${msg.tracking_number} as read`)
 
-        // Call the API to mark message as read
-        const res = await fetch("https://vercel-api-powebapp.vercel.app/api/customer-messages", {
+        // Use the existing getCustomerMessages endpoint with PUT method
+        const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/getCustomerMessages`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -413,6 +433,7 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ bgcolor: "#ffffff", minHeight: "100vh", py: { xs: 2, sm: 4 } }}>
+      <style>{spinKeyframes}</style>
       {/* Debug Dialog */}
       <Dialog open={debugDialogOpen} onClose={() => setDebugDialogOpen(false)}>
         <DialogTitle>API Debug Information</DialogTitle>
@@ -440,6 +461,7 @@ export default function Dashboard() {
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent dark background
+            animation: "fadeIn 0.3s ease-out", // Add this line
           }}
         >
           <div
@@ -612,17 +634,38 @@ export default function Dashboard() {
                   border: "none",
                   padding: "12px 24px",
                   borderRadius: "6px",
-                  cursor: "pointer",
+                  cursor: apiCallInProgress ? "not-allowed" : "pointer",
                   fontWeight: "600",
                   fontSize: "14px",
                   letterSpacing: "0.5px",
                   transition: "background-color 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#f5f5f5")}
+                onMouseOver={(e) => !apiCallInProgress && (e.currentTarget.style.backgroundColor = "#e0e0e0")}
+                onMouseOut={(e) => !apiCallInProgress && (e.currentTarget.style.backgroundColor = "#f5f5f5")}
                 disabled={apiCallInProgress}
               >
-                {apiCallInProgress ? "PROCESSING..." : "DISMISS"}
+                {apiCallInProgress ? (
+                  <>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        width: "16px",
+                        height: "16px",
+                        border: "2px solid rgba(0,0,0,0.2)",
+                        borderTopColor: "#555",
+                        borderRadius: "50%",
+                        animation: "spin 1s linear infinite",
+                      }}
+                    ></span>
+                    <span>PROCESSING...</span>
+                  </>
+                ) : (
+                  "DISMISS"
+                )}
               </button>
             </div>
           </div>
