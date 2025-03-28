@@ -53,7 +53,7 @@ export default function Dashboard() {
   // State for tracking API calls
   const [apiCallInProgress, setApiCallInProgress] = useState(false)
 
-  // Create test messages for development/testing
+  // Create test messages for development/testing\
   const testMessages = [
     {
       id: "test-1",
@@ -155,7 +155,9 @@ export default function Dashboard() {
         console.log(`🔍 Fetching messages for user ID: ${user.customers_id}`)
 
         // Call the getCustomerMessages API directly
-        const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/getCustomerMessages/${user.customers_id}`)
+        const res = await fetch(
+          `https://vercel-api-powebapp.vercel.app/api/getCustomerMessages?id=${user.customers_id}`,
+        )
 
         console.log(`📡 API Response status: ${res.status}`)
 
@@ -217,14 +219,14 @@ export default function Dashboard() {
       if (TEST_MODE) {
         // Simulate successful deletion in test mode
         setTimeout(() => {
-          setDebugInfo(`
-            TEST MODE: Simulated successful deletion
+          setDebugInfo(
+            `TEST MODE: Simulated successful deletion
             Status: 200
             Success: true
             Message: Messages deleted (simulated).
             Deleted Count: ${messages.length}
-            Remaining Count: 0
-          `)
+            Remaining Count: 0`,
+          )
 
           // Clear messages and hide notification
           setMessages([])
@@ -329,9 +331,79 @@ export default function Dashboard() {
     }
   }
 
-  // Function to close the notification
+  // Function to mark messages as read in the database
+  const markMessagesAsRead = async () => {
+    if (apiCallInProgress) {
+      console.log("⚠️ API call already in progress, skipping")
+      return
+    }
+
+    try {
+      if (!user?.customers_id) {
+        console.log("⚠️ No user ID available, skipping mark as read")
+        return
+      }
+
+      setApiCallInProgress(true)
+      console.log(`✏️ Marking messages as read for user ID: ${user.customers_id}`)
+
+      if (TEST_MODE) {
+        // Simulate successful marking as read in test mode
+        console.log("🧪 TEST MODE: Simulating successful marking as read")
+        setTimeout(() => {
+          // Clear messages and hide notification
+          setMessages([])
+          setShowNotification(false)
+          setApiCallInProgress(false)
+        }, 500)
+        return
+      }
+
+      // Process each message
+      for (const msg of messages) {
+        console.log(`📝 Marking message with tracking number ${msg.tracking_number} as read`)
+
+        // Call the API to mark message as read
+        const res = await fetch("https://vercel-api-powebapp.vercel.app/api/customer-messages", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customer_id: user.customers_id,
+            tracking_number: msg.tracking_number,
+          }),
+        })
+
+        console.log(`📡 Mark as read API Response status: ${res.status}`)
+
+        const data = await res.json()
+        console.log(`📊 Mark as read API Response data:`, data)
+
+        if (!data.success) {
+          throw new Error(data.error || "Unknown error when marking message as read")
+        }
+      }
+
+      console.log("✅ Successfully marked all messages as read")
+
+      // Clear messages and hide notification
+      setMessages([])
+      setShowNotification(false)
+    } catch (err) {
+      console.error("❌ Failed to mark messages as read:", err)
+
+      // Still hide the notification even if the API call fails
+      setMessages([])
+      setShowNotification(false)
+    } finally {
+      setApiCallInProgress(false)
+    }
+  }
+
+  // Replace the handleCloseNotification function with this:
   const handleCloseNotification = () => {
-    clearMessages() // This will delete the messages from the database
+    markMessagesAsRead() // This will mark the messages as read in the database
   }
 
   if (!user) {
@@ -533,7 +605,7 @@ export default function Dashboard() {
                 VIEW DETAILS
               </button>
               <button
-                onClick={clearMessages}
+                onClick={markMessagesAsRead}
                 style={{
                   backgroundColor: "#f5f5f5",
                   color: "#555555",
