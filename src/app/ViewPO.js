@@ -14,7 +14,7 @@ export default function ViewPO() {
     // Fetch data from the API when the component mounts
     const fetchPostOffices = async () => {
       try {
-        const response = await fetch('https://vercel-api-powebapp.vercel.app/api/getPostOfficeLocations'); // Your API endpoint
+        const response = await fetch('https://apipost.vercel.app/api/getPostOfficeLocations'); // Your API endpoint
         const result = await response.json();
 
         if (result.success) {

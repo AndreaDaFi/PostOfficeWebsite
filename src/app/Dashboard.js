@@ -68,7 +68,7 @@ export default function Dashboard() {
       }
 
       try {
-        const response = await fetch("https://vercel-api-powebapp.vercel.app/api/getCustomerPackages", {
+        const response = await fetch("https://apipost.vercel.app/api/getCustomerPackages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -95,7 +95,7 @@ export default function Dashboard() {
       if (!user?.customers_id) return
 
       try {
-        const res = await fetch(`https://vercel-api-powebapp.vercel.app/api/messages/${user.customers_id}`)
+        const res = await fetch(`https://apipost.vercel.app/api/messages/${user.customers_id}`)
         const data = await res.json()
         setMessages(data || [])
         // Show notification if there are messages
@@ -112,7 +112,7 @@ export default function Dashboard() {
 
   const clearMessages = async () => {
     try {
-      await fetch(`https://vercel-api-powebapp.vercel.app/api/messages/${user.customers_id}`, {
+      await fetch(`https://apipost.vercel.app/api/messages/${user.customers_id}`, {
         method: "DELETE",
       })
       setMessages([])

@@ -25,7 +25,7 @@ export default function CustLogin() {
     console.log("Password:", password);
 
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/EmployeeLOGIN", {
+      const response = await fetch("https://apipost.vercel.app/api/EmployeeLOGIN", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -25,7 +25,7 @@ export default function PackageCheckout() {
       try {
         console.log("origin address id:", payload.origin_address_id);
         const response = await fetch(
-          `https://vercel-api-powebapp.vercel.app/api/GetTax?address_id=${payload.origin_address_id}`
+          `https://apipost.vercel.app/api/GetTax?address_id=${payload.origin_address_id}`
         );
         const data = await response.json();
 
@@ -81,7 +81,7 @@ export default function PackageCheckout() {
     const checkoutData = {...payload};
 
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/PackageCheckout", {
+      const response = await fetch("https://apipost.vercel.app/api/PackageCheckout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

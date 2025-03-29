@@ -32,7 +32,7 @@ export default function ReStock() {
     const fetchItems = async () => {
       try {
         const response = await fetch(
-          `https://vercel-api-powebapp.vercel.app/api/ViewStore?po_id=${user.po_id}`
+          `https://apipost.vercel.app/api/ViewStore?po_id=${user.po_id}`
         );
         const data = await response.json();
         if (data.success) {
@@ -65,7 +65,7 @@ export default function ReStock() {
 
     try {
       const response = await fetch(
-        "https://vercel-api-powebapp.vercel.app/api/UpdateStock",
+        "https://apipost.vercel.app/api/UpdateStock",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

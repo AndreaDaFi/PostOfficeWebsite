@@ -75,7 +75,7 @@ export default function PackageHistory() {
 
       try {
         // First try to fetch from the package history API
-        const historyResponse = await fetch("https://vercel-api-powebapp.vercel.app/api/packagehistory", {
+        const historyResponse = await fetch("https://apipost.vercel.app/api/packagehistory", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -107,7 +107,7 @@ export default function PackageHistory() {
 
         // Fall back to basic package info if history API fails
         try {
-          const packageResponse = await fetch("https://vercel-api-powebapp.vercel.app/api/getCustomerPackages", {
+          const packageResponse = await fetch("https://apipost.vercel.app/api/getCustomerPackages", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
