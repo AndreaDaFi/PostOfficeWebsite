@@ -70,7 +70,7 @@ export default function AddStoreItem() {
       };
       console.log("Form Data:", newItem);
       const response = await fetch(
-        "https://vercel-api-powebapp.vercel.app/api/AddStore",
+        " https://apipost.vercel.app/api/AddStore",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

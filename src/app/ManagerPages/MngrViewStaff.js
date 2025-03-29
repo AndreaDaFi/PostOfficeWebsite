@@ -31,7 +31,7 @@ export default function ViewStaff() {
     const fetchStaff = async () => {
       const mngr_id = user?.employees_id; // Get the manager's ID
       try {
-        const response = await fetch(`https://vercel-api-powebapp.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`, {
+        const response = await fetch(` https://apipost.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`, {
           method: "GET", // Use GET method instead of POST
         });
     

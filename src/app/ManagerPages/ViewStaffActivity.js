@@ -37,7 +37,7 @@ export default function ViewStaffActivity() {
     setSuccessMessage(null);
     setIsLoading(true);
     try {
-      const response = await fetch('https://vercel-api-powebapp.vercel.app/api/staffActivity', {
+      const response = await fetch(' https://apipost.vercel.app/api/staffActivity', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

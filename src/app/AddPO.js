@@ -137,7 +137,7 @@ export default function AddPO() {
 
   // Fetch states
   useEffect(() => {
-    fetch("https://vercel-api-powebapp.vercel.app/api/state_id")
+    fetch(" https://apipost.vercel.app/api/state_id")
       .then((res) => res.json())
       .then((result) => {
         if (result.data) setStates(result.data)
@@ -203,7 +203,7 @@ export default function AddPO() {
 
     try {
       // Make a real API call to your backend
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/addPostOffice", {
+      const response = await fetch(" https://apipost.vercel.app/api/addPostOffice", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -416,7 +416,7 @@ export default function AddPO() {
       {/* Debug Information - Remove in production */}
       <Box sx={{ mt: 2, p: 2, bgcolor: "#f5f5f5", borderRadius: 1, display: "none" }}>
         <Typography variant="caption">
-          API Endpoint: https://vercel-api-powebapp.vercel.app/api/addPostOffice
+          API Endpoint:  https://apipost.vercel.app/api/addPostOffice
         </Typography>
         <pre style={{ fontSize: "12px", marginTop: "8px" }}>{JSON.stringify(poData, null, 2)}</pre>
       </Box>

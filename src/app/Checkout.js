@@ -41,7 +41,7 @@ const CheckoutPage = () => {
       try {
         console.log("origin address id:", user.address_id);
         const response = await fetch(
-          `https://vercel-api-powebapp.vercel.app/api/GetTax?address_id=${user.address_id}`
+          ` https://apipost.vercel.app/api/GetTax?address_id=${user.address_id}`
         );
         const tax = await response.json();
 
@@ -111,7 +111,7 @@ const CheckoutPage = () => {
     };
 
     try {
-      const response = await fetch("https://vercel-api-powebapp.vercel.app/api/ProcessStoreCheckout", {
+      const response = await fetch(" https://apipost.vercel.app/api/ProcessStoreCheckout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),

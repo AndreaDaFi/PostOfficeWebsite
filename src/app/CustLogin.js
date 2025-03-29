@@ -38,7 +38,7 @@ export default function CustLogin() {
 
     try {
       const response = await fetch(
-        "https://vercel-api-powebapp.vercel.app/api/custLogin",
+        " https://apipost.vercel.app/api/custLogin",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -83,7 +83,7 @@ export default function CustLogin() {
   const handleResetPassword = async () => {
     try {
       const response = await fetch(
-        `https://vercel-api-powebapp.vercel.app/api/CustEmailExists?email=${email}`,
+        ` https://apipost.vercel.app/api/CustEmailExists?email=${email}`,
         {
           method: "GET",
         }
@@ -111,7 +111,7 @@ export default function CustLogin() {
   const handleNewPass = async () => {
     try {
       const response = await fetch(
-        "https://vercel-api-powebapp.vercel.app/api/CustNewPass",
+        " https://apipost.vercel.app/api/CustNewPass",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
