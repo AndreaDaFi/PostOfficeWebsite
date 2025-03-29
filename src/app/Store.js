@@ -170,7 +170,7 @@ export default function Store() {
   };
 
   const handleCheckout = () => {
-    navigate("/checkout", { state: { cart } });
+    navigate("/checkout", { state: { cart, selectedPostOffice } });
   };
 
   const toggleSection = (index) => {
@@ -232,248 +232,248 @@ export default function Store() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          flexDirection: "column"
+          flexDirection: "column",
         }}
       >
         <Box>
-        {/* Store Items */}
-        {storeItems.map((section, index) => (
-          <Paper
-            key={index}
-            elevation={3}
+          {/* Store Items */}
+          {storeItems.map((section, index) => (
+            <Paper
+              key={index}
+              elevation={3}
+              sx={{
+                p: 3,
+                mb: 4,
+                borderRadius: 2,
+                overflow: "hidden",
+                border: `1px solid ${lightRed}`,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  mb: expandedSections[index] ? 2 : 0,
+                }}
+                onClick={() => toggleSection(index)}
+              >
+                <Typography
+                  variant="h4"
+                  component="h2"
+                  sx={{
+                    fontWeight: "bold",
+                    color: primaryRed,
+                  }}
+                >
+                  {section.category}
+                </Typography>
+                <IconButton>
+                  {expandedSections[index] ? (
+                    <KeyboardArrowUp />
+                  ) : (
+                    <KeyboardArrowDown />
+                  )}
+                </IconButton>
+              </Box>
+
+              <Collapse in={expandedSections[index]}>
+                <Grid container spacing={3}>
+                  {section.items.map((item, idx) => (
+                    <Grid item xs={12} sm={6} md={4} key={idx}>
+                      <Card
+                        sx={{
+                          height: "100%",
+                          borderRadius: 2,
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            transform: "translateY(-5px)",
+                            boxShadow: 4,
+                          },
+                          border: `1px solid ${lightRed}`,
+                        }}
+                      >
+                        <CardContent sx={{ p: 3 }}>
+                          <Typography
+                            variant="h6"
+                            component="h3"
+                            sx={{
+                              fontWeight: "bold",
+                              color: "#333",
+                              mb: 1,
+                            }}
+                          >
+                            {item.name}
+                          </Typography>
+
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mt: "auto",
+                            }}
+                          >
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                fontWeight: "bold",
+                                color: primaryRed,
+                              }}
+                            >
+                              {item.price}
+                            </Typography>
+
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                handleAddToCart({
+                                  ...item,
+                                  id: item.id || `${section.category}-${idx}`,
+                                })
+                              }
+                              sx={{
+                                bgcolor: primaryRed,
+                                "&:hover": { bgcolor: secondaryRed },
+                              }}
+                              startIcon={<Add />}
+                            >
+                              Add
+                            </Button>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Collapse>
+            </Paper>
+          ))}
+        </Box>
+
+        <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            mb: 4,
+            borderRadius: 2,
+            border: `1px solid ${lightRed}`,
+            position: "sticky",
+            top: 16,
+            zIndex: 10,
+            bgcolor: "white",
+          }}
+        >
+          <Box
             sx={{
-              p: 3,
-              mb: 4,
-              borderRadius: 2,
-              overflow: "hidden",
-              border: `1px solid ${lightRed}`,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                cursor: "pointer",
-                mb: expandedSections[index] ? 2 : 0,
-              }}
-              onClick={() => toggleSection(index)}
-            >
-              <Typography
-                variant="h4"
-                component="h2"
-                sx={{
-                  fontWeight: "bold",
-                  color: primaryRed,
-                }}
-              >
-                {section.category}
-              </Typography>
-              <IconButton>
-                {expandedSections[index] ? (
-                  <KeyboardArrowUp />
-                ) : (
-                  <KeyboardArrowDown />
-                )}
-              </IconButton>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <ShoppingCart sx={{ color: primaryRed, mr: 2, fontSize: 28 }} />
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Your Cart
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {cartItemCount} {cartItemCount === 1 ? "item" : "items"} -
+                  Total: ${cartTotal.toFixed(2)}
+                </Typography>
+              </Box>
             </Box>
+            <Button
+              variant="contained"
+              disabled={cart.length === 0}
+              onClick={handleCheckout}
+              sx={{
+                bgcolor: primaryRed,
+                "&:hover": { bgcolor: secondaryRed },
+                fontWeight: "bold",
+                px: 3,
+              }}
+              startIcon={<ShoppingCart />}
+            >
+              Checkout
+            </Button>
+          </Box>
 
-            <Collapse in={expandedSections[index]}>
-              <Grid container spacing={3}>
-                {section.items.map((item, idx) => (
-                  <Grid item xs={12} sm={6} md={4} key={idx}>
+          {cart.length > 0 && (
+            <>
+              <Divider sx={{ my: 2 }} />
+              <Grid container spacing={2}>
+                {cart.map((item) => (
+                  <Grid item xs={12} sm={6} md={4} key={item.id}>
                     <Card
                       sx={{
-                        height: "100%",
                         borderRadius: 2,
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          transform: "translateY(-5px)",
-                          boxShadow: 4,
-                        },
                         border: `1px solid ${lightRed}`,
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          boxShadow: 3,
+                        },
                       }}
                     >
-                      <CardContent sx={{ p: 3 }}>
+                      <CardContent>
                         <Typography
-                          variant="h6"
-                          component="h3"
-                          sx={{
-                            fontWeight: "bold",
-                            color: "#333",
-                            mb: 1,
-                          }}
+                          variant="subtitle1"
+                          sx={{ fontWeight: "bold", mb: 1 }}
                         >
                           {item.name}
                         </Typography>
-
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          gutterBottom
+                        >
+                          {item.price} × {item.quantity} = $
+                          {(item.price * item.quantity).toFixed(2)}
+                        </Typography>
                         <Box
                           sx={{
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
-                            mt: "auto",
+                            mt: 1,
                           }}
                         >
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontWeight: "bold",
-                              color: primaryRed,
-                            }}
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleRemoveFromCart(item)}
+                              sx={{ color: primaryRed }}
+                            >
+                              <Remove fontSize="small" />
+                            </IconButton>
+                            <Typography sx={{ mx: 1, fontWeight: "bold" }}>
+                              {item.quantity}
+                            </Typography>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleAddToCart(item)}
+                              sx={{ color: primaryRed }}
+                            >
+                              <Add fontSize="small" />
+                            </IconButton>
+                          </Box>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDeleteFromCart(item)}
+                            sx={{ color: "#888" }}
                           >
-                            {item.price}
-                          </Typography>
-
-                          <Button
-                            variant="contained"
-                            onClick={() =>
-                              handleAddToCart({
-                                ...item,
-                                id: item.id || `${section.category}-${idx}`,
-                              })
-                            }
-                            sx={{
-                              bgcolor: primaryRed,
-                              "&:hover": { bgcolor: secondaryRed },
-                            }}
-                            startIcon={<Add />}
-                          >
-                            Add
-                          </Button>
+                            <DeleteOutline fontSize="small" />
+                          </IconButton>
                         </Box>
                       </CardContent>
                     </Card>
                   </Grid>
                 ))}
               </Grid>
-            </Collapse>
-          </Paper>
-        ))}
-</Box>
-
-        <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          mb: 4,
-          borderRadius: 2,
-          border: `1px solid ${lightRed}`,
-          position: "sticky",
-          top: 16,
-          zIndex: 10,
-          bgcolor: "white",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ShoppingCart sx={{ color: primaryRed, mr: 2, fontSize: 28 }} />
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Your Cart
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {cartItemCount} {cartItemCount === 1 ? "item" : "items"} -
-                Total: ${cartTotal.toFixed(2)}
-              </Typography>
-            </Box>
-          </Box>
-          <Button
-            variant="contained"
-            disabled={cart.length === 0}
-            onClick={handleCheckout}
-            sx={{
-              bgcolor: primaryRed,
-              "&:hover": { bgcolor: secondaryRed },
-              fontWeight: "bold",
-              px: 3,
-            }}
-            startIcon={<ShoppingCart />}
-          >
-            Checkout
-          </Button>
-        </Box>
-
-        {cart.length > 0 && (
-          <>
-            <Divider sx={{ my: 2 }} />
-            <Grid container spacing={2}>
-              {cart.map((item) => (
-                <Grid item xs={12} sm={6} md={4} key={item.id}>
-                  <Card
-                    sx={{
-                      borderRadius: 2,
-                      border: `1px solid ${lightRed}`,
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        boxShadow: 3,
-                      },
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ fontWeight: "bold", mb: 1 }}
-                      >
-                        {item.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        {item.price} × {item.quantity} = $
-                        {(item.price * item.quantity).toFixed(2)}
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mt: 1,
-                        }}
-                      >
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleRemoveFromCart(item)}
-                            sx={{ color: primaryRed }}
-                          >
-                            <Remove fontSize="small" />
-                          </IconButton>
-                          <Typography sx={{ mx: 1, fontWeight: "bold" }}>
-                            {item.quantity}
-                          </Typography>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleAddToCart(item)}
-                            sx={{ color: primaryRed }}
-                          >
-                            <Add fontSize="small" />
-                          </IconButton>
-                        </Box>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDeleteFromCart(item)}
-                          sx={{ color: "#888" }}
-                        >
-                          <DeleteOutline fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </>
-        )}
-      </Paper>
+            </>
+          )}
+        </Paper>
       </Box>
     </Container>
   );
