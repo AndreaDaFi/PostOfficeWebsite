@@ -1,59 +1,56 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Container, TextField, Button, Typography, Paper, Alert, InputAdornment, CircularProgress } from "@mui/material";
-import BadgeIcon from '@mui/icons-material/Badge';
-import PersonIcon from '@mui/icons-material/Person';
-import SearchIcon from '@mui/icons-material/Search';
+import { Container, Button, Typography, Paper, Alert, CircularProgress, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function ViewStaffActivity() {
   const { user } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [startDate, setStartDate] = useState(""); // Start date for filtering
-  const [endDate, setEndDate] = useState(""); // End date for filtering
-  const [statusUpdate, setStatusUpdate] = useState(""); // Filter by status update
-  const [employeeRole, setEmployeeRole] = useState(""); // Filter by employee role
-  const [specificEmployee, setSpecificEmployee] = useState(""); // Filter by specific employee
-  const [data, setData] = useState([]); // Holds API data
-  const [filteredData, setFilteredData] = useState([]); // Holds filtered data
-  const [totalRows, setTotalRows] = useState(0); // Total number of rows
-  const [filteredRows, setFilteredRows] = useState(0); // Number of rows 
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [startDate, setStartDate] = useState(""); 
+  const [endDate, setEndDate] = useState(""); 
+  const [statusUpdate, setStatusUpdate] = useState(""); 
+  const [employeeRole, setEmployeeRole] = useState(""); 
+  const [specificEmployee, setSpecificEmployee] = useState(""); 
+  const [employeesList, setEmployeesList] = useState([]); // List of employees fetched dynamically
+  const [data, setData] = useState([]); 
+  const [filteredData, setFilteredData] = useState([]); 
+  const [totalRows, setTotalRows] = useState(0); 
+  const [filteredRows, setFilteredRows] = useState(0); 
+  const [isLoading, setIsLoading] = useState(false); 
 
-  const handleStartDateChange = (e) => {
-    const date = new Date(e.target.value);
-    const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
-    setStartDate(formattedDate);
-  };
-
-  const handleEndDateChange = (e) => {
-    const date = new Date(e.target.value);
-    const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
-    setEndDate(formattedDate);
-  };
+  // Fetch employees dynamically based on manager's po_id
+  useEffect(() => {
+    async function fetchEmployees() {
+      try {
+        const response = await fetch(`https://apipost.vercel.app/api/employees?po_id=${user?.po_id}`);
+        if (!response.ok) throw new Error("Failed to fetch employees");
+        const data = await response.json();
+        setEmployeesList(data.employees || []);
+      } catch (err) {
+        console.error(err.message);
+      }
+    }
+    fetchEmployees();
+  }, [user?.po_id]);
 
   const handleViewActivity = async () => {
     setError(null);
     setSuccessMessage(null);
     setIsLoading(true);
     try {
-      const response = await fetch(' https://apipost.vercel.app/api/staffActivity', {
+      const response = await fetch('https://apipost.vercel.app/api/staffActivity', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          po_id: user?.po_id, // Pass the po_id of the current manager
+          po_id: user?.po_id,
           startDate,
           endDate,
           statusUpdate,
           employeeRole,
-          specificEmployee
-        })
+          specificEmployee,
+        }),
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setData(data.data);
       setTotalRows(data.totalRows);
@@ -67,25 +64,9 @@ export default function ViewStaffActivity() {
     }
   };
 
-  const handleFilter = () => {
-    const filtered = data.filter(item => {
-      const dateCondition = (!startDate || item.status_update_datetime >= startDate) && (!endDate || item.status_update_datetime <= endDate);
-      const statusCondition = !statusUpdate || item.updated_status === statusUpdate;
-      const roleCondition = !employeeRole || item.role === employeeRole;
-      const employeeCondition = !specificEmployee || item.first_name === specificEmployee;
-      return dateCondition && statusCondition && roleCondition && employeeCondition;
-    });
-    setFilteredData(filtered);
-    setFilteredRows(filtered.length);
-  };
-
-  useEffect(() => {
-    handleFilter(); // Recalculate the filtered items whenever the filters change
-  }, [startDate, endDate, statusUpdate, employeeRole, specificEmployee, data]);
-
   return (
     <Container maxWidth="sm" sx={{ p: 3 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2, textAlign: "center" }}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>👥 View Staff Activity</Typography>
         <Typography variant="body2" color="textSecondary">Enter filters to view staff activity.</Typography>
 
@@ -93,78 +74,77 @@ export default function ViewStaffActivity() {
         {successMessage && <Alert severity="success" sx={{ mt: 2 }}>{successMessage}</Alert>}
 
         <label>Start Date:</label>
-        <input type="date" value={startDate} onChange={handleStartDateChange} />
+<input 
+  type="text" 
+  value={startDate} 
+  onChange={(e) => setStartDate(e.target.value)} 
+  placeholder="YYYY-MM-DD"
+/>
         <br />
         <label>End Date:</label>
-        <input type="date" value={endDate} onChange={handleEndDateChange} />
+<input 
+  type="text" 
+  value={startDate} 
+  onChange={(e) => setStartDate(e.target.value)} 
+  placeholder="YYYY-MM-DD"
+/>
         <br />
-        <TextField
-          fullWidth
-          label="Status Update"
-          name="statusUpdate"
-          onChange={(e) => setStatusUpdate(e.target.value)}
-          sx={{ mt: 2 }}
-        />
-        <TextField
-          fullWidth
-          label="Employee Role"
-          name="employeeRole"
-          onChange={(e) => setEmployeeRole(e.target.value)}
-          sx={{ mt: 2 }}
-        />
-        <TextField
-          fullWidth
-          label="Specific Employee"
-          name="specificEmployee"
-          onChange={(e) => setSpecificEmployee(e.target.value)}
-          sx={{ mt: 2 }}
-        />
+
+        {/* Dropdown for Status Update */}
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel>Status Update</InputLabel>
+          <Select value={statusUpdate} onChange={(e) => setStatusUpdate(e.target.value)}>
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="In Transit">In Transit</MenuItem>
+            <MenuItem value="Out for Delivery">Out for Delivery</MenuItem>
+            <MenuItem value="Delivered">Delivered</MenuItem>
+            <MenuItem value="Returned">Returned</MenuItem>
+            <MenuItem value="Missing">Missing</MenuItem>
+          </Select>
+        </FormControl>
+
+        {/* Dropdown for Employee Role */}
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel>Employee Role</InputLabel>
+          <Select value={employeeRole} onChange={(e) => setEmployeeRole(e.target.value)}>
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="Driver">Driver</MenuItem>
+            <MenuItem value="Clerk">Clerk</MenuItem>
+          </Select>
+        </FormControl>
+
+        {/* Dropdown for Specific Employee */}
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel>Specific Employee</InputLabel>
+          <Select value={specificEmployee} onChange={(e) => setSpecificEmployee(e.target.value)}>
+            <MenuItem value="">All</MenuItem>
+            {employeesList.map((employee) => (
+              <MenuItem key={employee.id} value={employee.first_name}>
+                {employee.first_name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Buttons */}
         <Button
           fullWidth
           variant="contained"
-          sx={{ mt: 3, p: 2, backgroundColor: "#D32F2F", color: "#FFF" }}
+          sx={{ mt: 3 }}
           onClick={handleViewActivity}
           disabled={isLoading}
         >
           {isLoading ? <CircularProgress size={20} color="inherit" /> : '🔍 VIEW STAFF ACTIVITY'}
         </Button>
-        <Button
-          fullWidth
-          variant="contained"
-          sx={{ mt: 2, p: 2, backgroundColor: "#D32F2F", color: "#FFF" }}
-          onClick={handleFilter}
-        >
-          FILTER DATA
-        </Button>
 
-        <div>
-          <Typography variant="body1">
-            Total Rows: {totalRows}
-          </Typography>
-          <Typography variant="body1">
-            Filtered Rows: {filteredRows}
-          </Typography>
-          <Typography variant="body1">
-            Percentage: {totalRows > 0 ? (filteredRows / totalRows) * 100 : 0}%
-          </Typography>
-        </div>
-
-        <div>
-          {filteredData.map(item => (
-            <div key={item.my_row_id}>
-              <Typography variant="body1">
-                Employee Name: {item.first_name}<br />
-                Employee Role: {item.role}<br />
-                Date of Update: {item.status_update_datetime}<br />
-                Previous Status: {item.previoust_status}<br />
-                Updated Status: {item.updated_status}<br />
-                Package Type: {item.type}<br />
-                Destination Address: {item.destinationAddress}<br />
-                Origin Address: {item.originAddress}
-              </Typography>
-            </div>
-          ))}
-        </div>
+        {/* Display Results */}
+        <Typography variant="body1">
+          Total Rows: {totalRows}
+        </Typography>
+        <Typography variant="body1">
+          Filtered Rows: {filteredRows}
+        </Typography>
       </Paper>
     </Container>
   );
