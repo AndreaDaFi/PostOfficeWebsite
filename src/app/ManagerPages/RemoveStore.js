@@ -63,7 +63,7 @@ export default function RemoveStoreItem() {
   
     try {
       console.log("item to delete: ", selectedItem);
-      const response = await fetch("http://localhost:3001/api/RemoveItem", {
+      const response = await fetch("https://apipost.vercel.app/api/RemoveItem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selectedItem }), // Wrap selectedItem in an object
