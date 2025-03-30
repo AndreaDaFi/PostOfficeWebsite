@@ -50,6 +50,7 @@ import ViewStore from "./app/ManagerPages/ViewStore";
 import StoreSales from "./app/ManagerPages/StoreSales";
 import ViewPOPackages from "./app/ViewPOPackages";
 import EmpRecordHours from "./app/EmpRecordHours";
+import RemoveStore from "./app/ManagerPages/RemoveStore";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -474,7 +475,7 @@ const App = () => {
                           [{label:"ADD ITEMS TO STORE", to:"/AddStore"},
                             {label:"VIEW CURRENT ITEMS FOR SALE", to:"/ViewStore"},
                             {label:"VIEW ONLINE STORE SALES"},
-                            {label:"REMOVE ITEMS FROM STORE"}
+                            {label:"REMOVE ITEMS FROM STORE", to: "/RemoveStore"}
                           ]}
                           />
                         </ListItem>
@@ -628,6 +629,7 @@ const App = () => {
                       <Route path="/ViewStaffActivity" element={<ViewStaffActivity />} />
                       <Route path="/ViewStore" element={<ViewStore />} />
                       <Route path="/StoreSales" element={<StoreSales />} />
+                      <Route path="/RemoveStore" element={<RemoveStore />} />
                     </>
                   )}
 
