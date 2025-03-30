@@ -1,16 +1,26 @@
 "use client"
 
 import { useState, useEffect, useContext } from "react"
-import {AuthContext} from "../context/AuthContext"
-import { Container, Typography, Box, Card, CardContent, Avatar, Paper, Button } from "@mui/material"
+import { AuthContext } from "../context/AuthContext"
+import {
+  Container,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Avatar,
+  Paper,
+  Button,
+  Badge,
+  IconButton,
+  Tooltip,
+} from "@mui/material"
 import {
   AccessTime as ClockIcon,
-  Email as MailIcon,
-  HelpOutline as HelpIcon,
   LocalShipping as TruckIcon,
-  LocationOn as MapPinIcon,
   Inventory as PackageIcon,
   Logout as LogoutIcon,
+  Warning as WarningIcon,
 } from "@mui/icons-material"
 
 const EmpDashboard = () => {
@@ -18,18 +28,17 @@ const EmpDashboard = () => {
   const [greeting, setGreeting] = useState("")
   const [currentTime, setCurrentTime] = useState("")
   const [animation, setAnimation] = useState(false)
+  const [managerMessages, setManagerMessages] = useState([])
+  const [showLowStockAlert, setShowLowStockAlert] = useState(false)
 
-  // Get user name from context or use default
   const userName = user ? user.name || user.email?.split("@")[0] || "User" : "User"
 
   useEffect(() => {
-    // Set appropriate greeting based on time of day
     const hour = new Date().getHours()
     if (hour < 12) setGreeting("Good morning")
     else if (hour < 18) setGreeting("Good afternoon")
     else setGreeting("Good evening")
 
-    // Update time
     const updateTime = () => {
       const now = new Date()
       setCurrentTime(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }))
@@ -37,18 +46,60 @@ const EmpDashboard = () => {
 
     updateTime()
     const interval = setInterval(updateTime, 60000)
-
-    // Trigger animation after component mounts
     setAnimation(true)
 
     return () => clearInterval(interval)
   }, [])
 
-  const handleEmailSupport = () => {
-    window.location.href = "mailto:support@cougarpost.com?subject=CougarPost Support Request"
+  useEffect(() => {
+    const fetchManagerMessages = async () => {
+      if (!user?.po_id || !isManager()) return
+
+      try {
+        const res = await fetch(`https://apipost.vercel.app/api/getManagerNotifications?po_id=${user.po_id}`)
+        const data = await res.json()
+        console.log("📬 Messages response:", data)
+
+        if (data.success && data.messages) {
+          setManagerMessages(data.messages)
+          if (data.messages.length > 0) {
+            setShowLowStockAlert(true)
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching manager messages:", err)
+      }
+    }
+
+    fetchManagerMessages()
+
+    // Poll for new messages every minute
+    const messageInterval = setInterval(fetchManagerMessages, 60000)
+
+    return () => clearInterval(messageInterval)
+  }, [user])
+
+  const dismissLowStockMessages = async () => {
+    if (!user?.po_id) return
+
+    try {
+      const response = await fetch(`https://apipost.vercel.app/api/markManagerNotificationsRead`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ po_id: user.po_id }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setManagerMessages([])
+        setShowLowStockAlert(false)
+      }
+    } catch (err) {
+      console.error("Failed to mark messages as read:", err)
+    }
   }
 
-  // Get role-specific greeting
   const getRoleGreeting = () => {
     if (isAdmin()) return "Admin Dashboard"
     if (isManager()) return "Manager Dashboard"
@@ -58,16 +109,8 @@ const EmpDashboard = () => {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "white", // Changed from gradient to white
-        pt: 4,
-        pb: 8,
-      }}
-    >
+    <Box sx={{ minHeight: "100vh", background: "white", pt: 4, pb: 8 }}>
       <Container maxWidth="md">
-        {/* Logo and Branding */}
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Typography
             variant="h2"
@@ -87,6 +130,28 @@ const EmpDashboard = () => {
             Your Reliable Postal Service
           </Typography>
         </Box>
+
+        {/* Low Stock Alert Icon */}
+        {isManager() && managerMessages.length > 0 && (
+          <Box sx={{ position: "absolute", top: 20, right: 20 }}>
+            <Tooltip title="Low Stock Alerts">
+              <IconButton
+                color="error"
+                onClick={() => setShowLowStockAlert(true)}
+                sx={{
+                  bgcolor: "rgba(255, 0, 0, 0.1)",
+                  "&:hover": {
+                    bgcolor: "rgba(255, 0, 0, 0.2)",
+                  },
+                }}
+              >
+                <Badge badgeContent={managerMessages.length} color="error" max={99}>
+                  <WarningIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
 
         <Box
           className={animation ? "animate-fade-in" : ""}
@@ -139,14 +204,7 @@ const EmpDashboard = () => {
             {greeting}, {userName}
           </Typography>
 
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: "medium",
-              color: "#ff0000",
-              mb: 2,
-            }}
-          >
+          <Typography variant="h5" sx={{ fontWeight: "medium", color: "#ff0000", mb: 2 }}>
             {getRoleGreeting()}
           </Typography>
 
@@ -191,24 +249,64 @@ const EmpDashboard = () => {
           <CardContent sx={{ p: 5 }}>
             <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
               <TruckIcon sx={{ fontSize: 28, color: "#ff0000", mr: 1.5 }} />
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: "bold",
-                  color: "#ff0000",
-                }}
-              >
+              <Typography variant="h4" sx={{ fontWeight: "bold", color: "#ff0000" }}>
                 Welcome back
               </Typography>
             </Box>
 
             <Typography variant="body1" sx={{ fontSize: "1.1rem", mb: 3, lineHeight: 1.6 }}>
-            At CougarPost, we acknowledge that it's people like you that keep the business running. Keep up the good work!
+              At CougarPost, we acknowledge that it's people like you that keep the business running. Keep up the good
+              work!
             </Typography>
+
+            {/* Low Stock Alert Card */}
+            {isManager() && showLowStockAlert && managerMessages.length > 0 && (
+              <Card
+                elevation={4}
+                sx={{
+                  mt: 4,
+                  p: 3,
+                  borderRadius: 4,
+                  border: "1px solid #ffcccc",
+                  bgcolor: "rgba(255, 0, 0, 0.05)",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                  <WarningIcon sx={{ color: "#ff0000", mr: 2, fontSize: 28 }} />
+                  <Typography variant="h6" sx={{ color: "#ff0000", fontWeight: "bold" }}>
+                    Low Stock Alert
+                  </Typography>
+                </Box>
+
+                <Typography variant="body1" sx={{ mb: 3 }}>
+                  You have {managerMessages.length} item{managerMessages.length !== 1 ? "s" : ""} that{" "}
+                  {managerMessages.length !== 1 ? "are" : "is"} running low on stock. Please review inventory levels.
+                </Typography>
+
+                <Box sx={{ textAlign: "center" }}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={dismissLowStockMessages}
+                    sx={{
+                      fontWeight: "bold",
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 3,
+                      background: "linear-gradient(135deg, #ff5555, #ff0000)",
+                      "&:hover": {
+                        background: "linear-gradient(135deg, #cc0000, #990000)",
+                      },
+                    }}
+                  >
+                    Dismiss Low Stock Alerts
+                  </Button>
+                </Box>
+              </Card>
+            )}
           </CardContent>
         </Card>
 
-        {/* Logout Button */}
         {user && (
           <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
             <Button
