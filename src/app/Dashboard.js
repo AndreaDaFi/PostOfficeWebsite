@@ -29,23 +29,6 @@ export default function Dashboard() {
   // State for controlling the notification
   const [showNotification, setShowNotification] = useState(false)
 
-  // FOR TESTING ONLY - Remove in production
-  useEffect(() => {
-    console.log("Creating test messages")
-    setTimeout(() => {
-      // Simulate messages for testing
-      setMessages([
-        {
-          origin_state: "TX",
-          destination_address: "123 Main St, Houston TX 77001",
-        },
-      ])
-      // Force notification to show
-      setShowNotification(true)
-      console.log("Notification activated for testing")
-    }, 2000) // Will appear 2 seconds after loading
-  }, []) // Runs only once on load
-
   useEffect(() => {
     // Update time every minute
     const timer = setInterval(() => {
@@ -95,12 +78,18 @@ export default function Dashboard() {
       if (!user?.customers_id) return
 
       try {
-        const res = await fetch(`https://apipost.vercel.app/api/messages/${user.customers_id}`)
+        // Use the existing API endpoint structure
+        const res = await fetch(`https://apipost.vercel.app/api/CustomerMessages?customerId=${user.customers_id}`)
         const data = await res.json()
-        setMessages(data || [])
-        // Show notification if there are messages
-        if (data && data.length > 0) {
-          setShowNotification(true)
+        console.log("📬 Messages response:", data)
+
+        if (data.success && data.messages) {
+          setMessages(data.messages)
+          // Show notification if there are unread messages
+          const unreadMessages = data.messages.filter((msg) => msg.message_read === 0)
+          if (unreadMessages.length > 0) {
+            setShowNotification(true)
+          }
         }
       } catch (err) {
         console.error("Error fetching messages:", err)
@@ -111,14 +100,23 @@ export default function Dashboard() {
   }, [user])
 
   const clearMessages = async () => {
+    if (!user?.customers_id) return
+
     try {
-      await fetch(`https://apipost.vercel.app/api/messages/${user.customers_id}`, {
-        method: "DELETE",
+      // Use the existing API endpoint structure
+      const response = await fetch(`https://apipost.vercel.app/api/mark-read`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerId: user.customers_id }),
       })
-      setMessages([])
-      setShowNotification(false)
+
+      if (response.ok) {
+        // Update the local messages to show they've been read
+        setMessages((prevMessages) => prevMessages.map((msg) => ({ ...msg, message_read: 1 })))
+        setShowNotification(false)
+      }
     } catch (err) {
-      console.error("Failed to clear messages:", err)
+      console.error("Failed to mark messages as read:", err)
     }
   }
 
@@ -136,10 +134,13 @@ export default function Dashboard() {
     return null
   }
 
+  // Filter for unread messages only for the notification
+  const unreadMessages = messages.filter((msg) => msg.message_read === 0)
+
   return (
     <Box sx={{ bgcolor: "#ffffff", minHeight: "100vh", py: { xs: 2, sm: 4 } }}>
       {/* CENTERED NOTIFICATION */}
-      {messages.length > 0 && showNotification && (
+      {unreadMessages.length > 0 && showNotification && (
         <div
           style={{
             position: "fixed",
@@ -244,10 +245,10 @@ export default function Dashboard() {
                   margin: "0 auto",
                 }}
               >
-                You have {messages.length} new package {messages.length === 1 ? "update" : "updates"}.
+                You have {unreadMessages.length} new package {unreadMessages.length === 1 ? "update" : "updates"}.
               </div>
 
-              {messages.map((msg, index) => (
+              {unreadMessages.map((msg, index) => (
                 <div
                   key={index}
                   style={{
@@ -268,8 +269,8 @@ export default function Dashboard() {
                     <LocalShipping style={{ fontSize: "20px", color: "#d32f2f" }} />
                   </div>
                   <div>
-                    Your package from <strong>{msg.origin_state}</strong> has arrived at{" "}
-                    <strong>{msg.destination_address}</strong>.
+                    Your package from <strong>{msg.origin_state || "Unknown"}</strong> has arrived at{" "}
+                    <strong>{msg.destination_address || "your destination"}</strong>.
                   </div>
                 </div>
               ))}
