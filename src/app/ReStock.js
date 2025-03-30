@@ -80,9 +80,10 @@ export default function ReStock() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      setSuccessMessage("✅ Stock updated successfully.");
       setSelectedItemId("");
       setNewStock("");
+      alert("Stock updated successfully.");
+      window.location.reload();
     } catch (err) {
       setError("❌ " + err.message);
     }
