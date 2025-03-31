@@ -93,7 +93,7 @@ export default function ViewStore() {
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
   }
 
-  // Enhance the table paper styling
+  // Enhance the table paper styling - make it wider than other elements
   const tablePaperStyle = {
     borderRadius: "12px",
     overflow: "hidden",
@@ -471,113 +471,129 @@ export default function ViewStore() {
           </Typography>
         </Box>
       ) : (
-        <div style={{ width: "100%", overflow: "auto" }}>
-          <Paper elevation={0} style={tablePaperStyle}>
-            <Box
-              style={{
-                backgroundColor: colors.headerBg,
-                padding: "16px",
-                borderBottom: `1px solid ${colors.cardBorder}`,
-              }}
-            >
-              <Typography
-                variant="h5"
+        // Make the Package Details section wider than the rest of the content
+        <div
+          style={{
+            width: "100vw",
+            marginLeft: "calc(-50vw + 50%)",
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              width: "95%",
+              maxWidth: "2200px", // Make the table wider than the rest of the content
+            }}
+          >
+            <Paper elevation={0} style={tablePaperStyle}>
+              <Box
                 style={{
-                  fontWeight: "600",
-                  color: colors.primary,
-                  textAlign: "center",
+                  backgroundColor: colors.headerBg,
+                  padding: "16px",
+                  borderBottom: `1px solid ${colors.cardBorder}`,
                 }}
               >
-                Package Details
-              </Typography>
-            </Box>
-            {/* Table with improved styling */}
-            <TableContainer style={tableContainerStyle}>
-              <Table style={tableStyle}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell style={headerCellStyle}>ID</TableCell>
-                    <TableCell style={headerCellStyle}>TYPE</TableCell>
-                    <TableCell style={headerCellStyle}>WEIGHT</TableCell>
-                    <TableCell style={headerCellStyle}>SIZE</TableCell>
-                    <TableCell style={headerCellStyle}>STATUS</TableCell>
-                    <TableCell style={headerCellStyle}>ORDER DATE</TableCell>
-                    <TableCell style={headerCellStyle}>DELIVERY</TableCell>
-                    <TableCell style={headerCellStyle}>ORIGIN</TableCell>
-                    <TableCell style={headerCellStyle}>DESTINATION</TableCell>
-                    <TableCell style={headerCellStyle}>INS</TableCell>
-                    <TableCell style={headerCellStyle}>FAST</TableCell>
-                    <TableCell style={headerCellStyle}>FRAG</TableCell>
-                    <TableCell style={headerCellStyle}>AMOUNT</TableCell>
-                    <TableCell style={headerCellStyle}>TAX</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredItems.length > 0 ? (
-                    filteredItems.map((item, index) => (
-                      <TableRow key={index} hover style={getRowStyle(index)}>
-                        <TableCell style={cellStyle}>{item.tracking_number}</TableCell>
-                        <TableCell style={cellStyle}>{item.type}</TableCell>
-                        <TableCell style={cellStyle}>{item.weight ? item.weight : "N/A"}</TableCell>
-                        <TableCell style={cellStyle}>
-                          {item.size
-                            ? item.size === "s"
-                              ? "Small"
-                              : item.size === "m"
-                                ? "Medium"
-                                : item.size === "l"
-                                  ? "Large"
-                                  : "N/A"
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell style={getStatusStyle(item.status)}>{item.status}</TableCell>
-                        <TableCell style={cellStyle}>
-                          {new Date(item.transaction_date).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </TableCell>
-                        <TableCell style={cellStyle}>
-                          {item.delivery_date
-                            ? new Date(item.delivery_date).toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                              })
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell style={cellStyle}>{item.origin_city}</TableCell>
-                        <TableCell style={cellStyle}>{item.destination_city}</TableCell>
-                        <TableCell style={getBooleanStyle(item.purchased_insurance)}>
-                          {item.purchased_insurance === "1" ? "Yes" : "No"}
-                        </TableCell>
-                        <TableCell style={getBooleanStyle(item.fast_delivery)}>
-                          {item.fast_delivery === "1" ? "Yes" : "No"}
-                        </TableCell>
-                        <TableCell style={getBooleanStyle(item.fragile)}>
-                          {item.fragile === "1" ? "Yes" : "No"}
-                        </TableCell>
-                        <TableCell style={{ ...cellStyle, fontWeight: "bold" }}>${item.total_amount}</TableCell>
-                        <TableCell style={cellStyle}>${item.total_tax}</TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
+                <Typography
+                  variant="h5"
+                  style={{
+                    fontWeight: "600",
+                    color: colors.primary,
+                    textAlign: "center",
+                  }}
+                >
+                  Package Details
+                </Typography>
+              </Box>
+              {/* Table with improved styling */}
+              <TableContainer style={tableContainerStyle}>
+                <Table style={tableStyle}>
+                  <TableHead>
                     <TableRow>
-                      <TableCell
-                        colSpan={14}
-                        style={{
-                          textAlign: "center",
-                          padding: "24px",
-                          color: colors.primary,
-                        }}
-                      >
-                        ❌ No results found.
-                      </TableCell>
+                      <TableCell style={headerCellStyle}>ID</TableCell>
+                      <TableCell style={headerCellStyle}>TYPE</TableCell>
+                      <TableCell style={headerCellStyle}>WEIGHT</TableCell>
+                      <TableCell style={headerCellStyle}>SIZE</TableCell>
+                      <TableCell style={headerCellStyle}>STATUS</TableCell>
+                      <TableCell style={headerCellStyle}>ORDER DATE</TableCell>
+                      <TableCell style={headerCellStyle}>DELIVERY</TableCell>
+                      <TableCell style={headerCellStyle}>ORIGIN</TableCell>
+                      <TableCell style={headerCellStyle}>DESTINATION</TableCell>
+                      <TableCell style={headerCellStyle}>INS</TableCell>
+                      <TableCell style={headerCellStyle}>FAST</TableCell>
+                      <TableCell style={headerCellStyle}>FRAG</TableCell>
+                      <TableCell style={headerCellStyle}>AMOUNT</TableCell>
+                      <TableCell style={headerCellStyle}>TAX</TableCell>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                  </TableHead>
+                  <TableBody>
+                    {filteredItems.length > 0 ? (
+                      filteredItems.map((item, index) => (
+                        <TableRow key={index} hover style={getRowStyle(index)}>
+                          <TableCell style={cellStyle}>{item.tracking_number}</TableCell>
+                          <TableCell style={cellStyle}>{item.type}</TableCell>
+                          <TableCell style={cellStyle}>{item.weight ? item.weight : "N/A"}</TableCell>
+                          <TableCell style={cellStyle}>
+                            {item.size
+                              ? item.size === "s"
+                                ? "Small"
+                                : item.size === "m"
+                                  ? "Medium"
+                                  : item.size === "l"
+                                    ? "Large"
+                                    : "N/A"
+                              : "N/A"}
+                          </TableCell>
+                          <TableCell style={getStatusStyle(item.status)}>{item.status}</TableCell>
+                          <TableCell style={cellStyle}>
+                            {new Date(item.transaction_date).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </TableCell>
+                          <TableCell style={cellStyle}>
+                            {item.delivery_date
+                              ? new Date(item.delivery_date).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              : "N/A"}
+                          </TableCell>
+                          <TableCell style={cellStyle}>{item.origin_city}</TableCell>
+                          <TableCell style={cellStyle}>{item.destination_city}</TableCell>
+                          <TableCell style={getBooleanStyle(item.purchased_insurance)}>
+                            {item.purchased_insurance === "1" ? "Yes" : "No"}
+                          </TableCell>
+                          <TableCell style={getBooleanStyle(item.fast_delivery)}>
+                            {item.fast_delivery === "1" ? "Yes" : "No"}
+                          </TableCell>
+                          <TableCell style={getBooleanStyle(item.fragile)}>
+                            {item.fragile === "1" ? "Yes" : "No"}
+                          </TableCell>
+                          <TableCell style={{ ...cellStyle, fontWeight: "bold" }}>${item.total_amount}</TableCell>
+                          <TableCell style={cellStyle}>${item.total_tax}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={14}
+                          style={{
+                            textAlign: "center",
+                            padding: "24px",
+                            color: colors.primary,
+                          }}
+                        >
+                          ❌ No results found.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </div>
         </div>
       )}
     </Container>
