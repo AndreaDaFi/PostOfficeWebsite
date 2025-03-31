@@ -83,32 +83,32 @@ export default function Dashboard() {
     fetchPackages();
   }, [user]);
 
- // Fetch messages and handle unread notifications
- useEffect(() => {
-  const fetchMessages = async () => {
-    if (!user?.customers_id) return;
+  // Fetch messages and handle unread notifications
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!user?.customers_id) return;
 
-    try {
-      const res = await fetch(
-        `https://apipost.vercel.app/api/CustomerMessages?customerId=${user.customers_id}`
-      );
-      const data = await res.json();
-      console.log("📬 Messages response:", data);
-      console.log("there are ",data.messages.length," messages");
+      try {
+        const res = await fetch(
+          `https://apipost.vercel.app/api/CustomerMessages?customerId=${user.customers_id}`
+        );
+        const data = await res.json();
+        console.log("📬 Messages response:", data);
+        console.log("there are ", data.messages.length, " messages");
 
-      if (data.success && data.messages) {
-        setUnreadMessages(data.messages);
-        if (data.messages.length > 0) {
-          setShowNotification(true);
+        if (data.success && data.messages) {
+          setUnreadMessages(data.messages);
+          if (data.messages.length > 0) {
+            setShowNotification(true);
+          }
         }
+      } catch (err) {
+        console.error("Error fetching messages:", err);
       }
-    } catch (err) {
-      console.error("Error fetching messages:", err);
-    }
-  };
+    };
 
-  fetchMessages();
-}, [user]);
+    fetchMessages();
+  }, [user]);
 
   const clearMessages = async () => {
     if (!user?.customers_id) return;
@@ -122,7 +122,6 @@ export default function Dashboard() {
       });
 
       setShowNotification(false);
-
     } catch (err) {
       console.error("Failed to mark messages as read:", err);
     }
@@ -132,7 +131,6 @@ export default function Dashboard() {
     navigate("/cust-login");
     return null;
   }
-
 
   return (
     <Box sx={{ bgcolor: "#ffffff", minHeight: "100vh", py: { xs: 2, sm: 4 } }}>
@@ -228,125 +226,144 @@ export default function Dashboard() {
 
         {/*package notifications*/}
         {showNotification && unreadMessages && (
-        <Paper style={{ padding: "20px", maxWidth: "775px", margin: "0 auto" }}>
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              color: "#333333",
-              padding: "30px",
-              borderRadius: "12px",
-              boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
-              width: "100%",
-              position: "relative",
-              border: "none",
-              overflow: "hidden",
-            }}
+          <Paper
+            style={{ padding: "20px", maxWidth: "775px", margin: "0 auto" }}
           >
             <div
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "4px",
-                background: "linear-gradient(to right, #d32f2f, #f44336)",
+                backgroundColor: "#ffffff",
+                color: "#333333",
+                padding: "30px",
+                borderRadius: "12px",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+                width: "100%",
+                position: "relative",
+                border: "none",
+                overflow: "hidden",
               }}
-            />
-            <div style={{ textAlign: "center", marginBottom: "25px" }}>
+            >
               <div
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "60px",
-                  height: "60px",
-                  borderRadius: "50%",
-                  backgroundColor: "#fef8f8",
-                  marginBottom: "15px",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "4px",
+                  background: "linear-gradient(to right, #d32f2f, #f44336)",
                 }}
-              >
-                <LocalShipping style={{ fontSize: "30px", color: "#d32f2f" }} />
-              </div>
-              <div
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "24px",
-                  marginBottom: "10px",
-                  color: "#d32f2f",
-                  letterSpacing: "0.5px",
-                }}
-              >
-                MESSAGES
-              </div>
-
-              <div
-                style={{
-                  fontSize: "16px",
-                  marginBottom: "20px",
-                  color: "#555555",
-                  maxWidth: "80%",
-                  margin: "0 auto",
-                }}
-              >
-                You have {unreadMessages.length} delivered package notifications.
-              </div>
-              <div>
-                {/* Message List */}
-                {unreadMessages.map((msg, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      textAlign: "left",
-                      backgroundColor: "#fafafa",
-                      padding: "15px 20px",
-                      borderRadius: "8px",
-                      marginBottom: "12px",
-                      fontSize: "15px",
-                      border: "1px solid #f0f0f0",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: "12px",
-                    }}
-                  >
-                    <div style={{ marginTop: "2px" }}>
-                      <LocalShipping style={{ fontSize: "20px", color: "#d32f2f" }} />
-                    </div>
-                    <div>
-                      Your package from {msg.origin_state || "Unknown"} has arrived at {msg.destination_address || "your destination"}.
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Dismiss button */}
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-                <button
-                  onClick={() => {
-                    clearMessages();
-                  }}
+              />
+              <div style={{ textAlign: "center", marginBottom: "25px" }}>
+                <div
                   style={{
-                    backgroundColor: "#f5f5f5",
-                    color: "#555555",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontWeight: "600",
-                    fontSize: "14px",
-                    letterSpacing: "0.5px",
-                    transition: "background-color 0.2s",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "60px",
+                    height: "60px",
+                    borderRadius: "50%",
+                    backgroundColor: "#fef8f8",
+                    marginBottom: "15px",
                   }}
-                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#f5f5f5")}
                 >
-                  DISMISS
-                </button>
+                  <LocalShipping
+                    style={{ fontSize: "30px", color: "#d32f2f" }}
+                  />
+                </div>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "24px",
+                    marginBottom: "10px",
+                    color: "#d32f2f",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  MESSAGES
+                </div>
+
+                <div
+                  style={{
+                    fontSize: "16px",
+                    marginBottom: "20px",
+                    color: "#555555",
+                    maxWidth: "80%",
+                    margin: "0 auto",
+                  }}
+                >
+                  You have {unreadMessages.length} delivered package
+                  notifications.
+                </div>
+                <div>
+                  {/* Message List */}
+                  {unreadMessages.map((msg, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        textAlign: "left",
+                        backgroundColor: "#fafafa",
+                        padding: "15px 20px",
+                        borderRadius: "8px",
+                        marginBottom: "12px",
+                        fontSize: "15px",
+                        border: "1px solid #f0f0f0",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "12px",
+                      }}
+                    >
+                      <div style={{ marginTop: "2px" }}>
+                        <LocalShipping
+                          style={{ fontSize: "20px", color: "#d32f2f" }}
+                        />
+                      </div>
+                      <div>
+                        Your package from {msg.origin_state || "Unknown"} has
+                        arrived at{" "}
+                        {msg.destination_address || "your destination"}.
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Dismiss button */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                  }}
+                >
+                  <button
+                    onClick={() => {
+                      clearMessages();
+                    }}
+                    style={{
+                      backgroundColor: "#f5f5f5",
+                      color: "#555555",
+                      border: "none",
+                      padding: "12px 24px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      fontSize: "14px",
+                      letterSpacing: "0.5px",
+                      transition: "background-color 0.2s",
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#e0e0e0")
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#f5f5f5")
+                    }
+                  >
+                    DISMISS
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </Paper>
-      )}
+          </Paper>
+        )}
 
         {/* Main Actions */}
         <Typography
@@ -661,6 +678,22 @@ export default function Dashboard() {
                     </Typography>
                   </Box>
                 </Box>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="error"
+                  size="large"
+                  onClick={() => navigate("/CustomerInfo")}
+                  sx={{
+                    fontWeight: "bold",
+                    py: { xs: 1, sm: 1.5 },
+                    borderRadius: { xs: 1, sm: 2 },
+                    boxShadow: "0 4px 12px rgba(211, 47, 47, 0.3)",
+                  }}
+                  endIcon={<ArrowForward />}
+                >
+                  MY INFORMATION
+                </Button>
               </CardContent>
               <CardActions sx={{ p: { xs: 2, sm: 3, md: 4 }, pt: 0 }}>
                 <Button

@@ -51,6 +51,7 @@ import StoreSales from "./app/ManagerPages/StoreSales";
 import ViewPOPackages from "./app/ViewPOPackages";
 import EmpRecordHours from "./app/EmpRecordHours";
 import RemoveStore from "./app/ManagerPages/RemoveStore";
+import CustomerInfo from "./app/CustomerInfo";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -555,6 +556,7 @@ const App = () => {
                 <Routes>
                   {/* Public Pages */}
                   <Route path="/" element={<Home />} />
+                  <Route path="/PackageDetails" element={<PackageDetails />} />
                   {!user && (
                     <Route path="/cust-login" element={<CustLogin />} />
                   )}
@@ -585,14 +587,14 @@ const App = () => {
                         path="/ask-store-location"
                         element={<AskPostOfficeForStore />}
                       />
+                      <Route
+                        path="/CustomerInfo"
+                        element={<CustomerInfo />}
+                      />
                       <Route path="/store" element={<Store />} />
                       <Route path="/Checkout" element={<Checkout />} />
                       <Route path="/MyPackages" element={<MyPackages />} />
                       <Route path="/TrackPackage" element={<TrackPackage />} />
-                      <Route
-                        path="/PackageDetails"
-                        element={<PackageDetails />}
-                      />
                       <Route
                         path="/delivered-messages"
                         element={<DeliveredMessagesPage />}

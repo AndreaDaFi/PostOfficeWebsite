@@ -583,6 +583,22 @@ const Home = () => {
               >
                 You'll always have access to your package locations through our website. Just log in, and you'll have access to anything you could need.
               </Typography>
+              <Button
+                    variant="outlined"
+                    component={Link}
+                    to="/PackageDetails"
+                    sx={{
+                      borderColor: primaryRed,
+                      color: primaryRed,
+                      "&:hover": {
+                        backgroundColor: primaryRed,
+                        color: "white",
+                        borderColor: primaryRed,
+                      },
+                    }}
+                  >
+                    TRACK MY PACKAGE
+                  </Button>
             </Grid>
             <Grid item xs={12} md={6}>
               <Box

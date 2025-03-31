@@ -39,7 +39,7 @@ export default function ViewStore() {
       const po_id = user?.po_id; // Get the manager's ID
       try {
         const response = await fetch(
-          ` https://apipost.vercel.app/api/StoreSales?po_id=${po_id}`,
+          ` http://localhost:3001/api/StoreSales?po_id=${po_id}`,
           {
             method: "GET", // Use GET method
           }
@@ -121,8 +121,10 @@ export default function ViewStore() {
         variant="body1"
         style={{ color: "#555", marginBottom: "20px" }}
       >
-        view individual package data, statistics, and more. Change the filters
-        to view more specific data.
+        view individual package data, statistics, and more for your post office.
+        Change the filters to view more specific data. This displays the data of
+        the packages we are delivering for customers, not orders from the online
+        store.
       </Typography>
 
       <Box
@@ -319,6 +321,15 @@ export default function ViewStore() {
                       style={{
                         color: "#FFF",
                         fontWeight: "bold",
+                        minWidth: "120px",
+                      }}
+                    >
+                      DATE OF DELIVERY
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        color: "#FFF",
+                        fontWeight: "bold",
                         minWidth: "150px",
                       }}
                     >
@@ -404,14 +415,39 @@ export default function ViewStore() {
                       <TableRow key={index} hover>
                         <TableCell>{item.tracking_number}</TableCell>
                         <TableCell>{item.type}</TableCell>
-                        <TableCell>{item.weight}</TableCell>
-                        <TableCell>{item.size}</TableCell>
+                        <TableCell>
+                          {item.weight ? item.weight : "N/A"}
+                        </TableCell>
+                        <TableCell>
+                          {item.size
+                            ? item.size === "s"
+                              ? "small"
+                              : item.size === "m"
+                              ? "medium"
+                              : item.size === "l"
+                              ? "large"
+                              : "N/A"
+                            : "N/A"}
+                        </TableCell>
+
                         <TableCell>{item.status}</TableCell>
                         <TableCell>
                           {new Date(item.transaction_date).toLocaleDateString(
                             "en-US",
                             { year: "2-digit", month: "short", day: "2-digit" }
                           )}
+                        </TableCell>
+                        <TableCell>
+                          {item.delivery_date
+                            ? new Date(item.delivery_date).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "2-digit",
+                                  month: "short",
+                                  day: "2-digit",
+                                }
+                              )
+                            : "N/A"}
                         </TableCell>
                         <TableCell>{item.origin_state}</TableCell>
                         <TableCell>{item.origin_city}</TableCell>
