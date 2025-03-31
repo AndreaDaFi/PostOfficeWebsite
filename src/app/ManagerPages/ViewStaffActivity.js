@@ -20,6 +20,8 @@ export default function ViewStaffActivity() {
 
   // Fetch employees dynamically based on manager's po_id
   useEffect(() => {
+    console.log("Current user:", user);
+    console.log("PO_ID:", user?.po_id);
     async function fetchEmployees() {
       try {
         const response = await fetch(`https://apipost.vercel.app/api/staffActivity?po_id=${user?.po_id}`);
@@ -30,13 +32,25 @@ export default function ViewStaffActivity() {
         console.error(err.message);
       }
     }
-    fetchEmployees();
+    if (user?.po_id) {
+      fetchEmployees();
+    } else {
+      console.log("No valid po_id available");
+    }
+    
   }, [user?.po_id]);
 
   const handleViewActivity = async () => {
     setError(null);
-    setSuccessMessage(null);
-    setIsLoading(true);
+  setSuccessMessage(null);
+  setIsLoading(true);
+  
+  // Check if user has a po_id
+  if (!user?.po_id) {
+    setError("No post office ID found for this user");
+    setIsLoading(false);
+    return;
+  }
     try {
       const response = await fetch('https://apipost.vercel.app/api/staffActivity', {
         method: 'POST',
