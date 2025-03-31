@@ -91,7 +91,7 @@ const App = () => {
                     }}
                     onClick={goLogout}
                   >
-                    Logout
+                    Logoutt
                     <LogoutIcon sx={{ marginLeft: "8px" }} />
                   </Button>
                 )}
