@@ -22,7 +22,7 @@ export default function ViewStaffActivity() {
   useEffect(() => {
     async function fetchEmployees() {
       try {
-        const response = await fetch(`https://apipost.vercel.app/api/employees?po_id=${user?.po_id}`);
+        const response = await fetch(`https://apipost.vercel.app/api/staffActivity?po_id=${user?.po_id}`);
         if (!response.ok) throw new Error("Failed to fetch employees");
         const data = await response.json();
         setEmployeesList(data.employees || []);
@@ -78,15 +78,15 @@ export default function ViewStaffActivity() {
   type="text" 
   value={startDate} 
   onChange={(e) => setStartDate(e.target.value)} 
-  placeholder="YYYY-MM-DD"
+  placeholder="mm/dd/yyyy"
 />
-        <br />
-        <label>End Date:</label>
+<br />
+<label>End Date:</label>
 <input 
   type="text" 
-  value={startDate} 
-  onChange={(e) => setStartDate(e.target.value)} 
-  placeholder="YYYY-MM-DD"
+  value={endDate} 
+  onChange={(e) => setEndDate(e.target.value)} 
+  placeholder="mm/dd/yyyy"
 />
         <br />
 
@@ -145,6 +145,37 @@ export default function ViewStaffActivity() {
         <Typography variant="body1">
           Filtered Rows: {filteredRows}
         </Typography>
+        {/* Display Filtered Employee Data */}
+{filteredData.length > 0 && (
+  <div style={{ marginTop: '20px', overflowX: 'auto' }}>
+    <Typography variant="h6">Staff Activity Results</Typography>
+    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+      <thead>
+        <tr>
+          <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Employee</th>
+          <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Role</th>
+          <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Date/Time</th>
+          <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Previous Status</th>
+          <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Updated Status</th>
+          <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Package Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredData.map((item) => (
+          <tr key={item.my_row_id}>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.first_name}</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.role}</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{new Date(item.status_update_datetime).toLocaleString()}</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.previoust_status}</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.updated_status}</td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.type}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
       </Paper>
     </Container>
   );
