@@ -78,7 +78,7 @@ const MyPackages = () => {
 
   // Function to navigate to package history page
   const viewPackageHistory = (trackingNumber) => {
-    navigate(`/package-history/${trackingNumber}`)
+    navigate(`/PackageDetails/`)
   }
 
   return (
