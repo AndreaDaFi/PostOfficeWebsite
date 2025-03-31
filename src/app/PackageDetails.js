@@ -38,7 +38,7 @@ export default function PackageDetails() {
 
     setIsLoading(true)
     try {
-      const res = await fetch(`http://localhost:3000/api/tracking-history?trackingNumber=${trackingNumber}`)
+      const res = await fetch(`https://apipost.vercel.app/api/tracking-history?trackingNumber=${trackingNumber}`)
       const data = await res.json()
 
       if (!data.success || data.history.length === 0) {
