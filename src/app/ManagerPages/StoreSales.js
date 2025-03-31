@@ -1,5 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
-import { AuthContext } from "../../context/AuthContext";
+"use client"
+
+import { useState, useEffect, useContext } from "react"
+import { AuthContext } from "../../context/AuthContext"
 import {
   Container,
   Typography,
@@ -11,466 +13,562 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  InputAdornment,
   CircularProgress,
   Box,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+  Card,
+  CardContent,
+  Grid,
+} from "@mui/material"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 
 export default function ViewStore() {
-  const { user } = useContext(AuthContext);
-  const [items, setItems] = useState([]); // Holds API data
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [startDate, setStartDate] = useState(""); // Start date for filtering
-  const [endDate, setEndDate] = useState(""); // End date for filtering
-  const [totalSales, setTotalSales] = useState(0); // Holds the total sales amount
-  const [totalPackages, setTotalPackages] = useState(0); // Holds the total number of packages
-  const [filteredItems, setFilteredItems] = useState([]);
-  const [packageType, setPackageType] = useState("any"); // Track the selected package type
+  const { user } = useContext(AuthContext)
+  const [items, setItems] = useState([]) // Holds API data
+  const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [startDate, setStartDate] = useState("") // Start date for filtering
+  const [endDate, setEndDate] = useState("") // End date for filtering
+  const [totalSales, setTotalSales] = useState(0) // Holds the total sales amount
+  const [totalPackages, setTotalPackages] = useState(0) // Holds the total number of packages
+  const [filteredItems, setFilteredItems] = useState([])
+  const [packageType, setPackageType] = useState("any") // Track the selected package type
+  const [tabValue, setTabValue] = useState(0)
+  const [chartData, setChartData] = useState([])
+
+  // Update the color scheme to include more subtle colors and improve the box styling
+  const colors = {
+    primary: "#D32F2F", // Red
+    secondary: "#424242", // Dark Gray
+    text: "#333333",
+    lightGray: "#f5f5f5",
+    mediumGray: "#e0e0e0",
+    darkGray: "#757575",
+    success: "#2E7D32", // Green
+    warning: "#FF9800", // Orange
+    white: "#ffffff",
+    cardBorder: "#e0e0e0",
+    cardShadow: "rgba(0, 0, 0, 0.1)",
+    headerBg: "#f8f8f8",
+  }
+
+  // Update the container style to add more breathing room and allow wider content
+  const containerStyle = {
+    marginTop: "24px",
+    marginBottom: "24px",
+    width: "100%",
+    padding: "0 16px",
+    maxWidth: "1800px", // 1.5x wider than standard (1200px)
+    margin: "0 auto", // Center the container
+  }
+
+  // Improve the Paper component styling for filters
+  const filterPaperStyle = {
+    padding: "20px",
+    marginBottom: "24px",
+    borderRadius: "12px",
+    backgroundColor: colors.white,
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+    border: `1px solid ${colors.cardBorder}`,
+  }
+
+  // Enhance the card styling for stats cards
+  const statsCardStyle = {
+    borderRadius: "12px",
+    height: "100%",
+    overflow: "hidden",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+    transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+  }
+
+  // Enhance the chart card styling
+  const chartCardStyle = {
+    marginBottom: "24px",
+    borderRadius: "12px",
+    overflow: "hidden",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+  }
+
+  // Enhance the table paper styling
+  const tablePaperStyle = {
+    borderRadius: "12px",
+    overflow: "hidden",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+    width: "100%",
+    maxWidth: "100%",
+  }
+
+  // Update the header cell style
+  const headerCellStyle = {
+    backgroundColor: colors.primary,
+    color: colors.white,
+    fontWeight: "bold",
+    padding: "14px 10px",
+    fontSize: "0.9rem",
+    textAlign: "center",
+    borderBottom: `2px solid ${colors.primary}`,
+  }
+
+  // Regular cell style
+  const cellStyle = {
+    padding: "10px 8px",
+    fontSize: "0.9rem",
+    textAlign: "center",
+    borderBottom: `1px solid ${colors.mediumGray}`,
+  }
+
+  // Status cell with color coding
+  const getStatusStyle = (status) => {
+    let color = colors.text
+
+    if (status.toLowerCase().includes("delivered")) {
+      color = colors.success // Green for delivered
+    } else if (status.toLowerCase().includes("transit")) {
+      color = colors.secondary // Dark gray for in transit
+    } else if (status.toLowerCase().includes("processing")) {
+      color = colors.warning // Orange for processing
+    }
+
+    return {
+      ...cellStyle,
+      color: color,
+      fontWeight: "bold",
+    }
+  }
+
+  // Yes/No cell with color coding
+  const getBooleanStyle = (value) => ({
+    ...cellStyle,
+    color: value === "1" ? colors.success : colors.darkGray,
+    fontWeight: value === "1" ? "bold" : "normal",
+  })
 
   useEffect(() => {
     const fetchItems = async () => {
-      const po_id = user?.po_id; // Get the manager's ID
+      const po_id = user?.po_id // Get the manager's ID
       try {
-        const response = await fetch(
-          ` https://apipost.vercel.app/api/StoreSales?po_id=${po_id}`,
-          {
-            method: "GET", // Use GET method
-          }
-        );
+        const response = await fetch(`https://apipost.vercel.app/api/StoreSales?po_id=${po_id}`, {
+          method: "GET", // Use GET method
+        })
 
-        const data = await response.json();
-        console.log("Fetched Data:", data);
+        const data = await response.json()
+        console.log("Fetched Data:", data)
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          setItems(data.data); // Update state with API response
+          setItems(data.data) // Update state with API response
         } else {
-          console.error("⚠ API returned an empty array:", data);
+          console.error("⚠ API returned an empty array:", data)
         }
       } catch (err) {
-        console.error("❌ Error fetching items for sale:", err);
-        setError(err.message);
+        console.error("❌ Error fetching items for sale:", err)
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchItems();
-  }, [user?.po_id]); // Refetch when `po_id` changes
+    fetchItems()
+  }, [user?.po_id]) // Refetch when `po_id` changes
 
   const filterByDateRangeAndType = () => {
-    let filtered = items;
+    let filtered = items
 
     // Apply date range filter
     filtered = filtered.filter((item) => {
-      const transactionDate = new Date(item.transaction_date);
-      const start = new Date(startDate);
-      const end = new Date(endDate);
+      const transactionDate = new Date(item.transaction_date)
+      const start = startDate ? new Date(startDate) : null
+      const end = endDate ? new Date(endDate) : null
 
-      return (
-        (!startDate || transactionDate >= start) &&
-        (!endDate || transactionDate <= end)
-      );
-    });
+      return (!start || transactionDate >= start) && (!end || transactionDate <= end)
+    })
 
     // Apply package type filter
     if (packageType !== "any") {
-      filtered = filtered.filter(
-        (item) => item.type.toLowerCase() === packageType.toLowerCase()
-      );
+      filtered = filtered.filter((item) => item.type.toLowerCase() === packageType.toLowerCase())
     }
 
-    setFilteredItems(filtered);
+    setFilteredItems(filtered)
 
     // Calculate total sales and total packages
-    const total = filtered.reduce(
-      (acc, item) => acc + parseFloat(item.total_amount),
-      0
-    );
-    setTotalSales(total);
-    setTotalPackages(filtered.length);
-  };
+    const total = filtered.reduce((acc, item) => acc + Number.parseFloat(item.total_amount), 0)
+    setTotalSales(total)
+    setTotalPackages(filtered.length)
+
+    // Process data for charts
+    processChartData(filtered)
+  }
+
+  const processChartData = (data) => {
+    // For package type distribution
+    const typeCount = {}
+
+    data.forEach((item) => {
+      const type = item.type.toLowerCase()
+      if (!typeCount[type]) {
+        typeCount[type] = 0
+      }
+      typeCount[type] += 1
+    })
+
+    const chartData = Object.entries(typeCount).map(([name, value]) => ({
+      name,
+      packages: value,
+      amount: data
+        .filter((item) => item.type.toLowerCase() === name)
+        .reduce((sum, item) => sum + Number.parseFloat(item.total_amount), 0),
+    }))
+
+    setChartData(chartData)
+  }
 
   useEffect(() => {
-    filterByDateRangeAndType(); // Recalculate the filtered items whenever the date range changes
-  }, [startDate, endDate, packageType, items]);
+    filterByDateRangeAndType() // Recalculate the filtered items whenever the date range changes
+  }, [startDate, endDate, packageType, items])
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue)
+  }
+
+  // Table styles
+  const tableContainerStyle = {
+    overflowX: "auto",
+    width: "100%",
+    maxWidth: "100%",
+  }
+
+  const tableStyle = {
+    minWidth: 750,
+    width: "100%",
+  }
+
+  const getRowStyle = (index) => ({
+    backgroundColor: index % 2 === 0 ? colors.lightGray : colors.white,
+    transition: "background-color 0.3s ease",
+    "&:hover": {
+      backgroundColor: colors.mediumGray,
+    },
+  })
 
   return (
-    <Container
-      style={{
-        marginTop: "20px",
-        textAlign: "center",
-        width: "100%", // Ensure the container takes up the full available width
-        marginLeft: "auto", // Center the container
-        marginRight: "auto", // Center the container
-      }}
-    >
+    <Container maxWidth={false} style={containerStyle}>
       <Typography
         variant="h4"
-        style={{ fontWeight: "bold", color: "#D32F2F", marginBottom: "20px" }}
+        style={{ fontWeight: "bold", color: colors.primary, marginBottom: "15px", textAlign: "center" }}
       >
         Packages in the system
       </Typography>
-      <Typography
-        variant="body1"
-        style={{ color: "#555", marginBottom: "20px" }}
-      >
-        view individual package data, statistics, and more for your post office.
-        Change the filters to view more specific data. This displays the data of
-        the packages we are delivering for customers, not orders from the online
-        store.
-      </Typography>
 
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        style={{ marginBottom: "20px" }}
-      >
-        {/* Date Range Filter */}
-        <Box style={{ marginRight: "20px", flex: 1 }}>
-          <TextField
-            label="Start Date"
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            fullWidth
-          />
-        </Box>
-        <Box style={{ marginRight: "20px", flex: 1 }}>
-          <TextField
-            label="End Date"
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            fullWidth
-          />
-        </Box>
+      {/* Filters Section */}
+      <Paper elevation={0} style={filterPaperStyle}>
+        <Typography
+          variant="h6"
+          style={{
+            marginBottom: "16px",
+            color: colors.secondary,
+            fontWeight: "600",
+          }}
+        >
+          Filter Packages
+        </Typography>
+        <Grid container spacing={3} alignItems="center">
+          <Grid item xs={12} md={4}>
+            <TextField
+              label="Start Date"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              size="small"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              label="End Date"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              size="small"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <FormControl fullWidth size="small" variant="outlined">
+              <InputLabel>Package Type</InputLabel>
+              <Select value={packageType} onChange={(e) => setPackageType(e.target.value)} label="Package Type">
+                <MenuItem value="any">Any</MenuItem>
+                <MenuItem value="box">Box</MenuItem>
+                <MenuItem value="envelope">Envelope</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </Paper>
 
-        {/* Package Type Filter */}
-        <Box style={{ flex: 1 }}>
-          <FormControl fullWidth>
-            <InputLabel>Package Type</InputLabel>
-            <Select
-              value={packageType}
-              onChange={(e) => setPackageType(e.target.value)}
-              label="Package Type"
+      {/* Stats Cards */}
+      <Grid container spacing={3} style={{ marginBottom: "24px" }}>
+        <Grid item xs={12} md={6}>
+          <Card elevation={0} style={statsCardStyle}>
+            <CardContent
+              style={{
+                padding: "0",
+              }}
             >
-              <MenuItem value="any">Any</MenuItem>
-              <MenuItem value="box">Box</MenuItem>
-              <MenuItem value="envelope">Envelope</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-      </Box>
+              <Box
+                style={{
+                  backgroundColor: colors.primary,
+                  padding: "16px",
+                  borderBottom: `1px solid ${colors.cardBorder}`,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  style={{
+                    color: colors.white,
+                    fontWeight: "600",
+                    textAlign: "center",
+                  }}
+                >
+                  TOTAL SALES
+                </Typography>
+              </Box>
+              <Box
+                style={{
+                  padding: "24px 16px",
+                  textAlign: "center",
+                  backgroundColor: colors.white,
+                }}
+              >
+                <Typography
+                  variant="h3"
+                  style={{
+                    fontWeight: "700",
+                    color: colors.primary,
+                  }}
+                >
+                  ${totalSales.toFixed(2)}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Card elevation={0} style={statsCardStyle}>
+            <CardContent
+              style={{
+                padding: "0",
+              }}
+            >
+              <Box
+                style={{
+                  backgroundColor: colors.secondary,
+                  padding: "16px",
+                  borderBottom: `1px solid ${colors.cardBorder}`,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  style={{
+                    color: colors.white,
+                    fontWeight: "600",
+                    textAlign: "center",
+                  }}
+                >
+                  TOTAL PACKAGES
+                </Typography>
+              </Box>
+              <Box
+                style={{
+                  padding: "24px 16px",
+                  textAlign: "center",
+                  backgroundColor: colors.white,
+                }}
+              >
+                <Typography
+                  variant="h3"
+                  style={{
+                    fontWeight: "700",
+                    color: colors.secondary,
+                  }}
+                >
+                  {totalPackages}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
-      <Box
-        display="flex"
-        justifyContent="space-between" // This will spread the two boxes apart
-        alignItems="center"
-        style={{
-          padding: "20px",
-          borderRadius: "10px",
-          backgroundColor: "#FFF",
-          border: "2px solid #D32F2F", // Red border
-          marginBottom: "20px",
-          width: "auto", // Ensures the Box fits the content
-          maxWidth: "500px", // Optional max-width for responsive design
-          margin: "0 auto", // Center it horizontally
-        }}
-      >
-        {/* Total Sales Box */}
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          style={{
-            padding: "20px",
-            borderRadius: "10px",
-            backgroundColor: "#FFF",
-            border: "2px solid #D32F2F", // Red border
-            marginRight: "10px", // Add space between boxes
-          }}
-        >
-          <Typography
-            variant="h6"
+      {/* Chart Section */}
+      <Card elevation={0} style={chartCardStyle}>
+        <CardContent style={{ padding: "0" }}>
+          <Box
             style={{
-              color: "#D32F2F", // Red color for the text
-              fontWeight: "bold",
+              backgroundColor: colors.headerBg,
+              padding: "16px",
+              borderBottom: `1px solid ${colors.cardBorder}`,
             }}
           >
-            TOTAL SALES: ${totalSales.toFixed(2)}
-          </Typography>
-        </Box>
-
-        {/* Amount of Packages Box */}
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          style={{
-            padding: "20px",
-            borderRadius: "10px",
-            backgroundColor: "#FFF",
-            border: "2px solid #D32F2F", // Red border
-          }}
-        >
-          <Typography
-            variant="h6"
-            style={{
-              color: "#D32F2F", // Red color for the text
-              fontWeight: "bold",
-            }}
-          >
-            AMOUNT OF PACKAGES: {totalPackages}
-          </Typography>
-        </Box>
-      </Box>
+            <Typography
+              variant="h5"
+              style={{
+                fontWeight: "600",
+                color: colors.primary,
+                textAlign: "center",
+              }}
+            >
+              Package Analytics
+            </Typography>
+          </Box>
+          <Box style={{ padding: "20px" }}>
+            <div style={{ width: "100%", height: 350 }}>
+              <ResponsiveContainer>
+                <BarChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={colors.mediumGray} />
+                  <XAxis dataKey="name" tick={{ fill: colors.text }} />
+                  <YAxis yAxisId="left" orientation="left" stroke={colors.primary} />
+                  <YAxis yAxisId="right" orientation="right" stroke={colors.secondary} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "rgba(255, 255, 255, 0.98)",
+                      borderRadius: "8px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                      border: "none",
+                      padding: "10px",
+                    }}
+                  />
+                  <Legend wrapperStyle={{ paddingTop: "16px" }} />
+                  <Bar yAxisId="left" dataKey="packages" name="Packages" fill={colors.primary} radius={[6, 6, 0, 0]} />
+                  <Bar
+                    yAxisId="right"
+                    dataKey="amount"
+                    name="Amount ($)"
+                    fill={colors.secondary}
+                    radius={[6, 6, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Box>
+        </CardContent>
+      </Card>
 
       {loading ? (
-        <CircularProgress style={{ color: "#D32F2F", marginTop: "20px" }} />
+        <Box display="flex" justifyContent="center" my={4}>
+          <CircularProgress style={{ color: colors.primary }} />
+        </Box>
       ) : error ? (
-        <Typography
-          variant="body2"
-          style={{ color: "#D32F2F", fontWeight: "bold" }}
-        >
-          ❌ {error}
-        </Typography>
+        <Box display="flex" justifyContent="center" my={4} p={3} bgcolor="#FFEBEE" borderRadius="8px">
+          <Typography variant="body1" style={{ color: colors.primary, fontWeight: "bold" }}>
+            ❌ {error}
+          </Typography>
+        </Box>
       ) : (
-        <Paper
-          elevation={3}
-          style={{
-            padding: "20px",
-            borderRadius: "10px",
-            backgroundColor: "#fff",
-          }}
-        >
-          {/* Added a div with horizontal scroll */}
-          <div>
-            <TableContainer style={{ width: "100%" }}>
-              <Table>
+        <div style={{ width: "100%", overflow: "auto" }}>
+          <Paper elevation={0} style={tablePaperStyle}>
+            <Box
+              style={{
+                backgroundColor: colors.headerBg,
+                padding: "16px",
+                borderBottom: `1px solid ${colors.cardBorder}`,
+              }}
+            >
+              <Typography
+                variant="h5"
+                style={{
+                  fontWeight: "600",
+                  color: colors.primary,
+                  textAlign: "center",
+                }}
+              >
+                Package Details
+              </Typography>
+            </Box>
+            {/* Table with improved styling */}
+            <TableContainer style={tableContainerStyle}>
+              <Table style={tableStyle}>
                 <TableHead>
-                  <TableRow style={{ backgroundColor: "#D32F2F" }}>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      TRACKING NUMBER
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "100px",
-                      }}
-                    >
-                      TYPE
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "80px",
-                      }}
-                    >
-                      WEIGHT
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "80px",
-                      }}
-                    >
-                      SIZE
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      STATUS
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      DATE OF ORDER
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      DATE OF DELIVERY
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "150px",
-                      }}
-                    >
-                      ORIGIN STATE
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "150px",
-                      }}
-                    >
-                      ORIGIN CITY
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "150px",
-                      }}
-                    >
-                      DESTINATION STATE
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "150px",
-                      }}
-                    >
-                      DESTINATION CITY
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "150px",
-                      }}
-                    >
-                      PURCHASED INSURANCE
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      FAST DELIVERY
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      FRAGILE
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      TOTAL AMOUNT
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        color: "#FFF",
-                        fontWeight: "bold",
-                        minWidth: "120px",
-                      }}
-                    >
-                      TOTAL TAX
-                    </TableCell>
+                  <TableRow>
+                    <TableCell style={headerCellStyle}>ID</TableCell>
+                    <TableCell style={headerCellStyle}>TYPE</TableCell>
+                    <TableCell style={headerCellStyle}>WEIGHT</TableCell>
+                    <TableCell style={headerCellStyle}>SIZE</TableCell>
+                    <TableCell style={headerCellStyle}>STATUS</TableCell>
+                    <TableCell style={headerCellStyle}>ORDER DATE</TableCell>
+                    <TableCell style={headerCellStyle}>DELIVERY</TableCell>
+                    <TableCell style={headerCellStyle}>ORIGIN</TableCell>
+                    <TableCell style={headerCellStyle}>DESTINATION</TableCell>
+                    <TableCell style={headerCellStyle}>INS</TableCell>
+                    <TableCell style={headerCellStyle}>FAST</TableCell>
+                    <TableCell style={headerCellStyle}>FRAG</TableCell>
+                    <TableCell style={headerCellStyle}>AMOUNT</TableCell>
+                    <TableCell style={headerCellStyle}>TAX</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {filteredItems.length > 0 ? (
                     filteredItems.map((item, index) => (
-                      <TableRow key={index} hover>
-                        <TableCell>{item.tracking_number}</TableCell>
-                        <TableCell>{item.type}</TableCell>
-                        <TableCell>
-                          {item.weight ? item.weight : "N/A"}
-                        </TableCell>
-                        <TableCell>
+                      <TableRow key={index} hover style={getRowStyle(index)}>
+                        <TableCell style={cellStyle}>{item.tracking_number}</TableCell>
+                        <TableCell style={cellStyle}>{item.type}</TableCell>
+                        <TableCell style={cellStyle}>{item.weight ? item.weight : "N/A"}</TableCell>
+                        <TableCell style={cellStyle}>
                           {item.size
                             ? item.size === "s"
-                              ? "small"
+                              ? "Small"
                               : item.size === "m"
-                              ? "medium"
-                              : item.size === "l"
-                              ? "large"
-                              : "N/A"
+                                ? "Medium"
+                                : item.size === "l"
+                                  ? "Large"
+                                  : "N/A"
                             : "N/A"}
                         </TableCell>
-
-                        <TableCell>{item.status}</TableCell>
-                        <TableCell>
-                          {new Date(item.transaction_date).toLocaleDateString(
-                            "en-US",
-                            { year: "2-digit", month: "short", day: "2-digit" }
-                          )}
+                        <TableCell style={getStatusStyle(item.status)}>{item.status}</TableCell>
+                        <TableCell style={cellStyle}>
+                          {new Date(item.transaction_date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </TableCell>
-                        <TableCell>
+                        <TableCell style={cellStyle}>
                           {item.delivery_date
-                            ? new Date(item.delivery_date).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "2-digit",
-                                  month: "short",
-                                  day: "2-digit",
-                                }
-                              )
+                            ? new Date(item.delivery_date).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                              })
                             : "N/A"}
                         </TableCell>
-                        <TableCell>{item.origin_state}</TableCell>
-                        <TableCell>{item.origin_city}</TableCell>
-                        <TableCell>{item.destination_state}</TableCell>
-                        <TableCell>{item.destination_city}</TableCell>
-                        <TableCell>
-                          {item.purchased_insurance === "1" ? "YES" : "NO"}
+                        <TableCell style={cellStyle}>{item.origin_city}</TableCell>
+                        <TableCell style={cellStyle}>{item.destination_city}</TableCell>
+                        <TableCell style={getBooleanStyle(item.purchased_insurance)}>
+                          {item.purchased_insurance === "1" ? "Yes" : "No"}
                         </TableCell>
-                        <TableCell>
-                          {item.fast_delivery === "1" ? "YES" : "NO"}
+                        <TableCell style={getBooleanStyle(item.fast_delivery)}>
+                          {item.fast_delivery === "1" ? "Yes" : "No"}
                         </TableCell>
-                        <TableCell>
-                          {item.fragile === "1" ? "YES" : "NO"}
+                        <TableCell style={getBooleanStyle(item.fragile)}>
+                          {item.fragile === "1" ? "Yes" : "No"}
                         </TableCell>
-                        <TableCell>${item.total_amount}</TableCell>
-                        <TableCell>${item.total_tax}</TableCell>
+                        <TableCell style={{ ...cellStyle, fontWeight: "bold" }}>${item.total_amount}</TableCell>
+                        <TableCell style={cellStyle}>${item.total_tax}</TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={4}
-                        style={{ textAlign: "center", color: "#B71C1C" }}
+                        colSpan={14}
+                        style={{
+                          textAlign: "center",
+                          padding: "24px",
+                          color: colors.primary,
+                        }}
                       >
                         ❌ No results found.
                       </TableCell>
@@ -479,9 +577,10 @@ export default function ViewStore() {
                 </TableBody>
               </Table>
             </TableContainer>
-          </div>
-        </Paper>
+          </Paper>
+        </div>
       )}
     </Container>
-  );
+  )
 }
+
