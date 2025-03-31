@@ -28,7 +28,7 @@ const theme = createTheme({
     primary: {
       main: "#d32f2f",
       light: "#ff6659",
-      dark: "#9a0007",
+      dark: "##000a12",
       contrastText: "#ffffff",
     },
     secondary: {
@@ -38,8 +38,8 @@ const theme = createTheme({
       contrastText: "#ffffff",
     },
     text: {
-      primary: "#000000", // Pure black for text
-      secondary: "#212121", // Very dark gray for secondary text
+      primary: "#000.12", // Pure black for text
+      secondary: "#000.12", // Very dark gray for secondary text
     },
     background: {
       default: "#f5f5f5",
@@ -51,7 +51,7 @@ const theme = createTheme({
     h4: {
       fontWeight: 800,
       letterSpacing: "0.5px",
-      color: "#000000",
+      color: "#000a12",
     },
     h5: {
       fontWeight: 800,
@@ -61,14 +61,14 @@ const theme = createTheme({
     h6: {
       fontWeight: 700,
       letterSpacing: "0.25px",
-      color: "#000000",
+      color: "#000a12",
     },
     body1: {
-      color: "#000000",
+      color: "#000a12",
       fontWeight: 500,
     },
     body2: {
-      color: "#000000",
+      color: "#000a12",
       fontWeight: 500,
     },
   },
@@ -79,7 +79,7 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
+          boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
         },
       },
     },
@@ -149,7 +149,7 @@ export default function CustomerInfo() {
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/customer-profile", {
+        const res = await fetch("https://apipost.vercel.app/api/customer-profile", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ customer_id: user.customers_id }),
@@ -184,7 +184,7 @@ export default function CustomerInfo() {
 
   const handleUpdate = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/update-customer-profile", {
+      const res = await fetch("https://apipost.vercel.app/api/update-customer-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_id: user.customers_id, ...profile }),
@@ -254,14 +254,14 @@ export default function CustomerInfo() {
                   height: 64,
                   bgcolor: "white",
                   color: "primary.main",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
                   border: "2px solid #ffffff",
                 }}
               >
                 <PersonIcon sx={{ fontSize: 36 }} />
               </Avatar>
               <Box sx={{ ml: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 800, textShadow: "1px 1px 2px rgba(0,0,0,0.3)" }}>
+                <Typography variant="h5" sx={{ fontWeight: 800, textShadow: "1px 1px 2px rgba(0,0,0,0.12)" }}>
                   MY INFORMATION
                 </Typography>
               </Box>
@@ -281,9 +281,9 @@ export default function CustomerInfo() {
                   py: 1.2,
                   "&:hover": {
                     bgcolor: "rgba(255, 255, 255, 0.9)",
-                    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+                    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.12)",
                   },
-                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.25)",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.12)",
                   textTransform: "uppercase",
                   letterSpacing: "0.5px",
                 }}
@@ -303,9 +303,9 @@ export default function CustomerInfo() {
                   py: 1.2,
                   "&:hover": {
                     bgcolor: "rgba(255, 255, 255, 0.9)",
-                    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+                    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.12)",
                   },
-                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.25)",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.12)",
                   textTransform: "uppercase",
                   letterSpacing: "0.5px",
                 }}
@@ -322,7 +322,7 @@ export default function CustomerInfo() {
               sx={{
                 m: 3,
                 borderRadius: 2,
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
                 border: "1px solid #c8e6c9",
                 animation: "slideDown 0.5s ease-out",
                 "& .MuiAlert-message": {
@@ -387,7 +387,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
@@ -421,7 +421,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
@@ -476,7 +476,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
@@ -510,7 +510,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
@@ -565,7 +565,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
@@ -599,7 +599,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
@@ -633,7 +633,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
@@ -667,7 +667,7 @@ export default function CustomerInfo() {
                         opacity: 0.9,
                       },
                       "& .MuiOutlinedInput-root": {
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
                         backgroundColor: "#f9f9f9",
                         "&.Mui-disabled": {
                           backgroundColor: "#f5f5f5",
