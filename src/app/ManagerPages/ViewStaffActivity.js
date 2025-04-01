@@ -8,7 +8,6 @@ export default function ViewStaffActivity() {
   const [successMessage, setSuccessMessage] = useState(null);
   const [startDate, setStartDate] = useState(""); 
   const [endDate, setEndDate] = useState(""); 
-  const [statusUpdate, setStatusUpdate] = useState(""); 
   const [employeeRole, setEmployeeRole] = useState(""); 
   const [specificEmployee, setSpecificEmployee] = useState(""); 
   const [employeesList, setEmployeesList] = useState([]); 
@@ -16,19 +15,17 @@ export default function ViewStaffActivity() {
   const [filteredData, setFilteredData] = useState([]); 
   const [totalRows, setTotalRows] = useState(0); 
   const [filteredRows, setFilteredRows] = useState(0); 
+  const [hoursData, setHoursData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
   // Fetch employees dynamically based on manager's po_id
   useEffect(() => {
-    console.log("Current user:", user);
-    console.log("PO_ID:", user?.po_id);
     async function fetchEmployees() {
       try {
         const response = await fetch(`https://apipost.vercel.app/api/staffActivity?po_id=${user?.po_id}`);
         if (!response.ok) throw new Error("Failed to fetch employees");
         const data = await response.json();
-        console.log("Employees data:", data);
         setEmployeesList(data.employees);
       } catch (err) {
         console.error("Error fetching employees:", err.message);
@@ -36,10 +33,7 @@ export default function ViewStaffActivity() {
     }
     if (user?.po_id) {
       fetchEmployees();
-    } else {
-      console.log("No valid po_id available");
     }
-    
   }, [user?.po_id]);
 
   const handleViewActivity = async () => {
@@ -48,26 +42,15 @@ export default function ViewStaffActivity() {
     setIsLoading(true);
     setHasSearched(true);
     
-    // Check if user has a po_id
     if (!user?.po_id) {
       setError("No post office ID found for this user");
       setIsLoading(false);
       return;
     }
 
-    // Format dates for API if provided
     const formattedStartDate = startDate ? new Date(startDate).toISOString() : "";
     const formattedEndDate = endDate ? new Date(endDate).toISOString() : "";
     
-    console.log("Sending request with params:", {
-      po_id: user?.po_id,
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      statusUpdate,
-      employeeRole,
-      specificEmployee,
-    });
-
     try {
       const response = await fetch('https://apipost.vercel.app/api/staffActivity', {
         method: 'POST',
@@ -76,7 +59,6 @@ export default function ViewStaffActivity() {
           po_id: user?.po_id,
           startDate: formattedStartDate,
           endDate: formattedEndDate,
-          statusUpdate,
           employeeRole,
           specificEmployee,
         }),
@@ -85,12 +67,12 @@ export default function ViewStaffActivity() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
       const result = await response.json();
-      console.log("API Response:", result);
       
       setData(result.data || []);
       setTotalRows(result.totalRows || 0);
       setFilteredData(result.data || []);
       setFilteredRows((result.data || []).length);
+      setHoursData(result.hoursData || []);
       
       if ((result.data || []).length === 0) {
         setSuccessMessage("No records found matching your criteria.");
@@ -105,8 +87,14 @@ export default function ViewStaffActivity() {
     }
   };
 
+  // Calculate total hours worked
+  const totalHoursWorked = hoursData.reduce((total, employee) => total + employee.total_hours, 0);
+  
+  // Calculate total package updates
+  const totalPackageUpdates = hoursData.reduce((total, employee) => total + employee.package_updates, 0);
+
   return (
-    <Container maxWidth="sm" sx={{ p: 3 }}>
+    <Container maxWidth="lg" sx={{ p: 3 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>👥 View Staff Activity</Typography>
         <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>Enter filters to view staff activity.</Typography>
@@ -133,20 +121,6 @@ export default function ViewStaffActivity() {
             style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
         </div>
-
-        {/* Dropdown for Status Update */}
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel>Status Update</InputLabel>
-          <Select value={statusUpdate} onChange={(e) => setStatusUpdate(e.target.value)}>
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="In Transit">In Transit</MenuItem>
-            <MenuItem value="Out for Delivery">Out for Delivery</MenuItem>
-            <MenuItem value="Delivered">Delivered</MenuItem>
-            <MenuItem value="Returned">Returned</MenuItem>
-            <MenuItem value="Missing">Missing</MenuItem>
-          </Select>
-        </FormControl>
 
         {/* Dropdown for Employee Role */}
         <FormControl fullWidth sx={{ mt: 2 }}>
@@ -191,49 +165,89 @@ export default function ViewStaffActivity() {
             <Typography variant="body1">
               Records Matching Filters: {filteredRows}
             </Typography>
+            <Typography variant="body1">
+              Total Package Updates: {totalPackageUpdates}
+            </Typography>
+            <Typography variant="body1">
+              Total Hours Worked: {totalHoursWorked}
+            </Typography>
+          </div>
+        )}
+
+        {/* Display Hours Worked Summary */}
+        {hoursData.length > 0 && (
+          <div style={{ marginTop: '20px' }}>
+            <Typography variant="h6">Hours Worked Summary</Typography>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Employee</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Role</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Date</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Hours Worked</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {hoursData.map((employee, index) => (
+                    <tr key={index}>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{employee.first_name || 'N/A'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{employee.role || 'N/A'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        {employee.date ? new Date(employee.date).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{employee.total_hours || 0}</td>
+                    </tr>
+                  ))}
+                  <tr style={{ fontWeight: 'bold', backgroundColor: '#f2f2f2' }}>
+                    <td colSpan="3" style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>Total Hours:</td>
+                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{totalHoursWorked}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
         {/* Display Filtered Employee Data */}
         {filteredData.length > 0 ? (
           <div style={{ marginTop: '20px', overflowX: 'auto' }}>
-            <Typography variant="h6">Staff Activity Results</Typography>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-              <thead>
-                <tr>
-                  <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Employee</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Role</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Date/Time</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Previous Status</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Updated Status</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Package Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((item, index) => (
-                  <tr key={item.my_row_id || index}>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.first_name || 'N/A'}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.role || 'N/A'}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {item.status_update_datetime ? new Date(item.status_update_datetime).toLocaleString() : 'N/A'}
-                    </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.previoust_status || 'N/A'}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.updated_status || 'N/A'}</td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.type || 'N/A'}</td>
+            <Typography variant="h6">Package Status Updates</Typography>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Employee</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Role</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Date/Time</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Previous Status</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Updated Status</th>
+                    <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Package Type</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          hasSearched && (
-            <div style={{ marginTop: '20px', textAlign: 'center' }}>
-              <Typography variant="body1">No records found matching your criteria.</Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Try adjusting your filters or check if there is data in the database for this post office.
-              </Typography>
+                </thead>
+                <tbody>
+                  {filteredData.map((item, index) => (
+                    <tr key={item.my_row_id || index}>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.first_name || 'N/A'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.role || 'N/A'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        {item.status_update_datetime ? new Date(item.status_update_datetime).toLocaleString() : 'N/A'}
+                      </td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.previoust_status || 'N/A'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.updated_status || 'N/A'}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.type || 'N/A'}</td>
+                    </tr>
+                  ))}
+                  <tr style={{ fontWeight: 'bold', backgroundColor: '#f2f2f2' }}>
+                    <td colSpan="5" style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'right' }}>Total Updates:</td>
+                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>{filteredData.length}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          )
+          </div>
+        ) : hasSearched && (
+          <Typography variant="body1" sx={{ mt: 2 }}>No package status updates found matching your criteria.</Typography>
         )}
       </Paper>
     </Container>
