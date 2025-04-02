@@ -52,6 +52,7 @@ import ViewPOPackages from "./app/ViewPOPackages";
 import EmpRecordHours from "./app/EmpRecordHours";
 import RemoveStore from "./app/ManagerPages/RemoveStore";
 import CustomerInfo from "./app/CustomerInfo";
+import ViewOnlineStore from "./app/ManagerPages/ViewOnlineStore";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -475,7 +476,7 @@ const App = () => {
                           <DropMenuButton buttonText="online store" menuItems={
                           [{label:"ADD ITEMS TO STORE", to:"/AddStore"},
                             {label:"VIEW CURRENT ITEMS FOR SALE", to:"/ViewStore"},
-                            {label:"VIEW ONLINE STORE SALES"},
+                            {label:"VIEW ONLINE STORE SALES", to: "/ViewOnlineStore"},
                             {label:"REMOVE ITEMS FROM STORE", to: "/RemoveStore"}
                           ]}
                           />
@@ -625,6 +626,7 @@ const App = () => {
                   {/* ONLY VISIBLE/ACCESSIBLE WHEN AN MANAGER IS LOGGED IN */}
                   {user && isManager() && (
                     <>
+                      <Route path="/ViewOnlineStore" element={<ViewOnlineStore />} />
                       <Route path="/AddStore" element={<AddStore />} />
                       <Route path="/AddStaff" element={<AddStaff />} />
                       <Route path="/MngrViewStaff" element={<MngrViewStaff />} />

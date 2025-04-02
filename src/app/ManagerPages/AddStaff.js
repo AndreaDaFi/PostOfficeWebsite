@@ -275,7 +275,7 @@ export default function AddStaff() {
             Add New Staff Member
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            Add a new staff member to the system.
+            Please enter the new hire's information to add them to the system.
           </Typography>
 
           {error && (
