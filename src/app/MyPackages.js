@@ -78,8 +78,9 @@ const MyPackages = () => {
 
   // Function to navigate to package history page
   const viewPackageHistory = (trackingNumber) => {
-    navigate(`/PackageDetails/`)
+    navigate(`/TrackPackage?trackingNumber=${trackingNumber}`)
   }
+  
 
   return (
     <Box width="100%" display="flex" flexDirection="column" alignItems="center" py={4}>
