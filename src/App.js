@@ -15,6 +15,7 @@ import {
   MenuItem, ListItem, Menu
 } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
+import ShipingLabel from "./app/shipinglabel";
 import CustLogin from "./app/CustLogin";
 import EmpLogin from "./app/EmpLogin";
 import Store from "./app/Store";
@@ -591,6 +592,8 @@ const App = () => {
                         path="/CustomerInfo"
                         element={<CustomerInfo />}
                       />
+                      <Route path="/shipinglabel" element={<ShipingLabel />} />
+
                       <Route path="/store" element={<Store />} />
                       <Route path="/Checkout" element={<Checkout />} />
                       <Route path="/MyPackages" element={<MyPackages />} />

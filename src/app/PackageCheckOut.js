@@ -90,21 +90,42 @@ export default function PackageCheckout() {
       });
 
       if (response.ok) {
-        const result = await response.json();
-        console.log("Checkout successful:", result);
+        const result = await response.json()
+        console.log("Checkout successful:", result)
 
-        alert("Checkout successful.");
-        navigate("/Home");
+        // Get the tracking number from the API response if available
+        // If not available in the response, we'll need to make another API call to get it
+        let trackingNumber
+
+        if (result.tracking_number) {
+          trackingNumber = result.tracking_number
+        } else {
+          // If tracking number is not in the response, we could make another API call here
+          // For now, we'll use a placeholder
+          trackingNumber = `USPS${payload.po_id}${Date.now().toString().slice(-8)}`
+        }
+
+        alert("Checkout successful.")
+        navigate("/shipinglabel", {
+          state: {
+            payload: {
+              ...payload,
+              tracking_number: trackingNumber,
+            },
+            taxRate,
+            total: (payload.base_price * taxRate).toFixed(2),
+          },
+        })
       } else {
-        const errorResult = await response.json();
-        console.error("Checkout failed:", errorResult);
-        alert("Checkout failed. Please try again.");
+        const errorResult = await response.json()
+        console.error("Checkout failed:", errorResult)
+        alert("Checkout failed. Please try again.")
       }
     } catch (error) {
-      console.error("Error during checkout:", error);
-      alert("Something went wrong. Please try again later.");
+      console.error("Error during checkout:", error)
+      alert("Something went wrong. Please try again later.")
     }
-  };
+  }
 
   // Conditional rendering - Show loading message if still loading
   if (loading) {
@@ -239,7 +260,7 @@ export default function PackageCheckout() {
             </Grid>
             <Grid item xs={6}>
               <TextField
-                label="Expiration Date (MM/YY)"
+                label="Expiration Date (MM-YY)"
                 name="expirationDate"
                 variant="outlined"
                 fullWidth
