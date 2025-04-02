@@ -80,33 +80,42 @@ const MyPackages = () => {
   const viewPackageHistory = (trackingNumber) => {
     navigate(`/TrackPackage?trackingNumber=${trackingNumber}`)
   }
-  
 
   return (
     <Box width="100%" display="flex" flexDirection="column" alignItems="center" py={4}>
-      {/* Wide welcome banner */}
-      <Box
+      {/* Welcome banner with gradient background */}
+      <Paper
+        elevation={2}
         sx={{
           width: { xs: "95%", sm: "95%", md: "95%" },
           maxWidth: "1200px",
           mb: 4,
-          p: 3,
-          bgcolor: "#ffebee", // Light red background
           borderRadius: 2,
-          border: "1px solid #ffcdd2",
-          textAlign: "center",
+          background: "linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <Typography
-          variant="h4" // Reduced from h3
-          fontWeight="bold"
-          color="error.main"
-        >
-          Welcome to your packages
-        </Typography>
-      </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: 0.05,
+            backgroundImage:
+              'url(\'data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fillOpacity="1" fillRule="evenodd"/%3E%3C/svg%3E\')',
+          }}
+        />
+        <Box sx={{ p: 4, position: "relative", zIndex: 1, textAlign: "center" }}>
+          <Typography variant="h4" fontWeight="bold" color="white">
+            Welcome to your packages
+          </Typography>
+        </Box>
+      </Paper>
 
-      {/* Wide package container - same width as welcome banner */}
+      {/* Package container */}
       <Box
         sx={{
           width: { xs: "95%", sm: "95%", md: "95%" },
@@ -114,7 +123,7 @@ const MyPackages = () => {
         }}
       >
         <Paper
-          elevation={3}
+          elevation={2}
           sx={{
             borderRadius: 2,
             overflow: "hidden",
@@ -123,31 +132,27 @@ const MyPackages = () => {
         >
           <Box
             sx={{
-              bgcolor: "error.main", // Using MUI's red color
-              color: "error.contrastText",
-              p: 2.5, // Moderate padding
+              bgcolor: "#B71C1C",
+              color: "white",
+              p: 2.5,
               display: "flex",
               alignItems: "center",
-              gap: 1.5, // Moderate gap
+              gap: 1.5,
             }}
           >
-            <Inventory2 sx={{ fontSize: 24 }} /> {/* Moderate icon size */}
+            <Inventory2 sx={{ fontSize: 24 }} />
             <Typography variant="h5" fontWeight="bold">
-              {" "}
-              {/* Back to h5 */}
               My Packages
             </Typography>
           </Box>
 
           <Box p={3}>
-            {" "}
-            {/* Moderate padding */}
             {error && (
               <Alert
                 severity="error"
                 sx={{
                   mb: 3,
-                  "& .MuiAlert-message": { fontSize: "1rem" }, // Medium error text
+                  "& .MuiAlert-message": { fontSize: "1rem" },
                 }}
                 icon={<ErrorOutline />}
               >
@@ -156,26 +161,23 @@ const MyPackages = () => {
             )}
             {loading ? (
               <Box display="flex" justifyContent="center" p={4}>
-                <CircularProgress size={40} /> {/* Medium loading spinner */}
+                <CircularProgress size={40} sx={{ color: "#D32F2F" }} />
               </Box>
             ) : packages.length === 0 ? (
               <Box textAlign="center" p={4}>
                 <Typography variant="body1" fontSize="1rem" color="text.secondary">
-                  {" "}
-                  {/* Medium text */}🚫 No packages found.
+                  🚫 No packages found.
                 </Typography>
               </Box>
             ) : (
               <Stack spacing={2.5}>
-                {" "}
-                {/* Moderate spacing */}
                 {packages.map((pkg) => (
                   <Card
                     key={pkg.tracking_number}
                     variant="outlined"
                     sx={{
-                      borderLeft: "5px solid #d32f2f", // Moderate border
-                      boxShadow: "0 1px 4px rgba(0,0,0,0.1)", // Subtle shadow
+                      borderLeft: "5px solid #d32f2f",
+                      boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
                       transition: "transform 0.2s ease, box-shadow 0.2s ease",
                       "&:hover": {
                         transform: "translateY(-4px)",
@@ -186,55 +188,41 @@ const MyPackages = () => {
                     onClick={() => viewPackageHistory(pkg.tracking_number)}
                   >
                     <CardContent sx={{ p: 2.5 }}>
-                      {" "}
-                      {/* Moderate padding */}
                       <Grid container spacing={2.5}>
-                        {" "}
-                        {/* Moderate spacing */}
                         <Grid item xs={12}>
                           <Box display="flex" justifyContent="space-between" alignItems="center" mb={1.5}>
-                            <Typography
-                              variant="subtitle1" // Back to subtitle1
-                              fontSize="1.1rem" // Medium-sized text
-                              fontWeight="bold"
-                            >
+                            <Typography variant="subtitle1" fontSize="1.1rem" fontWeight="bold">
                               Tracking: {pkg.tracking_number}
                             </Typography>
                             <Chip
                               label={pkg.status}
                               color={getStatusColor(pkg.status)}
-                              size="medium" // Keep medium size
-                              sx={{ fontSize: "0.9rem" }} // Medium text
+                              size="medium"
+                              sx={{ fontSize: "0.9rem" }}
                             />
                           </Box>
-                          <Divider sx={{ borderWidth: 1 }} /> {/* Medium divider */}
+                          <Divider sx={{ borderWidth: 1 }} />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
                           <Box display="flex" alignItems="center" gap={1.2}>
-                            <Scale sx={{ fontSize: 20 }} color="action" /> {/* Medium icon */}
+                            <Scale sx={{ fontSize: 20 }} color="action" />
                             <Typography fontSize="1rem">
-                              {" "}
-                              {/* Medium text */}
                               <strong>Weight:</strong> {pkg.weight} kg
                             </Typography>
                           </Box>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
                           <Box display="flex" alignItems="center" gap={1.2}>
-                            <Person sx={{ fontSize: 20 }} color="action" /> {/* Medium icon */}
+                            <Person sx={{ fontSize: 20 }} color="action" />
                             <Typography fontSize="1rem">
-                              {" "}
-                              {/* Medium text */}
                               <strong>Receiver:</strong> {pkg.receiver_name}
                             </Typography>
                           </Box>
                         </Grid>
                         <Grid item xs={12} md={4}>
                           <Box display="flex" alignItems="center" gap={1.2}>
-                            <LocalShipping sx={{ fontSize: 20 }} color="action" /> {/* Medium icon */}
+                            <LocalShipping sx={{ fontSize: 20 }} color="action" />
                             <Typography fontSize="1rem">
-                              {" "}
-                              {/* Medium text */}
                               <strong>Type:</strong> {pkg.type}
                             </Typography>
                           </Box>
