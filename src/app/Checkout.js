@@ -153,7 +153,7 @@ const CheckoutPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/ProcessStoreCheckout", {
+      const response = await fetch("https://apipost.vercel.app/api/ProcessStoreCheckout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),

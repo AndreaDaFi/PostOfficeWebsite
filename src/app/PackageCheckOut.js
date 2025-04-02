@@ -21,8 +21,8 @@ import {
   LocalPostOffice,
   WarningAmber,
   FlashOn,
-  QrCode2,
   ShieldOutlined,
+  QrCode2,
 } from "@mui/icons-material"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -37,30 +37,45 @@ export default function PackageCheckout() {
   const [checkoutComplete, setCheckoutComplete] = useState(false)
   const [packageInfo, setPackageInfo] = useState(null)
   const [showSticker, setShowSticker] = useState(false)
+  const [error, setError] = useState(null) // Add error state
 
   // Fetch the tax rate from the API
   useEffect(() => {
     const fetchTaxRate = async () => {
       try {
+        if (!payload || !payload.origin_address_id) {
+          console.error("Missing origin address ID in payload")
+          setError("Missing origin address ID")
+          setLoading(false)
+          return
+        }
+
         console.log("origin address id:", payload.origin_address_id)
         const response = await fetch(`https://apipost.vercel.app/api/GetTax?address_id=${payload.origin_address_id}`)
+
+        if (!response.ok) {
+          throw new Error(`Tax API returned ${response.status}`)
+        }
+
         const data = await response.json()
 
-        if (data) {
+        if (data && data.data) {
           setTaxRate(data.data) // Set the tax rate from the API
           console.log("tax rate: ", data.data)
         } else {
           console.error("Tax rate not found in the API response")
+          setError("Tax rate not found in API response")
         }
       } catch (error) {
         console.error("Error fetching tax rate:", error)
+        setError(`Error fetching tax rate: ${error.message}`)
       } finally {
         setLoading(false) // Stop loading after API call is complete
       }
     }
 
     fetchTaxRate()
-  }, []) // Run only on mount
+  }, [payload]) // Run when payload changes
 
   // State to manage form input data for payment
   const [formData, setFormData] = useState({
@@ -91,17 +106,20 @@ export default function PackageCheckout() {
         body: JSON.stringify({ customer_id: customerId }),
       })
 
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success && result.packages.length > 0) {
-          // Get the most recent package (assuming it's the one just created)
-          setPackageInfo(result.packages[result.packages.length - 1])
-          return result.packages[result.packages.length - 1]
-        }
+      if (!response.ok) {
+        throw new Error(`Package info API returned ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.success && result.packages && result.packages.length > 0) {
+        // Get the most recent package (assuming it's the one just created)
+        setPackageInfo(result.packages[result.packages.length - 1])
+        return result.packages[result.packages.length - 1]
       }
       return null
     } catch (error) {
       console.error("Error fetching package info:", error)
+      setError(`Error fetching package info: ${error.message}`)
       return null
     }
   }
@@ -109,16 +127,44 @@ export default function PackageCheckout() {
   // Handle form submission
   const handleCheckout = async (e) => {
     e.preventDefault()
+    setError(null) // Clear previous errors
 
     // Validate form data
     if (!formData.cardHolder || !formData.cardNumber || !formData.expirationDate || !formData.cvv) {
-      alert("Please fill in all card details.")
+      setError("Please fill in all card details.")
       return
     }
 
-    const checkoutData = { ...payload }
+    if (!payload) {
+      setError("Missing package information")
+      return
+    }
 
     try {
+      // Create a clean checkout data object with only the necessary fields
+      const checkoutData = {
+        customers_id: payload.customers_id || 1,
+        origin_address_id: payload.origin_address_id,
+        po_id: payload.po_id,
+        receiver_name: payload.receiver_name,
+        street: payload.street,
+        apt: payload.apt || "",
+        city_name: payload.city_name,
+        state_id: payload.state_id,
+        zip: payload.zip,
+        type: payload.type,
+        weight: payload.weight || 0,
+        size: payload.size || "",
+        fragile: payload.fragile || 0,
+        purchased_insurance: payload.purchased_insurance || 0,
+        fast_delivery: payload.fast_delivery || 0,
+        base_price: payload.base_price,
+        tax_rate: taxRate || 1.06,
+        total_price: payload.base_price * (taxRate || 1.06),
+      }
+
+      console.log("Sending checkout data:", checkoutData)
+
       const response = await fetch("https://apipost.vercel.app/api/PackageCheckout", {
         method: "POST",
         headers: {
@@ -127,29 +173,29 @@ export default function PackageCheckout() {
         body: JSON.stringify(checkoutData),
       })
 
-      if (response.ok) {
-        const result = await response.json()
-        console.log("Checkout successful:", result)
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("Checkout failed with status:", response.status, errorText)
+        throw new Error(`Checkout failed with status: ${response.status}`)
+      }
 
-        // Set checkout as complete
-        setCheckoutComplete(true)
+      const result = await response.json()
+      console.log("Checkout successful:", result)
 
-        // Fetch package information for the sticker
-        const packageData = await fetchPackageInfo(payload.customers_id || 1) // Use customer ID from payload or default to 1
+      // Set checkout as complete
+      setCheckoutComplete(true)
 
-        if (packageData) {
-          setShowSticker(true)
-        } else {
-          alert("Checkout successful, but couldn't retrieve package information for the sticker.")
-        }
+      // Fetch package information for the sticker
+      const packageData = await fetchPackageInfo(payload.customers_id || 1) // Use customer ID from payload or default to 1
+
+      if (packageData) {
+        setShowSticker(true)
       } else {
-        const errorResult = await response.json()
-        console.error("Checkout failed:", errorResult)
-        alert("Checkout failed. Please try again.")
+        setError("Checkout successful, but couldn't retrieve package information for the sticker.")
       }
     } catch (error) {
       console.error("Error during checkout:", error)
-      alert("Something went wrong. Please try again later.")
+      setError(`Checkout failed: ${error.message}. Please try again.`)
     }
   }
 
@@ -334,7 +380,7 @@ export default function PackageCheckout() {
                   <div class="logo-text">POST OFFICE</div>
                 </div>
                 <div class="office-info">
-                  <div class="office-id">Office #: ${payload.po_id}</div>
+                  <div class="office-id">Office #: ${payload?.po_id || "N/A"}</div>
                   <div>${new Date().toLocaleDateString()}</div>
                 </div>
               </div>
@@ -346,15 +392,15 @@ export default function PackageCheckout() {
                   <!-- To Address -->
                   <div class="address-box">
                     <div class="address-title">DELIVER TO:</div>
-                    <div class="receiver-name">${payload.receiver_name}</div>
-                    <div>${payload.street} ${payload.apt}</div>
-                    <div>${payload.city_name}, ${payload.state_id} ${payload.zip}</div>
+                    <div class="receiver-name">${payload?.receiver_name || "N/A"}</div>
+                    <div>${payload?.street || "N/A"} ${payload?.apt || ""}</div>
+                    <div>${payload?.city_name || "N/A"}, ${payload?.state_id || "N/A"} ${payload?.zip || "N/A"}</div>
                   </div>
 
                   <!-- From Address -->
                   <div class="address-box">
                     <div class="address-title">FROM:</div>
-                    <div class="detail-label">Post Office #${payload.po_id}</div>
+                    <div class="detail-label">Post Office #${payload?.po_id || "N/A"}</div>
                   </div>
                 </div>
 
@@ -364,11 +410,11 @@ export default function PackageCheckout() {
 
                   <div class="detail-row">
                     <div class="detail-label">Type:</div>
-                    <div>${payload.type}</div>
+                    <div>${payload?.type || "N/A"}</div>
                   </div>
 
                   ${
-                    payload.type === "Box"
+                    payload?.type === "Box"
                       ? `
                     <div class="detail-row">
                       <div class="detail-label">Weight:</div>
@@ -395,7 +441,7 @@ export default function PackageCheckout() {
 
                   <div class="special-tags">
                     ${
-                      payload.fragile === 1
+                      payload?.fragile === 1
                         ? `
                       <div class="tag">
                         <div class="tag-text fragile">FRAGILE</div>
@@ -405,7 +451,7 @@ export default function PackageCheckout() {
                     }
 
                     ${
-                      payload.fast_delivery === 1
+                      payload?.fast_delivery === 1
                         ? `
                       <div class="tag">
                         <div class="tag-text priority">PRIORITY DELIVERY</div>
@@ -415,7 +461,7 @@ export default function PackageCheckout() {
                     }
 
                     ${
-                      payload.purchased_insurance === 1
+                      payload?.purchased_insurance === 1
                         ? `
                       <div class="tag">
                         <div class="tag-text insured">INSURED</div>
@@ -450,7 +496,7 @@ export default function PackageCheckout() {
 
               <!-- Special Handling Instructions -->
               ${
-                payload.fragile === 1 || payload.fast_delivery === 1
+                payload?.fragile === 1 || payload?.fast_delivery === 1
                   ? `
                 <div class="special-handling ${payload.fragile === 1 ? "fragile-handling" : "priority-handling"}">
                   ${payload.fragile === 1 ? "FRAGILE - HANDLE WITH CARE" : "PRIORITY - EXPEDITED DELIVERY"}
@@ -506,6 +552,49 @@ export default function PackageCheckout() {
     )
   }
 
+  // Show error message if there's an error
+  if (error) {
+    return (
+      <Container maxWidth="md" style={{ marginTop: "20px", marginBottom: "20px" }}>
+        <Paper elevation={3} style={{ padding: "20px", borderRadius: "12px" }}>
+          <Typography variant="h5" gutterBottom style={{ fontWeight: "bold", color: "#D32F2F" }}>
+            Error
+          </Typography>
+          <Typography color="error">{error}</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "20px" }}
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </Button>
+        </Paper>
+      </Container>
+    )
+  }
+
+  // Check if payload exists
+  if (!payload) {
+    return (
+      <Container maxWidth="md" style={{ marginTop: "20px", marginBottom: "20px" }}>
+        <Paper elevation={3} style={{ padding: "20px", borderRadius: "12px" }}>
+          <Typography variant="h5" gutterBottom style={{ fontWeight: "bold", color: "#D32F2F" }}>
+            Missing Package Information
+          </Typography>
+          <Typography>No package information was provided. Please go back and select a package.</Typography>
+          <Button
+            variant="contained"
+            style={{ marginTop: "20px", backgroundColor: "#D32F2F" }}
+            onClick={() => navigate(-1)}
+          >
+            Go Back
+          </Button>
+        </Paper>
+      </Container>
+    )
+  }
+
   return (
     <Container maxWidth="md" style={{ marginTop: "20px", marginBottom: "20px" }}>
       <Paper elevation={3} style={{ padding: "20px", borderRadius: "12px" }}>
@@ -519,7 +608,7 @@ export default function PackageCheckout() {
         </Typography>
         <Typography>Receiver name: {payload.receiver_name}</Typography>
         <Typography>
-          Address: {payload.street} {payload.apt}, {payload.city_name}, {payload.state_id} {payload.zip}
+          Address: {payload.street} {payload.apt || ""}, {payload.city_name}, {payload.state_id} {payload.zip}
         </Typography>
 
         {/* Package Information */}
@@ -540,13 +629,13 @@ export default function PackageCheckout() {
 
         {/* Total Price Breakdown */}
         <Typography variant="h5" style={{ fontWeight: "bold", color: "#D32F2F", marginTop: "20px" }}>
-          subtotal: $ {payload.base_price}+
+          subtotal: $ {payload.base_price.toFixed(2)}
         </Typography>
         <Typography variant="h5" style={{ fontWeight: "bold", color: "#D32F2F", marginTop: "20px" }}>
-          tax: ${(payload.base_price * (taxRate - 1)).toFixed(2)} +
+          tax: ${(payload.base_price * (taxRate - 1) || 0).toFixed(2)}
         </Typography>
         <Typography variant="h5" style={{ fontWeight: "bold", color: "#D32F2F", marginTop: "10px" }}>
-          total (with tax): $ {(payload.base_price * taxRate).toFixed(2)}
+          total (with tax): $ {(payload.base_price * taxRate || 0).toFixed(2)}
         </Typography>
 
         {/* Payment Method */}
@@ -581,6 +670,7 @@ export default function PackageCheckout() {
                   fullWidth
                   value={formData.cardHolder}
                   onChange={handleInputChange}
+                  required
                 />
               </Grid>
               <Grid item xs={12}>
@@ -591,6 +681,8 @@ export default function PackageCheckout() {
                   fullWidth
                   value={formData.cardNumber}
                   onChange={handleInputChange}
+                  required
+                  inputProps={{ maxLength: 16 }}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -601,6 +693,9 @@ export default function PackageCheckout() {
                   fullWidth
                   value={formData.expirationDate}
                   onChange={handleInputChange}
+                  required
+                  inputProps={{ maxLength: 5 }}
+                  placeholder="MM-YY"
                 />
               </Grid>
               <Grid item xs={6}>
@@ -611,6 +706,9 @@ export default function PackageCheckout() {
                   fullWidth
                   value={formData.cvv}
                   onChange={handleInputChange}
+                  required
+                  type="password"
+                  inputProps={{ maxLength: 4 }}
                 />
               </Grid>
 
@@ -685,7 +783,7 @@ export default function PackageCheckout() {
                       {payload.receiver_name}
                     </Typography>
                     <Typography>
-                      {payload.street} {payload.apt}
+                      {payload.street} {payload.apt || ""}
                     </Typography>
                     <Typography>
                       {payload.city_name}, {payload.state_id} {payload.zip}
