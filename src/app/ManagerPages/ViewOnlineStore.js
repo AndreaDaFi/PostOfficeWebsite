@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useState, useEffect, useContext } from "react"
+import { AuthContext } from "../../context/AuthContext"
 import {
   Container,
   Typography,
@@ -22,142 +22,22 @@ import {
   Card,
   CardContent,
   Grid,
-} from "@mui/material";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+} from "@mui/material"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 
 export default function ViewStore() {
-  const { user } = useContext(AuthContext);
-  const [items, setItems] = useState([]); // Holds API data
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [startDate, setStartDate] = useState(""); // Start date for filtering
-  const [endDate, setEndDate] = useState(""); // End date for filtering
-  const [totalSales, setTotalSales] = useState(0); // Holds the total sales amount
-  const [totalPackages, setTotalPackages] = useState(0); // Holds the total number of packages
-  const [filteredItems, setFilteredItems] = useState([]);
-  const [packageType, setPackageType] = useState("any"); // Track the selected package type
-  const [tabValue, setTabValue] = useState(0);
-  const [chartData, setChartData] = useState([]);
-  const [status, setStatus] = useState("Any");
-  const [insured, setInsured] = useState(false);
-  const [fastDelivery, setFastDelivery] = useState(false);
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
-  const states = [
-    "al",
-    "ak",
-    "az",
-    "ar",
-    "ca",
-    "co",
-    "ct",
-    "de",
-    "fl",
-    "ga",
-    "hi",
-    "id",
-    "il",
-    "in",
-    "ia",
-    "ks",
-    "ky",
-    "la",
-    "me",
-    "md",
-    "ma",
-    "mi",
-    "mn",
-    "ms",
-    "mo",
-    "mt",
-    "ne",
-    "nv",
-    "nh",
-    "nj",
-    "nm",
-    "ny",
-    "nc",
-    "nd",
-    "oh",
-    "ok",
-    "or",
-    "pa",
-    "ri",
-    "sc",
-    "sd",
-    "tn",
-    "tx",
-    "ut",
-    "vt",
-    "va",
-    "wa",
-    "wv",
-    "wi",
-    "wy",
-  ];
-
-  const stateNames = {
-    al: "Alabama",
-    ak: "Alaska",
-    az: "Arizona",
-    ar: "Arkansas",
-    ca: "California",
-    co: "Colorado",
-    ct: "Connecticut",
-    de: "Delaware",
-    fl: "Florida",
-    ga: "Georgia",
-    hi: "Hawaii",
-    id: "Idaho",
-    il: "Illinois",
-    in: "Indiana",
-    ia: "Iowa",
-    ks: "Kansas",
-    ky: "Kentucky",
-    la: "Louisiana",
-    me: "Maine",
-    md: "Maryland",
-    ma: "Massachusetts",
-    mi: "Michigan",
-    mn: "Minnesota",
-    ms: "Mississippi",
-    mo: "Missouri",
-    mt: "Montana",
-    ne: "Nebraska",
-    nv: "Nevada",
-    nh: "New Hampshire",
-    nj: "New Jersey",
-    nm: "New Mexico",
-    ny: "New York",
-    nc: "North Carolina",
-    nd: "North Dakota",
-    oh: "Ohio",
-    ok: "Oklahoma",
-    or: "Oregon",
-    pa: "Pennsylvania",
-    ri: "Rhode Island",
-    sc: "South Carolina",
-    sd: "South Dakota",
-    tn: "Tennessee",
-    tx: "Texas",
-    ut: "Utah",
-    vt: "Vermont",
-    va: "Virginia",
-    wa: "Washington",
-    wv: "West Virginia",
-    wi: "Wisconsin",
-    wy: "Wyoming",
-  };
+  const { user } = useContext(AuthContext)
+  const [items, setItems] = useState([]) // Holds API data
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [startDate, setStartDate] = useState("") // Start date for filtering
+  const [endDate, setEndDate] = useState("") // End date for filtering
+  const [totalSales, setTotalSales] = useState(0) // Holds the total sales amount
+  const [totalPackages, setTotalPackages] = useState(0) // Holds the total number of packages
+  const [filteredItems, setFilteredItems] = useState([])
+  const [packageType, setPackageType] = useState("any") // Track the selected package type
+  const [tabValue, setTabValue] = useState(0)
+  const [chartData, setChartData] = useState([])
 
   // Update the color scheme to include more subtle colors and improve the box styling
   const colors = {
@@ -173,7 +53,7 @@ export default function ViewStore() {
     cardBorder: "#e0e0e0",
     cardShadow: "rgba(0, 0, 0, 0.1)",
     headerBg: "#f8f8f8",
-  };
+  }
 
   // Update the container style to add more breathing room and allow wider content
   const containerStyle = {
@@ -183,7 +63,7 @@ export default function ViewStore() {
     padding: "0 16px",
     maxWidth: "1800px", // 1.5x wider than standard (1200px)
     margin: "0 auto", // Center the container
-  };
+  }
 
   // Improve the Paper component styling for filters
   const filterPaperStyle = {
@@ -193,7 +73,7 @@ export default function ViewStore() {
     backgroundColor: colors.white,
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
     border: `1px solid ${colors.cardBorder}`,
-  };
+  }
 
   // Enhance the card styling for stats cards
   const statsCardStyle = {
@@ -202,7 +82,7 @@ export default function ViewStore() {
     overflow: "hidden",
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
     transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
-  };
+  }
 
   // Enhance the chart card styling
   const chartCardStyle = {
@@ -210,7 +90,7 @@ export default function ViewStore() {
     borderRadius: "12px",
     overflow: "hidden",
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
-  };
+  }
 
   // Enhance the table paper styling - make it wider than other elements
   const tablePaperStyle = {
@@ -219,7 +99,7 @@ export default function ViewStore() {
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
     width: "100%",
     maxWidth: "100%",
-  };
+  }
 
   // Update the header cell style
   const headerCellStyle = {
@@ -230,7 +110,7 @@ export default function ViewStore() {
     fontSize: "0.9rem",
     textAlign: "center",
     borderBottom: `2px solid ${colors.primary}`,
-  };
+  }
 
   // Regular cell style
   const cellStyle = {
@@ -238,130 +118,100 @@ export default function ViewStore() {
     fontSize: "0.9rem",
     textAlign: "center",
     borderBottom: `1px solid ${colors.mediumGray}`,
-  };
+  }
 
   // Status cell with color coding
   const getStatusStyle = (status) => {
-    let color = colors.text;
+    let color = colors.text
 
     if (status.toLowerCase().includes("delivered")) {
-      color = colors.success; // Green for delivered
-    } else if (status.toLowerCase().includes("Missing")) {
-      color = colors.warning; // Orange for processing
+      color = colors.success // Green for delivered
+    } else if (status.toLowerCase().includes("transit")) {
+      color = colors.secondary // Dark gray for in transit
+    } else if (status.toLowerCase().includes("processing")) {
+      color = colors.warning // Orange for processing
     }
 
     return {
       ...cellStyle,
       color: color,
       fontWeight: "bold",
-    };
-  };
+    }
+  }
 
   // Yes/No cell with color coding
   const getBooleanStyle = (value) => ({
     ...cellStyle,
     color: value === "1" ? colors.success : colors.darkGray,
     fontWeight: value === "1" ? "bold" : "normal",
-  });
+  })
 
   useEffect(() => {
     const fetchItems = async () => {
-      const po_id = user?.po_id; // Get the manager's ID
+      const po_id = user?.po_id // Get the manager's ID
       try {
-        const response = await fetch(
-          `https://apipost.vercel.app/api/StoreSales?po_id=${po_id}`,
-          {
-            method: "GET", // Use GET method
-          }
-        );
+        const response = await fetch(`https://apipost.vercel.app/api/StoreSales?po_id=${po_id}`, {
+          method: "GET", // Use GET method
+        })
 
-        const data = await response.json();
-        console.log("Fetched Data:", data);
+        const data = await response.json()
+        console.log("Fetched Data:", data)
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          setItems(data.data); // Update state with API response
+          setItems(data.data) // Update state with API response
         } else {
-          console.error("⚠ API returned an empty array:", data);
+          console.error("⚠ API returned an empty array:", data)
         }
       } catch (err) {
-        console.error("❌ Error fetching items for sale:", err);
-        setError(err.message);
+        console.error("❌ Error fetching items for sale:", err)
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchItems();
-  }, [user?.po_id]); // Refetch when `po_id` changes
+    fetchItems()
+  }, [user?.po_id]) // Refetch when `po_id` changes
 
   const filterByDateRangeAndType = () => {
-    let filtered = items;
+    let filtered = items
 
     // Apply date range filter
     filtered = filtered.filter((item) => {
-      const transactionDate = new Date(item.transaction_date);
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
+      const transactionDate = new Date(item.transaction_date)
+      const start = startDate ? new Date(startDate) : null
+      const end = endDate ? new Date(endDate) : null
 
-      return (
-        (!start || transactionDate >= start) && (!end || transactionDate <= end)
-      );
-    });
+      return (!start || transactionDate >= start) && (!end || transactionDate <= end)
+    })
 
+    // Apply package type filter
     if (packageType !== "any") {
-      filtered = filtered.filter(
-        (item) => item.type.toLowerCase() === packageType.toLowerCase()
-      );
+      filtered = filtered.filter((item) => item.type.toLowerCase() === packageType.toLowerCase())
     }
 
-    if (origin !== "any") {
-      filtered = filtered.filter(
-        (item) => item.origin_state.toLowerCase() === origin
-      );
-    }
-    if (destination !== "any") {
-      filtered = filtered.filter(
-        (item) => item.destination_state.toLowerCase() === destination
-      );
-    }
+    setFilteredItems(filtered)
 
-    if (status === "Delivered") {
-      filtered = filtered.filter((item) => item.status === "Delivered");
-    }
-    if (status === "Missing") {
-      filtered = filtered.filter((item) => item.status === "Missing");
-    }
-    if (insured) {
-      filtered = filtered.filter((item) => item.purchased_insurance === "1");
-    }
-    if (fastDelivery) {
-      filtered = filtered.filter((item) => item.fast_delivery === "1");
-    }
-
-    setFilteredItems(filtered);
-
-    const total = filtered.reduce(
-      (acc, item) => acc + Number.parseFloat(item.total_amount),
-      0
-    );
-    setTotalSales(total);
-    setTotalPackages(filtered.length);
+    // Calculate total sales and total packages
+    const total = filtered.reduce((acc, item) => acc + Number.parseFloat(item.total_amount), 0)
+    setTotalSales(total)
+    setTotalPackages(filtered.length)
 
     // Process data for charts
-    processChartData(filtered);
-  };
+    processChartData(filtered)
+  }
 
   const processChartData = (data) => {
     // For package type distribution
-    const typeCount = {};
+    const typeCount = {}
 
     data.forEach((item) => {
-      const type = item.type.toLowerCase();
+      const type = item.type.toLowerCase()
       if (!typeCount[type]) {
-        typeCount[type] = 0;
+        typeCount[type] = 0
       }
-      typeCount[type] += 1;
-    });
+      typeCount[type] += 1
+    })
 
     const chartData = Object.entries(typeCount).map(([name, value]) => ({
       name,
@@ -369,30 +219,30 @@ export default function ViewStore() {
       amount: data
         .filter((item) => item.type.toLowerCase() === name)
         .reduce((sum, item) => sum + Number.parseFloat(item.total_amount), 0),
-    }));
+    }))
 
-    setChartData(chartData);
-  };
+    setChartData(chartData)
+  }
 
   useEffect(() => {
-    filterByDateRangeAndType(); // Recalculate the filtered items whenever the date range changes
-  }, [startDate, endDate, packageType, items, status, insured, fastDelivery, origin, destination]); // Make sure to track 'delivered' in the useEffect dependency array
+    filterByDateRangeAndType() // Recalculate the filtered items whenever the date range changes
+  }, [startDate, endDate, packageType, items])
 
   const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+    setTabValue(newValue)
+  }
 
   // Table styles
   const tableContainerStyle = {
     overflowX: "auto",
     width: "100%",
     maxWidth: "100%",
-  };
+  }
 
   const tableStyle = {
     minWidth: 750,
     width: "100%",
-  };
+  }
 
   const getRowStyle = (index) => ({
     backgroundColor: index % 2 === 0 ? colors.lightGray : colors.white,
@@ -400,22 +250,18 @@ export default function ViewStore() {
     "&:hover": {
       backgroundColor: colors.mediumGray,
     },
-  });
+  })
 
   return (
     <Container maxWidth={false} style={containerStyle}>
       <Typography
         variant="h4"
-        style={{
-          fontWeight: "bold",
-          color: colors.primary,
-          marginBottom: "15px",
-          textAlign: "center",
-        }}
+        style={{ fontWeight: "bold", color: colors.primary, marginBottom: "15px", textAlign: "center" }}
       >
         Packages in the system
       </Typography>
 
+      {/* Filters Section */}
       <Paper elevation={0} style={filterPaperStyle}>
         <Typography
           variant="h6"
@@ -427,9 +273,10 @@ export default function ViewStore() {
         >
           Filter Packages
         </Typography>
-        <Grid container spacing={2} alignItems="center">
+        <Grid container spacing={3} alignItems="center">
           <Grid item xs={12} md={4}>
             <TextField
+              label="Start Date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
@@ -441,6 +288,7 @@ export default function ViewStore() {
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField
+              label="End Date"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
@@ -453,82 +301,10 @@ export default function ViewStore() {
           <Grid item xs={12} md={4}>
             <FormControl fullWidth size="small" variant="outlined">
               <InputLabel>Package Type</InputLabel>
-              <Select
-                value={packageType}
-                onChange={(e) => setPackageType(e.target.value)}
-              >
+              <Select value={packageType} onChange={(e) => setPackageType(e.target.value)} label="Package Type">
                 <MenuItem value="any">Any</MenuItem>
                 <MenuItem value="box">Box</MenuItem>
                 <MenuItem value="envelope">Envelope</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>Package Status</InputLabel>
-              <Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <MenuItem value="Any">Any</MenuItem>
-                <MenuItem value="Delivered">Only delivered packages</MenuItem>
-                <MenuItem value="Missing">Only Missing packages</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>Insurance</InputLabel>
-              <Select
-                value={insured}
-                onChange={(e) => setInsured(e.target.value)}
-              >
-                <MenuItem value={false}>Not insured</MenuItem>
-                <MenuItem value={true}>Insured</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>Delivery</InputLabel>
-              <Select
-                value={fastDelivery}
-                onChange={(e) => setFastDelivery(e.target.value)}
-              >
-                <MenuItem value={false}>Normal Delivery</MenuItem>
-                <MenuItem value={true}>Fast Delivery</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>Origin State</InputLabel>
-              <Select
-                value={origin}
-                onChange={(e) => setOrigin(e.target.value)}
-              >
-                <MenuItem value="Any">Any</MenuItem>
-                {states.map((stateId) => (
-                <MenuItem key={stateId} value={stateId}>
-                  {stateNames[stateId]}
-                </MenuItem>
-              ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>destination State</InputLabel>
-              <Select
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-              >
-                <MenuItem value="Any">Any</MenuItem>
-                {states.map((stateId) => (
-                <MenuItem key={stateId} value={stateId}>
-                  {stateNames[stateId]}
-                </MenuItem>
-              ))}
               </Select>
             </FormControl>
           </Grid>
@@ -559,7 +335,7 @@ export default function ViewStore() {
                     textAlign: "center",
                   }}
                 >
-                  TOTAL PACKAGES
+                  TOTAL SALES
                 </Typography>
               </Box>
               <Box
@@ -576,7 +352,7 @@ export default function ViewStore() {
                     color: colors.primary,
                   }}
                 >
-                  {totalPackages}
+                  ${totalSales.toFixed(2)}
                 </Typography>
               </Box>
             </CardContent>
@@ -604,7 +380,7 @@ export default function ViewStore() {
                     textAlign: "center",
                   }}
                 >
-                  TOTAL SALES
+                  TOTAL PACKAGES
                 </Typography>
               </Box>
               <Box
@@ -621,7 +397,7 @@ export default function ViewStore() {
                     color: colors.secondary,
                   }}
                 >
-                  ${totalSales.toFixed(2)}
+                  {totalPackages}
                 </Typography>
               </Box>
             </CardContent>
@@ -643,7 +419,7 @@ export default function ViewStore() {
               variant="h5"
               style={{
                 fontWeight: "600",
-                color: colors.secondary,
+                color: colors.primary,
                 textAlign: "center",
               }}
             >
@@ -653,25 +429,11 @@ export default function ViewStore() {
           <Box style={{ padding: "20px" }}>
             <div style={{ width: "100%", height: 350 }}>
               <ResponsiveContainer>
-                <BarChart
-                  data={chartData}
-                  margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke={colors.mediumGray}
-                  />
+                <BarChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={colors.mediumGray} />
                   <XAxis dataKey="name" tick={{ fill: colors.text }} />
-                  <YAxis
-                    yAxisId="left"
-                    orientation="left"
-                    stroke={colors.primary}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    stroke={colors.secondary}
-                  />
+                  <YAxis yAxisId="left" orientation="left" stroke={colors.primary} />
+                  <YAxis yAxisId="right" orientation="right" stroke={colors.secondary} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "rgba(255, 255, 255, 0.98)",
@@ -682,13 +444,7 @@ export default function ViewStore() {
                     }}
                   />
                   <Legend wrapperStyle={{ paddingTop: "16px" }} />
-                  <Bar
-                    yAxisId="left"
-                    dataKey="packages"
-                    name="Packages"
-                    fill={colors.primary}
-                    radius={[6, 6, 0, 0]}
-                  />
+                  <Bar yAxisId="left" dataKey="packages" name="Packages" fill={colors.primary} radius={[6, 6, 0, 0]} />
                   <Bar
                     yAxisId="right"
                     dataKey="amount"
@@ -708,18 +464,8 @@ export default function ViewStore() {
           <CircularProgress style={{ color: colors.primary }} />
         </Box>
       ) : error ? (
-        <Box
-          display="flex"
-          justifyContent="center"
-          my={4}
-          p={3}
-          bgcolor="#FFEBEE"
-          borderRadius="8px"
-        >
-          <Typography
-            variant="body1"
-            style={{ color: colors.primary, fontWeight: "bold" }}
-          >
+        <Box display="flex" justifyContent="center" my={4} p={3} bgcolor="#FFEBEE" borderRadius="8px">
+          <Typography variant="body1" style={{ color: colors.primary, fontWeight: "bold" }}>
             ❌ {error}
           </Typography>
         </Box>
@@ -773,16 +519,10 @@ export default function ViewStore() {
                       <TableCell style={headerCellStyle}>DELIVERY</TableCell>
                       <TableCell style={headerCellStyle}>ORIGIN</TableCell>
                       <TableCell style={headerCellStyle}>DESTINATION</TableCell>
-                      <TableCell style={headerCellStyle}>
-                        PURCHASED INSURANCE
-                      </TableCell>
-                      <TableCell style={headerCellStyle}>
-                        FAST DELIVERY
-                      </TableCell>
-                      <TableCell style={headerCellStyle}>FRAGILE</TableCell>
-                      <TableCell style={headerCellStyle}>
-                        TRANSACTION TOTAL
-                      </TableCell>
+                      <TableCell style={headerCellStyle}>INS</TableCell>
+                      <TableCell style={headerCellStyle}>FAST</TableCell>
+                      <TableCell style={headerCellStyle}>FRAG</TableCell>
+                      <TableCell style={headerCellStyle}>AMOUNT</TableCell>
                       <TableCell style={headerCellStyle}>TAX</TableCell>
                     </TableRow>
                   </TableHead>
@@ -790,74 +530,48 @@ export default function ViewStore() {
                     {filteredItems.length > 0 ? (
                       filteredItems.map((item, index) => (
                         <TableRow key={index} hover style={getRowStyle(index)}>
-                          <TableCell style={cellStyle}>
-                            {item.tracking_number}
-                          </TableCell>
+                          <TableCell style={cellStyle}>{item.tracking_number}</TableCell>
                           <TableCell style={cellStyle}>{item.type}</TableCell>
-                          <TableCell style={cellStyle}>
-                            {item.weight ? item.weight : "N/A"}
-                          </TableCell>
+                          <TableCell style={cellStyle}>{item.weight ? item.weight : "N/A"}</TableCell>
                           <TableCell style={cellStyle}>
                             {item.size
                               ? item.size === "s"
                                 ? "Small"
                                 : item.size === "m"
-                                ? "Medium"
-                                : item.size === "l"
-                                ? "Large"
-                                : "N/A"
+                                  ? "Medium"
+                                  : item.size === "l"
+                                    ? "Large"
+                                    : "N/A"
                               : "N/A"}
                           </TableCell>
-                          <TableCell style={getStatusStyle(item.status)}>
-                            {item.status}
-                          </TableCell>
+                          <TableCell style={getStatusStyle(item.status)}>{item.status}</TableCell>
                           <TableCell style={cellStyle}>
-                            {new Date(item.transaction_date).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )}
+                            {new Date(item.transaction_date).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })}
                           </TableCell>
                           <TableCell style={cellStyle}>
                             {item.delivery_date
-                              ? new Date(item.delivery_date).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    day: "numeric",
-                                  }
-                                )
+                              ? new Date(item.delivery_date).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })
                               : "N/A"}
                           </TableCell>
-                          <TableCell style={cellStyle}>
-                            {item.origin_state}
-                          </TableCell>
-                          <TableCell style={cellStyle}>
-                            {item.destination_state}
-                          </TableCell>
-                          <TableCell
-                            style={getBooleanStyle(item.purchased_insurance)}
-                          >
+                          <TableCell style={cellStyle}>{item.origin_state}</TableCell>
+                          <TableCell style={cellStyle}>{item.destination_state}</TableCell>
+                          <TableCell style={getBooleanStyle(item.purchased_insurance)}>
                             {item.purchased_insurance === "1" ? "Yes" : "No"}
                           </TableCell>
-                          <TableCell
-                            style={getBooleanStyle(item.fast_delivery)}
-                          >
+                          <TableCell style={getBooleanStyle(item.fast_delivery)}>
                             {item.fast_delivery === "1" ? "Yes" : "No"}
                           </TableCell>
                           <TableCell style={getBooleanStyle(item.fragile)}>
                             {item.fragile === "1" ? "Yes" : "No"}
                           </TableCell>
-                          <TableCell
-                            style={{ ...cellStyle, fontWeight: "bold" }}
-                          >
-                            ${item.total_amount}
-                          </TableCell>
-                          <TableCell style={cellStyle}>
-                            ${item.total_tax}
-                          </TableCell>
+                          <TableCell style={{ ...cellStyle, fontWeight: "bold" }}>${item.total_amount}</TableCell>
+                          <TableCell style={cellStyle}>${item.total_tax}</TableCell>
                         </TableRow>
                       ))
                     ) : (
@@ -882,5 +596,6 @@ export default function ViewStore() {
         </div>
       )}
     </Container>
-  );
+  )
 }
+

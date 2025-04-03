@@ -53,6 +53,7 @@ import ViewPOPackages from "./app/ViewPOPackages";
 import EmpRecordHours from "./app/EmpRecordHours";
 import RemoveStore from "./app/ManagerPages/RemoveStore";
 import CustomerInfo from "./app/CustomerInfo";
+import ViewOnlineStore from "./app/ManagerPages/ViewOnlineStore";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -476,7 +477,7 @@ const App = () => {
                           <DropMenuButton buttonText="online store" menuItems={
                           [{label:"ADD ITEMS TO STORE", to:"/AddStore"},
                             {label:"VIEW CURRENT ITEMS FOR SALE", to:"/ViewStore"},
-                            {label:"VIEW ONLINE STORE SALES"},
+                            {label:"VIEW ONLINE STORE SALES", to: "/ViewOnlineStore"},
                             {label:"REMOVE ITEMS FROM STORE", to: "/RemoveStore"}
                           ]}
                           />
@@ -494,7 +495,7 @@ const App = () => {
                     )}
 
                     {/* DRIVER AND CLERK Pages */}
-                    {user && (isClerk() || isDriver()) && (
+                    {user && isClerk() && (
                       <>
                         <Button
                           sx={{
@@ -513,6 +514,44 @@ const App = () => {
                         >
                           update store item stock
                         </Button>
+                        <Button
+                          sx={{
+                            backgroundColor: "#D32F2F",
+                            color: "white",
+                            "&:hover": {
+                              backgroundColor: "#C62828", // Darker red on hover
+                            },
+                            borderRadius: 1,
+                            padding: "10px 20px",
+                            width: "100%",
+                            textAlign: "left",
+                          }}
+                          component={Link}
+                          to="/PackageStatus"
+                        >
+                          update status of a package
+                        </Button>
+                        <Button
+                          sx={{
+                            backgroundColor: "#D32F2F",
+                            color: "white",
+                            "&:hover": {
+                              backgroundColor: "#C62828", // Darker red on hover
+                            },
+                            borderRadius: 1,
+                            padding: "10px 20px",
+                            width: "100%",
+                            textAlign: "left",
+                          }}
+                          component={Link}
+                          to="/ViewPOPackages"
+                        >
+                          View packages at my location
+                        </Button>
+                      </>
+                    )}
+                    {user && isDriver() && (
+                      <>
                         <Button
                           sx={{
                             backgroundColor: "#D32F2F",
@@ -628,6 +667,7 @@ const App = () => {
                   {/* ONLY VISIBLE/ACCESSIBLE WHEN AN MANAGER IS LOGGED IN */}
                   {user && isManager() && (
                     <>
+                      <Route path="/ViewOnlineStore" element={<ViewOnlineStore />} />
                       <Route path="/AddStore" element={<AddStore />} />
                       <Route path="/AddStaff" element={<AddStaff />} />
                       <Route path="/MngrViewStaff" element={<MngrViewStaff />} />
@@ -640,7 +680,7 @@ const App = () => {
 
                   {/* Clerk/Driver Pages */}
                   {/* ONLY VISIBLE/ACCESSIBLE WHEN A CLERK OR DRIVER IS LOGGED IN */}
-                  {user && (isDriver() || isClerk()) && (
+                  {user && isClerk() && (
                     <>
                       <Route path="/ReStock" element={<ReStock />} />
                       <Route path="/low_stock" element={<LowStockPage />} />
@@ -650,6 +690,16 @@ const App = () => {
                         path="/ClerkAddPackage"
                         element={<ClerkAddPackage />}
                       />
+                      <Route
+                        path="/PackageStatus"
+                        element={<PackageStatus />}
+                      />
+                    </>
+                  )}
+                  {user && isDriver() && (
+                    <>
+                      <Route path="/work-hours" element={<WorkHours />} />
+                      <Route path="/ViewPOPackages" element={<ViewPOPackages />} />
                       <Route
                         path="/PackageStatus"
                         element={<PackageStatus />}

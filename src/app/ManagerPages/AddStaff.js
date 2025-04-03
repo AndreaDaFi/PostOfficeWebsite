@@ -289,6 +289,7 @@ export default function AddStaff() {
       {/* Staff Summary Card */}
       <Box sx={{ mb: 3 }}>
         <Paper
+<<<<<<< HEAD
           elevation={2}
           sx={{
             p: 3,
@@ -323,6 +324,22 @@ export default function AddStaff() {
           </Box>
         </Paper>
       </Box>
+=======
+                elevation={5}
+                style={{
+                  padding: "20px",
+                  backgroundColor: "#FFF",
+                  maxWidth: "550px",
+                  marginLeft: "0",
+                }}
+              >
+          <Typography variant="h5" style={{ fontWeight: "bold" }}>
+            Add New Staff Member
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Please enter the new hire's information to add them to the system.
+          </Typography>
+>>>>>>> 3f17f17a3fc4592add402b462a0ac201c6a91c04
 
       {/* Error and Success Messages */}
       {error && (
