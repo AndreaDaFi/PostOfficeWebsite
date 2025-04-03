@@ -495,7 +495,7 @@ const App = () => {
                     )}
 
                     {/* DRIVER AND CLERK Pages */}
-                    {user && (isClerk() || isDriver()) && (
+                    {user && isClerk() && (
                       <>
                         <Button
                           sx={{
@@ -514,6 +514,44 @@ const App = () => {
                         >
                           update store item stock
                         </Button>
+                        <Button
+                          sx={{
+                            backgroundColor: "#D32F2F",
+                            color: "white",
+                            "&:hover": {
+                              backgroundColor: "#C62828", // Darker red on hover
+                            },
+                            borderRadius: 1,
+                            padding: "10px 20px",
+                            width: "100%",
+                            textAlign: "left",
+                          }}
+                          component={Link}
+                          to="/PackageStatus"
+                        >
+                          update status of a package
+                        </Button>
+                        <Button
+                          sx={{
+                            backgroundColor: "#D32F2F",
+                            color: "white",
+                            "&:hover": {
+                              backgroundColor: "#C62828", // Darker red on hover
+                            },
+                            borderRadius: 1,
+                            padding: "10px 20px",
+                            width: "100%",
+                            textAlign: "left",
+                          }}
+                          component={Link}
+                          to="/ViewPOPackages"
+                        >
+                          View packages at my location
+                        </Button>
+                      </>
+                    )}
+                    {user && isDriver() && (
+                      <>
                         <Button
                           sx={{
                             backgroundColor: "#D32F2F",
@@ -642,7 +680,7 @@ const App = () => {
 
                   {/* Clerk/Driver Pages */}
                   {/* ONLY VISIBLE/ACCESSIBLE WHEN A CLERK OR DRIVER IS LOGGED IN */}
-                  {user && (isDriver() || isClerk()) && (
+                  {user && isClerk() && (
                     <>
                       <Route path="/ReStock" element={<ReStock />} />
                       <Route path="/low_stock" element={<LowStockPage />} />
@@ -652,6 +690,16 @@ const App = () => {
                         path="/ClerkAddPackage"
                         element={<ClerkAddPackage />}
                       />
+                      <Route
+                        path="/PackageStatus"
+                        element={<PackageStatus />}
+                      />
+                    </>
+                  )}
+                  {user && isDriver() && (
+                    <>
+                      <Route path="/work-hours" element={<WorkHours />} />
+                      <Route path="/ViewPOPackages" element={<ViewPOPackages />} />
                       <Route
                         path="/PackageStatus"
                         element={<PackageStatus />}

@@ -126,7 +126,7 @@ export default function ViewStaffActivity() {
   return (
     <Container maxWidth="lg" sx={{ p: 3 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>👥 View Staff Activity</Typography>
+        <Typography variant="h5" sx={{ fontWeight: "bold" }}>View Staff Activity</Typography>
         <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>Apply filters to view staff activity.</Typography>
 
         {error && <Alert severity="error" sx={{ mt: 2, mb: 2 }}>{error}</Alert>}
