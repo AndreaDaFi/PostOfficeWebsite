@@ -99,6 +99,21 @@ const EmpRecordHours = () => {
       setError("Please enter a date.")
       return
     }
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(date)) {
+    setError("Invalid date format. Please use 'YYYY-MM-DD'.");
+    return;
+  }
+  //check future
+
+  const selectedDate = new Date(date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
+
+  if (selectedDate > today) {
+    setError("Cannot record hours for future dates.");
+    return;
+  }
 
     setLoading(true)
     setError(null)
