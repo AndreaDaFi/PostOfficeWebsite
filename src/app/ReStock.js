@@ -373,7 +373,7 @@ export default function ReStock() {
                       <Grid item xs={6}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <AttachMoneyIcon sx={{ color: "#666", mr: 1, fontSize: 18 }} />
-                          <Typography variant="body2">${selectedItem.item_price}</Typography>
+                          <Typography variant="body2">{selectedItem.item_price}</Typography>
                         </Box>
                       </Grid>
 
@@ -520,7 +520,7 @@ export default function ReStock() {
                   />
 
                   <Typography variant="body2" sx={{ color: "#666", fontStyle: "italic" }}>
-                    Enter the new total quantity that will be available in stock.
+                    
                   </Typography>
                 </Box>
 

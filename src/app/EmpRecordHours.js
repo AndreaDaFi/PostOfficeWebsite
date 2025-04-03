@@ -15,14 +15,12 @@ import {
   IconButton,
   ThemeProvider,
   createTheme,
-  Chip,
 } from "@mui/material"
 import AccessTimeIcon from "@mui/icons-material/AccessTime"
 import SendIcon from "@mui/icons-material/Send"
 import CloseIcon from "@mui/icons-material/Close"
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday"
 import HourglassTopIcon from "@mui/icons-material/HourglassTop"
-import EventAvailableIcon from "@mui/icons-material/EventAvailable"
 
 // Create a custom theme with red as the primary color
 const theme = createTheme({
@@ -75,9 +73,7 @@ const theme = createTheme({
 })
 
 const EmpRecordHours = () => {
-  // Get today's date in YYYY-MM-DD format
-  const today = new Date().toISOString().split("T")[0]
-
+  const [date, setDate] = useState("")
   const [hours, setHours] = useState("")
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -99,11 +95,16 @@ const EmpRecordHours = () => {
       return
     }
 
+    if (!date) {
+      setError("Please enter a date.")
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     const data = {
-      date: today, // Use today's date automatically
+      date: date,
       hours,
       employees_id: user.employees_id,
       po_id: user.po_id,
@@ -122,8 +123,9 @@ const EmpRecordHours = () => {
       if (!response.ok) throw new Error(result.error || "Failed to record hours")
 
       setSuccessMessage("Hours recorded successfully!")
-      // Reset hours field after successful submission
+      // Reset fields after successful submission
       setHours("")
+      setDate("")
     } catch (err) {
       setError(err.message)
     } finally {
@@ -134,14 +136,6 @@ const EmpRecordHours = () => {
   const handleCloseSnackbar = () => {
     setSuccessMessage(null)
   }
-
-  // Format today's date for display
-  const formattedDate = new Date(today).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
 
   return (
     <ThemeProvider theme={theme}>
@@ -183,7 +177,7 @@ const EmpRecordHours = () => {
             <Box sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
               <AccessTimeIcon sx={{ fontSize: 40, mb: 1 }} />
               <Typography variant="h5" fontWeight="bold">
-                Record Today's Hours
+                Record Hours
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
                 Enter work hours for payroll and tracking
@@ -194,58 +188,20 @@ const EmpRecordHours = () => {
           {/* Form content */}
           <Box sx={{ p: 4 }}>
             <form onSubmit={handleSubmit}>
-              {/* Today's Date Display */}
-              <Box
-                mb={4}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  p: 2,
-                  bgcolor: "rgba(211, 47, 47, 0.08)",
-                  borderRadius: 2,
-                  border: "1px solid rgba(211, 47, 47, 0.2)",
-                }}
-              >
-                <Box display="flex" alignItems="center" mb={1}>
-                  <EventAvailableIcon sx={{ color: "#D32F2F", mr: 1, fontSize: 24 }} />
-                  <Typography variant="subtitle1" fontWeight="bold" color="#D32F2F">
-                    Today's Date
-                  </Typography>
-                </Box>
-                <Chip
-                  label={formattedDate}
-                  sx={{
-                    bgcolor: "white",
-                    color: "#D32F2F",
-                    fontWeight: "bold",
-                    fontSize: "1rem",
-                    py: 2,
-                    border: "1px solid rgba(211, 47, 47, 0.3)",
-                  }}
-                  icon={<CalendarTodayIcon style={{ color: "#D32F2F" }} />}
-                />
-                <Typography variant="caption" color="text.secondary" mt={1}>
-                  Hours will be recorded for today's date
-                </Typography>
-              </Box>
-
+              {/* Date Input */}
               <Box mb={4}>
                 <Box display="flex" alignItems="center" mb={1}>
-                  <HourglassTopIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
+                  <CalendarTodayIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
                   <Typography variant="subtitle2" color="primary">
-                    Hours Worked Today
+                    Date
                   </Typography>
                 </Box>
                 <TextField
                   fullWidth
-                  type="number"
-                  placeholder="Enter hours worked"
-                  value={hours}
-                  onChange={(e) => setHours(e.target.value)}
+                  placeholder="Enter date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
                   required
-                  inputProps={{ min: 0, max: 24, step: 0.5 }}
                   size="small"
                   autoFocus
                   sx={{
@@ -260,6 +216,41 @@ const EmpRecordHours = () => {
                     },
                   }}
                 />
+                <Typography variant="caption" color="text.secondary" mt={1} display="block">
+                  date format (e.g., "2023-04-15")
+                </Typography>
+              </Box>
+
+              {/* Hours Input */}
+              <Box mb={4}>
+                <Box display="flex" alignItems="center" mb={1}>
+                  <HourglassTopIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
+                  <Typography variant="subtitle2" color="primary">
+                    Hours Worked
+                  </Typography>
+                </Box>
+                <TextField
+                  fullWidth
+                  placeholder="Enter hours worked"
+                  value={hours}
+                  onChange={(e) => setHours(e.target.value)}
+                  required
+                  size="small"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                      "&:hover fieldset": {
+                        borderColor: "#D32F2F",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#D32F2F",
+                      },
+                    },
+                  }}
+                />
+                <Typography variant="caption" color="text.secondary" mt={1} display="block">
+                  Enter any value for hours worked
+                </Typography>
               </Box>
 
               {error && (
@@ -300,7 +291,7 @@ const EmpRecordHours = () => {
                 }}
                 startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
               >
-                {loading ? "Processing..." : "Record Today's Hours"}
+                {loading ? "Processing..." : "Record Hours"}
               </Button>
             </form>
           </Box>

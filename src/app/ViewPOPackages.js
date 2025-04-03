@@ -118,8 +118,8 @@ const ViewPOPackages = () => {
     switch (status?.toLowerCase()) {
       case "in transit":
         return "#D32F2F" // Red for in transit
-      case "processing":
-        return "#FF5252" // Lighter red for processing
+      case "printed label":
+        return "#FF5252" // Lighter red for printed label
       case "pending":
         return "#FF8A80" // Even lighter red for pending
       default:
@@ -265,9 +265,12 @@ const ViewPOPackages = () => {
                 }}
               >
                 <MenuItem value="all">All Statuses</MenuItem>
-                <MenuItem value="in transit">In Transit</MenuItem>
-                <MenuItem value="processing">Processing</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
+                <MenuItem value="in Transit">In Transit</MenuItem>
+                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="Out for Delivery">Out for Delivery</MenuItem>
+                <MenuItem value="Printed label">Printed label</MenuItem>
+                <MenuItem value="Missing">Missing</MenuItem>
+                <MenuItem value="Returned">Returned</MenuItem>
               </Select>
             </FormControl>
           </Grid>
