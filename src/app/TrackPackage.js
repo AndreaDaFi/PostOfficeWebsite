@@ -7,12 +7,14 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import InventoryIcon from "@mui/icons-material/Inventory"
 import LocationOnIcon from "@mui/icons-material/LocationOn"
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt"
+import InfoIcon from "@mui/icons-material/Info"
 
 export default function PackageDetails() {
   const [trackingNumber, setTrackingNumber] = useState("")
   const [trackingHistory, setTrackingHistory] = useState([])
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [noUpdates, setNoUpdates] = useState(false)
 
   // Get tracking number from URL if present
   useEffect(() => {
@@ -29,19 +31,25 @@ export default function PackageDetails() {
     setIsLoading(true)
     setError(null)
     setTrackingHistory([])
+    setNoUpdates(false)
 
     try {
       const res = await fetch(`https://apipost.vercel.app/api/tracking-history?trackingNumber=${trackingNumber}`)
       const data = await res.json()
 
       if (!data.success || data.history.length === 0) {
-        setError("⚠ Tracking number not found.")
+        // Check if it's a valid tracking number but no updates yet
+        if (data.packageExists) {
+          setNoUpdates(true)
+        } else {
+          setError("Your package has not been updated. Please come back later to see updates.")
+        }
       } else {
         setTrackingHistory(data.history)
       }
     } catch (err) {
       console.error(err)
-      setError("Error fetching package data.")
+      setError("Your package has not been updated. Please come back later to see updates.")
     } finally {
       setIsLoading(false)
     }
@@ -79,7 +87,7 @@ export default function PackageDetails() {
             bottom: 0,
             opacity: 0.1,
             backgroundImage:
-              'url(\'data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fill-opacity="1" fill-rule="evenodd"/%3E%3C/svg%3E\')',
+              'url(\'data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fillOpacity="1" fillRule="evenodd"/%3E%3C/svg%3E\')',
           }}
         />
 
@@ -173,6 +181,57 @@ export default function PackageDetails() {
           >
             {error}
           </Alert>
+        </Fade>
+      )}
+
+      {/* No updates message */}
+      {noUpdates && (
+        <Fade in={noUpdates}>
+          <Paper
+            elevation={0}
+            sx={{
+              mt: 3,
+              mb: 4,
+              p: 4,
+              borderRadius: "16px",
+              border: "1px solid rgba(255, 152, 0, 0.2)",
+              backgroundColor: "rgba(255, 243, 224, 0.5)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <InfoIcon
+              sx={{
+                fontSize: 60,
+                color: "#FF9800",
+                mb: 2,
+                opacity: 0.8,
+              }}
+            />
+            <Typography variant="h5" sx={{ fontWeight: 600, color: "#E65100", mb: 1 }}>
+              Lo sentimos
+            </Typography>
+            <Typography variant="body1" sx={{ color: "#555", mb: 2, maxWidth: "500px" }}>
+              Su paquete no ha sido actualizado. Por favor vuelva más tarde para ver las actualizaciones.
+            </Typography>
+            <Box
+              sx={{
+                mt: 2,
+                p: 2,
+                borderRadius: "8px",
+                backgroundColor: "rgba(255, 152, 0, 0.1)",
+                maxWidth: "450px",
+              }}
+            >
+              <Typography variant="body2" sx={{ color: "#795548", fontStyle: "italic" }}>
+                Los paquetes suelen actualizarse dentro de las 24-48 horas después de ser procesados. Si continúa sin
+                ver actualizaciones después de este período, póngase en contacto con nuestro servicio de atención al
+                cliente.
+              </Typography>
+            </Box>
+          </Paper>
         </Fade>
       )}
 

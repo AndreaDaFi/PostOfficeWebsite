@@ -1,192 +1,393 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import { Container, TextField, Button, Typography, Paper, Alert, Link } from "@mui/material";
+"use client"
+
+import { useState, useContext } from "react"
+import { useNavigate } from "react-router-dom"
+import { AuthContext } from "../context/AuthContext"
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Alert,
+  Link,
+  Box,
+  InputAdornment,
+  IconButton,
+  Fade,
+} from "@mui/material"
+import {
+  Email as EmailIcon,
+  Lock as LockIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+  LocalShipping as ShippingIcon,
+} from "@mui/icons-material"
 
 export default function CustLogin() {
-  const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext)
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [resetMessage, setResetMessage] = useState(null);
-  const [isResetMode, setIsResetMode] = useState(false);
-  const navigate = useNavigate(); // For navigation instead of window.location.href
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState(null)
+  const [resetMessage, setResetMessage] = useState(null)
+  const [isResetMode, setIsResetMode] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate() // For navigation instead of window.location.href
 
   const handleLogin = async () => {
-    setError(null);
-    setResetMessage(null);
+    setError(null)
+    setResetMessage(null)
+    setIsLoading(true)
 
-    if (!email) return setError("⚠ Please enter your email.");
-    if (!password) return setError("⚠ Please enter your password.");
+    if (!email) {
+      setIsLoading(false)
+      return setError("⚠ Please enter your email.")
+    }
+    if (!password) {
+      setIsLoading(false)
+      return setError("⚠ Please enter your password.")
+    }
 
     // Log email and password to the console
-    console.log("Email:", email);
-    console.log("Password:", password);
+    console.log("Email:", email)
+    console.log("Password:", password)
 
     try {
       const response = await fetch("https://apipost.vercel.app/api/EmployeeLOGIN", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      });
+      })
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Login failed");
+        const data = await response.json()
+        throw new Error(data.error || "Login failed")
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
-      const employee={
+      const employee = {
         ...data.user,
-        role: data.user.role,//fetches the role attribute of the employee
+        role: data.user.role, //fetches the role attribute of the employee
       }
-      login(employee);
+      login(employee)
 
-      alert("🎉 Login successful!");
-      navigate("/EmpDashboard"); // Use React Router for navigation
-      window.location.reload();
-
+      alert("🎉 Login successful!")
+      navigate("/EmpDashboard") // Use React Router for navigation
+      window.location.reload()
     } catch (err) {
-      setError("❌ " + err.message);
+      setError("❌ " + err.message)
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleForgotPassword = () => {
-    setIsResetMode(true);
-    setError(null);
-    setResetMessage(null);
-  };
+    setIsResetMode(true)
+    setError(null)
+    setResetMessage(null)
+  }
 
   const handleResetPassword = async () => {
     if (!email) {
-      setError("⚠ Please enter your email to receive the reset link.");
-      return;
+      setError("⚠ Please enter your email to receive the reset link.")
+      return
     }
+
+    setIsLoading(true)
 
     try {
       const response = await fetch("resetPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
-      });
+      })
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Reset failed");
+        const data = await response.json()
+        throw new Error(data.error || "Reset failed")
       }
 
-      setResetMessage("📩 Password reset instructions have been sent to your email.");
-
+      setResetMessage("📩 Password reset instructions have been sent to your email.")
+      setIsLoading(false)
     } catch (err) {
-      setError("❌ " + err.message);
+      setError("❌ " + err.message)
+      setIsLoading(false)
     }
-  };
+  }
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <Container maxWidth="sm">
-        <Paper
-          elevation={3}
-          style={{
-            padding: "50px",
-            width: "400px",
-            backgroundColor: "#FFF",
-            borderRadius: "12px",
-            textAlign: "center",
-            boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          padding: "40px",
+          width: "100%",
+          maxWidth: "400px",
+          backgroundColor: "#FFF",
+          borderRadius: "8px",
+          textAlign: "center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mb: 3,
           }}
         >
-          <Typography variant="h5" gutterBottom style={{ fontWeight: "bold", color: "#333" }}>
-            📦 Employer Login
-          </Typography>
+          <Box
+            sx={{
+              width: 70,
+              height: 70,
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: "#B71C1C",
+              mb: 2,
+            }}
+          >
+            <ShippingIcon sx={{ fontSize: 35, color: "white" }} />
+          </Box>
+        </Box>
 
-          <Typography variant="body2" color="textSecondary" style={{ marginBottom: "20px" }}>
-            {isResetMode ? "Enter your email to reset your password." : "Please enter your credentials to continue."}
-          </Typography>
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{
+            fontWeight: "bold",
+            color: "#333",
+            mb: 1,
+          }}
+        >
+          Employee Login
+        </Typography>
 
-          {error && <Alert severity="error" style={{ marginBottom: "15px" }}>{error}</Alert>}
-          {resetMessage && <Alert severity="success" style={{ marginBottom: "15px" }}>{resetMessage}</Alert>}
+        <Typography
+          variant="body2"
+          sx={{
+            color: "#666",
+            mb: 3,
+          }}
+        >
+          {isResetMode ? "Enter your email to reset your password." : "Please enter your credentials to continue."}
+        </Typography>
 
-          {/* EMAIL FIELD */}
-          <TextField 
-            fullWidth 
-            label="Email" 
-            type="email" 
-            variant="outlined" 
-            margin="normal" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-          />
+        {error && (
+          <Alert
+            severity="error"
+            sx={{
+              mb: 3,
+              borderRadius: 1,
+            }}
+          >
+            {error}
+          </Alert>
+        )}
 
-          {/* PASSWORD & LOGIN BUTTON - HIDDEN IN RESET MODE */}
-          {!isResetMode && (
-            <>
-              <TextField 
-                fullWidth 
-                label="Password" 
-                type="password" 
-                variant="outlined" 
-                margin="normal" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
+        {resetMessage && (
+          <Alert
+            severity="success"
+            sx={{
+              mb: 3,
+              borderRadius: 1,
+            }}
+          >
+            {resetMessage}
+          </Alert>
+        )}
+
+        {/* EMAIL FIELD */}
+        <TextField
+          fullWidth
+          label="Email"
+          type="email"
+          variant="outlined"
+          margin="normal"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <EmailIcon sx={{ color: "#B71C1C" }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            mb: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "4px",
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#B71C1C",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#B71C1C",
+              },
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: "#B71C1C",
+            },
+          }}
+        />
+
+        {/* PASSWORD & LOGIN BUTTON - HIDDEN IN RESET MODE */}
+        {!isResetMode && (
+          <Fade in={!isResetMode} timeout={500}>
+            <Box>
+              <TextField
+                fullWidth
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                variant="outlined"
+                margin="normal"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockIcon sx={{ color: "#B71C1C" }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleTogglePasswordVisibility}
+                        edge="end"
+                        sx={{
+                          color: "#B71C1C",
+                          "&:hover": {
+                            bgcolor: "rgba(183, 28, 28, 0.04)",
+                          },
+                        }}
+                      >
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  mb: 3,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "4px",
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#B71C1C",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#B71C1C",
+                      borderWidth: "2px",
+                    },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "#B71C1C",
+                  },
+                }}
               />
 
-              <Button 
-                fullWidth 
-                variant="contained" 
-                style={{ 
-                  marginTop: "20px", 
-                  padding: "12px 0", 
-                  borderRadius: "8px", 
-                  fontSize: "16px", 
-                  fontWeight: "bold",
-                  backgroundColor: "#D32F2F", 
-                  color: "#FFF"
-                }} 
+              <Button
+                fullWidth
+                variant="contained"
                 onClick={handleLogin}
+                disabled={isLoading}
+                sx={{
+                  mt: 2,
+                  py: 1.5,
+                  bgcolor: "#B71C1C",
+                  "&:hover": {
+                    bgcolor: "#8B0000",
+                  },
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                  borderRadius: "4px",
+                  boxShadow: "0 2px 4px rgba(183, 28, 28, 0.3)",
+                }}
               >
-                LOGIN
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
 
               {/* Forgot Password Link */}
-              <Typography variant="body2" style={{ marginTop: "15px" }}>
-                <Link href="#" onClick={handleForgotPassword} style={{ fontSize: "14px", color: "#B71C1C" }}>
+              <Typography variant="body2" sx={{ mt: 3 }}>
+                <Link
+                  component="button"
+                  onClick={handleForgotPassword}
+                  sx={{
+                    fontSize: "0.9rem",
+                    color: "#B71C1C",
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                >
                   Forgot Password?
                 </Link>
               </Typography>
-            </>
-          )}
+            </Box>
+          </Fade>
+        )}
 
-          {/* RESET PASSWORD BUTTON - ONLY VISIBLE IN RESET MODE */}
-          {isResetMode && (
-            <>
-              <Button 
-                fullWidth 
-                variant="contained" 
-                style={{ 
-                  marginTop: "20px", 
-                  padding: "12px 0", 
-                  borderRadius: "8px", 
-                  fontSize: "16px", 
-                  fontWeight: "bold",
-                  backgroundColor: "#D32F2F", 
-                  color: "#FFF"
-                }} 
+        {/* RESET PASSWORD BUTTON - ONLY VISIBLE IN RESET MODE */}
+        {isResetMode && (
+          <Fade in={isResetMode} timeout={500}>
+            <Box>
+              <Button
+                fullWidth
+                variant="contained"
                 onClick={handleResetPassword}
+                disabled={isLoading}
+                sx={{
+                  mt: 2,
+                  py: 1.5,
+                  bgcolor: "#B71C1C",
+                  "&:hover": {
+                    bgcolor: "#8B0000",
+                  },
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                  borderRadius: "4px",
+                  boxShadow: "0 2px 4px rgba(183, 28, 28, 0.3)",
+                }}
               >
-                SEND RESET LINK
+                {isLoading ? "Sending..." : "Send Reset Link"}
               </Button>
-              <Typography variant="body2" style={{ marginTop: "15px", color: "#B71C1C" }}>
-                📩 Check your email for password reset instructions.
-              </Typography>
-            </>
-          )}
 
-        
-        </Paper>
-      </Container>
-    </div>
-  );
+              <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+                <Link
+                  component="button"
+                  onClick={() => setIsResetMode(false)}
+                  sx={{
+                    fontSize: "0.9rem",
+                    color: "#B71C1C",
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                >
+                  Back to Login
+                </Link>
+              </Box>
+            </Box>
+          </Fade>
+        )}
+      </Paper>
+    </Container>
+  )
 }
+

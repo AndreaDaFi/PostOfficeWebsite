@@ -26,6 +26,9 @@ import {
   Fade,
   useMediaQuery,
   useTheme,
+  Paper,
+  Avatar,
+  Grid,
 } from "@mui/material"
 import {
   Business as BusinessIcon,
@@ -126,225 +129,117 @@ export default function ViewStaff() {
     }
   }
 
-  // Custom styling with all red theme
-  const styles = {
-    container: {
-      marginTop: "40px",
-      marginBottom: "40px",
-      maxWidth: "1200px",
-    },
-    header: {
-      marginBottom: "32px",
-      textAlign: "center",
-    },
-    title: {
-      fontWeight: "700",
-      color: "#D32F2F",
-      marginBottom: "12px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: "12px",
-    },
-    subtitle: {
-      color: "#757575",
-      maxWidth: "700px",
-      margin: "0 auto",
-    },
-    searchContainer: {
-      marginBottom: "24px",
-      display: "flex",
-      flexDirection: isMobile ? "column" : "row",
-      gap: "16px",
-      alignItems: "center",
-    },
-    searchField: {
-      flex: 1,
-      backgroundColor: "#fff",
-      borderRadius: "8px",
-      "& .MuiOutlinedInput-root": {
-        borderRadius: "8px",
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#D32F2F",
-        },
-        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#D32F2F",
-        },
-      },
-    },
-    filterContainer: {
-      display: "flex",
-      gap: "16px",
-      marginBottom: "24px",
-      flexWrap: "wrap",
-    },
-    filterSelect: {
-      minWidth: "150px",
-      backgroundColor: "#fff",
-      borderRadius: "8px",
-      "& .MuiOutlinedInput-root": {
-        borderRadius: "8px",
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#D32F2F",
-        },
-        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#D32F2F",
-        },
-      },
-    },
-    statsContainer: {
-      marginBottom: "24px",
-      display: "flex",
-      gap: "16px",
-      overflowX: "auto",
-      padding: "4px",
-      "&::-webkit-scrollbar": {
-        height: "6px",
-      },
-      "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(211, 47, 47, 0.3)",
-        borderRadius: "3px",
-      },
-      "&::-webkit-scrollbar-track": {
-        backgroundColor: "rgba(0, 0, 0, 0.05)",
-        borderRadius: "3px",
-      },
-    },
-    statCard: {
-      flex: "1 0 auto",
-      width: "180px",
-      borderRadius: "12px",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-      backgroundColor: "#fff",
-      "&:hover": {
-        transform: "translateY(-4px)",
-        boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-      },
-    },
-    statIcon: {
-      backgroundColor: "rgba(211, 47, 47, 0.1)",
-      color: "#D32F2F",
-      padding: "12px",
-      borderRadius: "50%",
-      marginBottom: "12px",
-      display: "inline-flex",
-    },
-    statValue: {
-      fontSize: "28px",
-      fontWeight: "700",
-      color: "#D32F2F",
-      marginBottom: "4px",
-    },
-    statLabel: {
-      color: "#757575",
-      fontSize: "14px",
-    },
-    mainCard: {
-      borderRadius: "12px",
-      overflow: "hidden",
-      boxShadow: "0 6px 18px rgba(0,0,0,0.1)",
-    },
-    cardHeader: {
-      backgroundColor: "#D32F2F",
-      color: "white",
-      padding: "16px 24px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    cardTitle: {
-      display: "flex",
-      alignItems: "center",
-      gap: "12px",
-      "& svg": {
-        fontSize: "24px",
-      },
-    },
-    tableContainer: {
-      padding: "0",
-    },
-    tableHeader: {
-      backgroundColor: "#f5f5f5",
-      "& th": {
-        color: "#D32F2F",
-        fontWeight: "600",
-        padding: "16px 24px",
-      },
-    },
-    tableRow: {
-      "&:nth-of-type(odd)": {
-        backgroundColor: "#fafafa",
-      },
-      "&:hover": {
-        backgroundColor: "rgba(211, 47, 47, 0.05)",
-      },
-    },
-    tableCell: {
-      padding: "16px 24px",
-    },
-    roleChip: {
-      fontWeight: "500",
-      padding: "4px 8px",
-      borderRadius: "4px",
-      display: "inline-flex",
-      alignItems: "center",
-      gap: "6px",
-      backgroundColor: "rgba(211, 47, 47, 0.1)",
-      color: "#D32F2F",
-    },
-    emptyState: {
-      textAlign: "center",
-      padding: "40px 20px",
-    },
-    emptyStateIcon: {
-      fontSize: "48px",
-      color: "rgba(211, 47, 47, 0.5)",
-      marginBottom: "16px",
-    },
-    footer: {
-      marginTop: "24px",
-      textAlign: "center",
-      color: "#757575",
-      fontSize: "14px",
-    },
-  }
-
   // Create stat cards
   const renderStatCards = () => {
     return (
-      <Box style={styles.statsContainer}>
+      <Box sx={{ display: "flex", gap: 2, mb: 4, overflowX: "auto", py: 1, px: 0.5 }}>
         {/* Total Staff Card */}
-        <Card style={styles.statCard}>
-          <CardContent style={{ textAlign: "center", padding: "20px" }}>
-            <Box style={styles.statIcon} display="inline-flex">
+        <Card
+          sx={{
+            flex: "1 0 auto",
+            minWidth: 180,
+            borderRadius: 2,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-4px)",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+            },
+          }}
+        >
+          <CardContent sx={{ textAlign: "center", p: 2.5 }}>
+            <Box
+              sx={{
+                bgcolor: "rgba(211, 47, 47, 0.1)",
+                color: "#D32F2F",
+                p: 1.5,
+                borderRadius: "50%",
+                mb: 1.5,
+                display: "inline-flex",
+              }}
+            >
               <PersonIcon />
             </Box>
-            <Typography style={styles.statValue}>{staffMembers.length}</Typography>
-            <Typography style={styles.statLabel}>Total Staff</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: "#D32F2F", mb: 0.5 }}>
+              {staffMembers.length}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#757575" }}>
+              Total Staff
+            </Typography>
           </CardContent>
         </Card>
 
         {/* Locations Card */}
-        <Card style={styles.statCard}>
-          <CardContent style={{ textAlign: "center", padding: "20px" }}>
-            <Box style={styles.statIcon} display="inline-flex">
+        <Card
+          sx={{
+            flex: "1 0 auto",
+            minWidth: 180,
+            borderRadius: 2,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-4px)",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+            },
+          }}
+        >
+          <CardContent sx={{ textAlign: "center", p: 2.5 }}>
+            <Box
+              sx={{
+                bgcolor: "rgba(211, 47, 47, 0.1)",
+                color: "#D32F2F",
+                p: 1.5,
+                borderRadius: "50%",
+                mb: 1.5,
+                display: "inline-flex",
+              }}
+            >
               <BusinessIcon />
             </Box>
-            <Typography style={styles.statValue}>{uniqueLocations.length}</Typography>
-            <Typography style={styles.statLabel}>Locations</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: "#D32F2F", mb: 0.5 }}>
+              {uniqueLocations.length}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#757575" }}>
+              Locations
+            </Typography>
           </CardContent>
         </Card>
 
         {/* Role Cards */}
         {uniqueRoles.map((role) => (
-          <Card key={role} style={styles.statCard}>
-            <CardContent style={{ textAlign: "center", padding: "20px" }}>
-              <Box style={styles.statIcon} display="inline-flex">
+          <Card
+            key={role}
+            sx={{
+              flex: "1 0 auto",
+              minWidth: 180,
+              borderRadius: 2,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+              },
+            }}
+          >
+            <CardContent sx={{ textAlign: "center", p: 2.5 }}>
+              <Box
+                sx={{
+                  bgcolor: "rgba(211, 47, 47, 0.1)",
+                  color: "#D32F2F",
+                  p: 1.5,
+                  borderRadius: "50%",
+                  mb: 1.5,
+                  display: "inline-flex",
+                }}
+              >
                 {getRoleIcon(role)}
               </Box>
-              <Typography style={styles.statValue}>{staffByRole[role] || 0}</Typography>
-              <Typography style={styles.statLabel}>{role}s</Typography>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: "#D32F2F", mb: 0.5 }}>
+                {staffByRole[role] || 0}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#757575" }}>
+                {role}s
+              </Typography>
             </CardContent>
           </Card>
         ))}
@@ -353,18 +248,56 @@ export default function ViewStaff() {
   }
 
   return (
-    <Container style={styles.container}>
-      <Box style={styles.header}>
-        <Typography variant="h4" style={styles.title}>
-          <Badge badgeContent={staffMembers.length} color="error">
-            <PersonIcon style={{ fontSize: "32px", color: "#D32F2F" }} />
-          </Badge>
-          Staff Directory
-        </Typography>
-        <Typography variant="body1" style={styles.subtitle}>
-          View and manage all staff members across all locations. Use the filters and search to find specific employees.
-        </Typography>
-      </Box>
+    <Container maxWidth="lg" sx={{ my: 4 }}>
+      {/* Header with gradient background */}
+      <Paper
+        elevation={2}
+        sx={{
+          borderRadius: 2,
+          overflow: "hidden",
+          mb: 4,
+          transition: "box-shadow 0.3s ease",
+          "&:hover": {
+            boxShadow: "0 8px 24px rgba(211, 47, 47, 0.15)",
+          },
+        }}
+      >
+        <Box
+          sx={{
+            background: "linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)",
+            color: "white",
+            p: 3,
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              opacity: 0.05,
+              backgroundImage:
+                'url(\'data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fillOpacity="1" fillRule="evenodd"/%3E%3C/svg%3E\')',
+            }}
+          />
+          <Box sx={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center" }}>
+            <Badge badgeContent={staffMembers.length} color="error" sx={{ mr: 2 }}>
+              <PersonIcon sx={{ fontSize: 40 }} />
+            </Badge>
+            <Box>
+              <Typography variant="h4" fontWeight="bold">
+                Staff Directory
+              </Typography>
+              <Typography variant="subtitle1" sx={{ mt: 1, opacity: 0.9 }}>
+                View and manage all staff members across all locations
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Paper>
 
       {/* Stats cards in a single row */}
       {!loading && !error && (
@@ -374,69 +307,141 @@ export default function ViewStaff() {
       )}
 
       {/* Search and filters */}
-      <Box style={styles.searchContainer}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Search by name, ID, location, or role..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon style={{ color: "#D32F2F" }} />
-              </InputAdornment>
-            ),
-          }}
-          style={styles.searchField}
-        />
-      </Box>
-
-      <Box style={styles.filterContainer}>
-        <FormControl style={styles.filterSelect}>
-          <InputLabel>Filter by Role</InputLabel>
-          <Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} label="Filter by Role">
-            <MenuItem value="all">All Roles</MenuItem>
-            {uniqueRoles.map((role) => (
-              <MenuItem key={role} value={role}>
-                <Box display="flex" alignItems="center" gap={1}>
-                  {getRoleIcon(role)}
-                  {role}
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl style={styles.filterSelect}>
-          <InputLabel>Filter by Location</InputLabel>
-          <Select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} label="Filter by Location">
-            <MenuItem value="all">All Locations</MenuItem>
-            {uniqueLocations.map((location) => (
-              <MenuItem key={location} value={location}>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <BusinessIcon style={{ color: "#D32F2F" }} />
-                  {location}
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Search by name, ID, location, or role..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: "#D32F2F" }} />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              bgcolor: "#fff",
+              borderRadius: 2,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#D32F2F",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#D32F2F",
+                },
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <FormControl fullWidth>
+            <InputLabel>Filter by Role</InputLabel>
+            <Select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              label="Filter by Role"
+              sx={{
+                bgcolor: "#fff",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#D32F2F",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#D32F2F",
+                },
+              }}
+            >
+              <MenuItem value="all">All Roles</MenuItem>
+              {uniqueRoles.map((role) => (
+                <MenuItem key={role} value={role}>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    {getRoleIcon(role)}
+                    {role}
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <FormControl fullWidth>
+            <InputLabel>Filter by Location</InputLabel>
+            <Select
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+              label="Filter by Location"
+              sx={{
+                bgcolor: "#fff",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#D32F2F",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#D32F2F",
+                },
+              }}
+            >
+              <MenuItem value="all">All Locations</MenuItem>
+              {uniqueLocations.map((location) => (
+                <MenuItem key={location} value={location}>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <BusinessIcon sx={{ color: "#D32F2F" }} />
+                    {location}
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
 
       {/* Error alert */}
       {error && (
-        <Alert severity="error" style={{ marginBottom: "24px" }}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 3,
+            borderRadius: 2,
+            bgcolor: "#FFEBEE",
+            border: "1px solid #FFCDD2",
+          }}
+        >
           {error}
         </Alert>
       )}
 
       {/* Main content */}
-      <Card style={styles.mainCard}>
-        <Box style={styles.cardHeader}>
-          <Box style={styles.cardTitle}>
+      <Paper
+        elevation={3}
+        sx={{
+          borderRadius: 2,
+          overflow: "hidden",
+          boxShadow: "0 6px 18px rgba(0,0,0,0.1)",
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: "#B71C1C",
+            color: "white",
+            p: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <BadgeIcon />
-            <Typography variant="h6" style={{ fontWeight: 600, margin: 0 }}>
+            <Typography variant="h6" fontWeight="bold">
               Staff Members
             </Typography>
           </Box>
@@ -445,53 +450,74 @@ export default function ViewStaff() {
             <Chip
               label={`${filteredStaff.length} of ${staffMembers.length} staff`}
               size="small"
-              style={{
-                backgroundColor: "rgba(255,255,255,0.2)",
+              sx={{
+                bgcolor: "rgba(255,255,255,0.2)",
                 color: "white",
-                marginRight: "8px",
               }}
-              icon={<InfoIcon style={{ color: "white" }} />}
+              icon={<InfoIcon sx={{ color: "white !important" }} />}
             />
           </Box>
         </Box>
 
         {loading ? (
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" p={6}>
-            <CircularProgress style={{ color: "#D32F2F" }} />
-            <Typography style={{ marginTop: "16px", color: "#757575" }}>Loading staff members...</Typography>
+            <CircularProgress sx={{ color: "#D32F2F" }} />
+            <Typography sx={{ mt: 2, color: "#757575" }}>Loading staff members...</Typography>
           </Box>
         ) : (
-          <TableContainer style={styles.tableContainer}>
+          <TableContainer>
             <Table>
               <TableHead>
-                <TableRow style={styles.tableHeader}>
-                  <TableCell>Employee</TableCell>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Location</TableCell>
-                  <TableCell>Role</TableCell>
+                <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                  <TableCell sx={{ color: "#D32F2F", fontWeight: 600, py: 2, px: 3 }}>Employee</TableCell>
+                  <TableCell sx={{ color: "#D32F2F", fontWeight: 600, py: 2, px: 3 }}>ID</TableCell>
+                  <TableCell sx={{ color: "#D32F2F", fontWeight: 600, py: 2, px: 3 }}>Location</TableCell>
+                  <TableCell sx={{ color: "#D32F2F", fontWeight: 600, py: 2, px: 3 }}>Role</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredStaff.length > 0 ? (
                   filteredStaff.map((staff, index) => (
-                    <TableRow key={index} style={styles.tableRow}>
-                      <TableCell style={styles.tableCell}>
+                    <TableRow
+                      key={index}
+                      sx={{
+                        "&:nth-of-type(odd)": {
+                          bgcolor: "#fafafa",
+                        },
+                        "&:hover": {
+                          bgcolor: "rgba(211, 47, 47, 0.05)",
+                        },
+                      }}
+                    >
+                      <TableCell sx={{ py: 2, px: 3 }}>
                         <Box display="flex" alignItems="center" gap={2}>
-                          <Avatar style={{ backgroundColor: "#D32F2F" }}>{staff.name.charAt(0)}</Avatar>
+                          <Avatar sx={{ bgcolor: "#D32F2F" }}>{staff.name.charAt(0)}</Avatar>
                           <Typography fontWeight="500">{staff.name}</Typography>
                         </Box>
                       </TableCell>
-                      <TableCell style={styles.tableCell}>
-                        <Chip size="small" label={staff.id} style={{ backgroundColor: "#f5f5f5", fontWeight: "500" }} />
+                      <TableCell sx={{ py: 2, px: 3 }}>
+                        <Chip size="small" label={staff.id} sx={{ bgcolor: "#f5f5f5", fontWeight: "500" }} />
                       </TableCell>
-                      <TableCell style={styles.tableCell}>
+                      <TableCell sx={{ py: 2, px: 3 }}>
                         <Box display="flex" alignItems="center" gap={1}>
-                          <BusinessIcon style={{ color: "#D32F2F" }} />
+                          <BusinessIcon sx={{ color: "#D32F2F" }} />
                           {staff.locationId || "N/A"}
                         </Box>
                       </TableCell>
-                      <TableCell style={styles.tableCell}>
-                        <Box style={styles.roleChip}>
+                      <TableCell sx={{ py: 2, px: 3 }}>
+                        <Box
+                          sx={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 0.75,
+                            bgcolor: "rgba(211, 47, 47, 0.1)",
+                            color: "#D32F2F",
+                            fontWeight: 500,
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                          }}
+                        >
                           {getRoleIcon(staff.role)}
                           {staff.role}
                         </Box>
@@ -500,8 +526,8 @@ export default function ViewStaff() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} style={styles.emptyState}>
-                      <PersonIcon style={styles.emptyStateIcon} />
+                    <TableCell colSpan={4} sx={{ textAlign: "center", py: 5 }}>
+                      <PersonIcon sx={{ fontSize: 48, color: "rgba(211, 47, 47, 0.5)", mb: 2 }} />
                       <Typography variant="h6" gutterBottom>
                         No staff members found
                       </Typography>
@@ -515,37 +541,15 @@ export default function ViewStaff() {
             </Table>
           </TableContainer>
         )}
-      </Card>
+      </Paper>
 
-      <Box style={styles.footer}>
+      <Box sx={{ mt: 3, textAlign: "center", color: "#757575" }}>
         <Typography>© {new Date().getFullYear()} CougarPost Administration</Typography>
-        <Typography variant="caption" style={{ opacity: 0.7 }}>
+        <Typography variant="caption" sx={{ opacity: 0.7 }}>
           Staff data last updated: {new Date().toLocaleString()}
         </Typography>
       </Box>
     </Container>
-  )
-}
-
-// Avatar component for compatibility
-function Avatar({ children, style }) {
-  return (
-    <Box
-      style={{
-        width: 40,
-        height: 40,
-        borderRadius: "50%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#D32F2F",
-        color: "white",
-        fontWeight: "bold",
-        ...style,
-      }}
-    >
-      {children}
-    </Box>
   )
 }
 

@@ -675,7 +675,7 @@ export default function CustomerPackageEntry() {
           }}
         >
           <Typography variant="h4" sx={{ fontWeight: "bold", color: "#B71C1C" }}>
-            💲 Total: ${calculateTotalPrice()}
+             Total: ${calculateTotalPrice()}
           </Typography>
         </Box>
       </Paper>
@@ -693,7 +693,7 @@ export default function CustomerPackageEntry() {
         }}
         onClick={handleSubmit}
       >
-        🛒 Proceed to Checkout
+         Proceed to Checkout
       </Button>
     </Container>
   )

@@ -53,7 +53,7 @@ const EmpDashboard = () => {
 
   useEffect(() => {
     const fetchManagerMessages = async () => {
-      if (!user?.po_id || !isManager()) return
+      if (!user?.po_id || !(isManager() || isClerk())) return
 
       try {
         const res = await fetch(`https://apipost.vercel.app/api/getManagerNotifications?po_id=${user.po_id}`)
@@ -77,7 +77,7 @@ const EmpDashboard = () => {
     const messageInterval = setInterval(fetchManagerMessages, 60000)
 
     return () => clearInterval(messageInterval)
-  }, [user])
+  }, [user, isManager, isClerk])
 
   const dismissLowStockMessages = async () => {
     if (!user?.po_id) return
@@ -109,43 +109,72 @@ const EmpDashboard = () => {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", background: "white", pt: 4, pb: 8 }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "white",
+        pt: 4,
+        pb: 8,
+        position: "relative",
+      }}
+    >
       <Container maxWidth="md">
+        {/* Header with logo */}
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Typography
             variant="h2"
             sx={{
               fontWeight: "bold",
-              color: "#ff0000",
+              color: "#B71C1C",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: 1,
+              textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
             }}
           >
             <PackageIcon sx={{ fontSize: 40 }} />
             CougarPost
           </Typography>
-          <Typography variant="subtitle1" sx={{ color: "#666" }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              color: "#666",
+              letterSpacing: "1px",
+            }}
+          >
             Your Reliable Postal Service
           </Typography>
         </Box>
 
         {/* Low Stock Alert Icon */}
-        {isManager() && managerMessages.length > 0 && (
+        {(isManager() || isClerk()) && managerMessages.length > 0 && (
           <Box sx={{ position: "absolute", top: 20, right: 20 }}>
             <Tooltip title="Low Stock Alerts">
               <IconButton
-                color="error"
                 onClick={() => setShowLowStockAlert(true)}
                 sx={{
                   bgcolor: "rgba(255, 0, 0, 0.1)",
+                  color: "#B71C1C",
                   "&:hover": {
                     bgcolor: "rgba(255, 0, 0, 0.2)",
+                    transform: "scale(1.05)",
                   },
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 4px 8px rgba(255, 0, 0, 0.2)",
                 }}
               >
-                <Badge badgeContent={managerMessages.length} color="error" max={99}>
+                <Badge
+                  badgeContent={managerMessages.length}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      bgcolor: "#B71C1C",
+                      color: "white",
+                      fontWeight: "bold",
+                    },
+                  }}
+                  max={99}
+                >
                   <WarningIcon />
                 </Badge>
               </IconButton>
@@ -165,13 +194,26 @@ const EmpDashboard = () => {
           }}
         >
           <Paper
-            elevation={6}
+            elevation={8}
             sx={{
               borderRadius: "50%",
               p: 1.5,
               mb: 3,
-              background: "linear-gradient(135deg, #ff5555 0%, #ff0000 100%)",
-              boxShadow: "0 10px 20px rgba(255, 0, 0, 0.2)",
+              background: "linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)",
+              boxShadow: "0 15px 30px rgba(183, 28, 28, 0.3)",
+              position: "relative",
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                top: -5,
+                left: -5,
+                right: -5,
+                bottom: -5,
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, rgba(211,47,47,0.2) 0%, rgba(183,28,28,0.2) 100%)",
+                zIndex: -1,
+                filter: "blur(10px)",
+              },
             }}
           >
             <Avatar
@@ -179,9 +221,11 @@ const EmpDashboard = () => {
                 width: 100,
                 height: 100,
                 bgcolor: "white",
-                color: "#ff0000",
+                color: "#B71C1C",
                 fontSize: "2.5rem",
                 fontWeight: "bold",
+                boxShadow: "inset 0 4px 8px rgba(0,0,0,0.1)",
+                border: "4px solid rgba(255,255,255,0.8)",
               }}
               alt={userName}
             >
@@ -195,16 +239,26 @@ const EmpDashboard = () => {
             sx={{
               fontWeight: "bold",
               textAlign: "center",
-              background: "linear-gradient(135deg, #ff0000 0%, #ff5555 100%)",
+              background: "linear-gradient(135deg, #B71C1C 0%, #D32F2F 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               mb: 1,
+              textShadow: "0 2px 10px rgba(183,28,28,0.1)",
+              letterSpacing: "0.5px",
             }}
           >
             {greeting}, {userName}
           </Typography>
 
-          <Typography variant="h5" sx={{ fontWeight: "medium", color: "#ff0000", mb: 2 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "medium",
+              color: "#B71C1C",
+              mb: 2,
+              letterSpacing: "0.5px",
+            }}
+          >
             {getRoleGreeting()}
           </Typography>
 
@@ -213,13 +267,23 @@ const EmpDashboard = () => {
               display: "flex",
               alignItems: "center",
               mt: 1,
-              p: 1,
-              borderRadius: 20,
-              bgcolor: "rgba(255, 0, 0, 0.1)",
+              py: 1.5,
+              px: 3,
+              borderRadius: 30,
+              bgcolor: "rgba(255, 0, 0, 0.08)",
+              border: "1px solid rgba(255, 0, 0, 0.15)",
+              boxShadow: "0 4px 12px rgba(255, 0, 0, 0.1)",
             }}
           >
-            <ClockIcon sx={{ mr: 1, color: "#ff0000" }} />
-            <Typography variant="body1" sx={{ color: "#ff0000", fontWeight: "medium" }}>
+            <ClockIcon sx={{ mr: 1.5, color: "#B71C1C" }} />
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#B71C1C",
+                fontWeight: "medium",
+                letterSpacing: "0.5px",
+              }}
+            >
               {currentTime} •{" "}
               {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
             </Typography>
@@ -227,12 +291,13 @@ const EmpDashboard = () => {
         </Box>
 
         <Card
-          elevation={8}
+          elevation={10}
           sx={{
             borderRadius: 8,
             mb: 4,
             overflow: "visible",
             position: "relative",
+            background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
             "&::before": {
               content: '""',
               position: "absolute",
@@ -240,67 +305,146 @@ const EmpDashboard = () => {
               left: 0,
               right: 0,
               height: "8px",
-              background: "linear-gradient(90deg, #ff0000, #ff5555)",
+              background: "linear-gradient(90deg, #B71C1C, #D32F2F)",
               borderTopLeftRadius: 8,
               borderTopRightRadius: 8,
+            },
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
+            transition: "transform 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-5px)",
             },
           }}
         >
           <CardContent sx={{ p: 5 }}>
             <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-              <TruckIcon sx={{ fontSize: 28, color: "#ff0000", mr: 1.5 }} />
-              <Typography variant="h4" sx={{ fontWeight: "bold", color: "#ff0000" }}>
+              <Box
+                sx={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)",
+                  boxShadow: "0 6px 12px rgba(255, 0, 0, 0.2)",
+                  mr: 2,
+                }}
+              >
+                <TruckIcon sx={{ fontSize: 28, color: "white" }} />
+              </Box>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: "bold",
+                  color: "#333",
+                  letterSpacing: "0.5px",
+                }}
+              >
                 Welcome back
               </Typography>
             </Box>
 
-            <Typography variant="body1" sx={{ fontSize: "1.1rem", mb: 3, lineHeight: 1.6 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontSize: "1.1rem",
+                mb: 3,
+                lineHeight: 1.8,
+                color: "#555",
+                letterSpacing: "0.3px",
+              }}
+            >
               At CougarPost, we acknowledge that it's people like you that keep the business running. Keep up the good
               work!
             </Typography>
 
             {/* Low Stock Alert Card */}
-            {isManager() && showLowStockAlert && managerMessages.length > 0 && (
+            {(isManager() || isClerk()) && showLowStockAlert && managerMessages.length > 0 && (
               <Card
                 elevation={4}
                 sx={{
                   mt: 4,
-                  p: 3,
+                  p: 0,
                   borderRadius: 4,
-                  border: "1px solid #ffcccc",
-                  bgcolor: "rgba(255, 0, 0, 0.05)",
+                  border: "1px solid rgba(255, 0, 0, 0.2)",
+                  bgcolor: "rgba(255, 0, 0, 0.03)",
+                  overflow: "hidden",
+                  animation: "pulse 2s infinite",
+                  "@keyframes pulse": {
+                    "0%": { boxShadow: "0 0 0 0 rgba(255, 0, 0, 0.2)" },
+                    "70%": { boxShadow: "0 0 0 10px rgba(255, 0, 0, 0)" },
+                    "100%": { boxShadow: "0 0 0 0 rgba(255, 0, 0, 0)" },
+                  },
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                  <WarningIcon sx={{ color: "#ff0000", mr: 2, fontSize: 28 }} />
-                  <Typography variant="h6" sx={{ color: "#ff0000", fontWeight: "bold" }}>
-                    Low Stock Alert
-                  </Typography>
-                </Box>
+                <Box
+                  sx={{
+                    p: 3,
+                    position: "relative",
+                    "&::before": {
+                      content: '""',
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "5px",
+                      height: "100%",
+                      background: "linear-gradient(to bottom, #B71C1C, #D32F2F)",
+                    },
+                    pl: 4,
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                    <WarningIcon sx={{ color: "#B71C1C", mr: 2, fontSize: 28 }} />
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: "#B71C1C",
+                        fontWeight: "bold",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      Low Stock Alert
+                    </Typography>
+                  </Box>
 
-                <Typography variant="body1" sx={{ mb: 3 }}>
-                  You have {managerMessages.length} item{managerMessages.length !== 1 ? "s" : ""} that{" "}
-                  {managerMessages.length !== 1 ? "are" : "is"} running low on stock. Please review inventory levels.
-                </Typography>
-
-                <Box sx={{ textAlign: "center" }}>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={dismissLowStockMessages}
+                  <Typography
+                    variant="body1"
                     sx={{
-                      fontWeight: "bold",
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 3,
-                      background: "linear-gradient(135deg, #ff5555, #ff0000)",
-                      "&:hover": {
-                        background: "linear-gradient(135deg, #cc0000, #990000)",
-                      },
+                      mb: 3,
+                      color: "#555",
+                      pl: 5,
                     }}
                   >
-                    Dismiss Low Stock Alerts
-                  </Button>
+                    You have {managerMessages.length} item{managerMessages.length !== 1 ? "s" : ""} that{" "}
+                    {managerMessages.length !== 1 ? "are" : "is"} running low on stock. Please review inventory levels.
+                  </Typography>
+
+                  <Box sx={{ textAlign: "center" }}>
+                    <Button
+                      variant="contained"
+                      onClick={dismissLowStockMessages}
+                      sx={{
+                        fontWeight: "bold",
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: 30,
+                        background: "linear-gradient(135deg, #D32F2F, #B71C1C)",
+                        boxShadow: "0 6px 12px rgba(183, 28, 28, 0.3)",
+                        "&:hover": {
+                          background: "linear-gradient(135deg, #B71C1C, #8B0000)",
+                          boxShadow: "0 8px 16px rgba(183, 28, 28, 0.4)",
+                          transform: "translateY(-2px)",
+                        },
+                        transition: "all 0.3s ease",
+                        textTransform: "none",
+                        fontSize: "1rem",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      Dismiss Low Stock Alerts
+                    </Button>
+                  </Box>
                 </Box>
               </Card>
             )}
@@ -311,21 +455,26 @@ const EmpDashboard = () => {
           <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
             <Button
               variant="outlined"
-              color="error"
               size="large"
               startIcon={<LogoutIcon />}
               onClick={logout}
               sx={{
-                color: "#ff0000",
-                borderColor: "#ff0000",
+                color: "#B71C1C",
+                borderColor: "#B71C1C",
                 "&:hover": {
-                  borderColor: "#cc0000",
-                  backgroundColor: "rgba(255, 0, 0, 0.05)",
+                  borderColor: "#8B0000",
+                  backgroundColor: "rgba(183, 28, 28, 0.05)",
+                  transform: "translateY(-2px)",
                 },
-                borderRadius: 4,
+                borderRadius: 30,
                 px: 4,
                 py: 1.5,
                 fontWeight: "bold",
+                boxShadow: "0 4px 12px rgba(183, 28, 28, 0.1)",
+                transition: "all 0.3s ease",
+                textTransform: "none",
+                fontSize: "1rem",
+                letterSpacing: "0.5px",
               }}
             >
               LOGOUT
