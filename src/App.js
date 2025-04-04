@@ -698,6 +698,7 @@ const App = () => {
                   )}
                   {user && isDriver() && (
                     <>
+                      <Route path="/low_stock" element={<LowStockPage />} />
                       <Route path="/work-hours" element={<WorkHours />} />
                       <Route path="/ViewPOPackages" element={<ViewPOPackages />} />
                       <Route

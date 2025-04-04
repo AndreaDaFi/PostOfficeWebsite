@@ -1,9 +1,10 @@
-"use client"
-
-import { useState, useEffect, useContext } from "react"
-import { AuthContext } from "../../context/AuthContext"
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import ArrowForwardIcon from "@mui/icons-material/RefreshRounded";
 import {
   Container,
+  Switch,
+  CardContent,
   Typography,
   Paper,
   TextField,
@@ -13,33 +14,150 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  CircularProgress,
   Box,
+  CircularProgress,
+  Alert,
+  InputAdornment,
+  Chip,
+  FormControl,
+  Grid,
+  InputLabel,
   Select,
   MenuItem,
-  FormControl,
-  InputLabel,
+  FormControlLabel,
   Card,
-  CardContent,
-  Grid,
-} from "@mui/material"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+} from "@mui/material";
+import BusinessIcon from "@mui/icons-material/Business";
+import SearchIcon from "@mui/icons-material/Search";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PublicIcon from "@mui/icons-material/Public";
+import HomeIcon from "@mui/icons-material/Home";
 
-export default function ViewStore() {
-  const { user } = useContext(AuthContext)
-  const [items, setItems] = useState([]) // Holds API data
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [startDate, setStartDate] = useState("") // Start date for filtering
-  const [endDate, setEndDate] = useState("") // End date for filtering
-  const [totalSales, setTotalSales] = useState(0) // Holds the total sales amount
-  const [totalPackages, setTotalPackages] = useState(0) // Holds the total number of packages
-  const [filteredItems, setFilteredItems] = useState([])
-  const [packageType, setPackageType] = useState("any") // Track the selected package type
-  const [tabValue, setTabValue] = useState(0)
-  const [chartData, setChartData] = useState([])
+export default function ViewPO() {
+  const { user } = useContext(AuthContext);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [items, setItems] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [startDate, setStartDate] = useState(""); // Start date for filtering
+  const [endDate, setEndDate] = useState("");
+  const [status, setStatus] = useState("Any"); // Status for filtering
+  const [origin, setOrigin] = useState("Any"); // Origin for filtering
+  const [totalSales, setTotalSales] = useState(0);
+  const [destination, setDestination] = useState("Any"); // Destination for filtering
+  const [category, setCategory] = useState("Any"); // Category for filterin
+  const [itemsForSale, setItemsForSale] = useState([]); // State to hold items for sale
+  const [selectedItemForSale, setSelectedItemForSale] = useState("Any"); // State to hold selected item for sale
+  const [removedItems, setRemovedItems] = useState([]); // State to hold removed items
+  const [selectedRemovedItem, setSelectedRemovedItem] = useState("Any"); // State to hold selected removed item
+  const [isForSaleSelected, setIsForSaleSelected] = useState(true); // State to hold selected item for sale
+  const states = [
+    "al",
+    "ak",
+    "az",
+    "ar",
+    "ca",
+    "co",
+    "ct",
+    "de",
+    "fl",
+    "ga",
+    "hi",
+    "id",
+    "il",
+    "in",
+    "ia",
+    "ks",
+    "ky",
+    "la",
+    "me",
+    "md",
+    "ma",
+    "mi",
+    "mn",
+    "ms",
+    "mo",
+    "mt",
+    "ne",
+    "nv",
+    "nh",
+    "nj",
+    "nm",
+    "ny",
+    "nc",
+    "nd",
+    "oh",
+    "ok",
+    "or",
+    "pa",
+    "ri",
+    "sc",
+    "sd",
+    "tn",
+    "tx",
+    "ut",
+    "vt",
+    "va",
+    "wa",
+    "wv",
+    "wi",
+    "wy",
+  ];
 
-  // Update the color scheme to include more subtle colors and improve the box styling
+  const stateNames = {
+    al: "Alabama",
+    ak: "Alaska",
+    az: "Arizona",
+    ar: "Arkansas",
+    ca: "California",
+    co: "Colorado",
+    ct: "Connecticut",
+    de: "Delaware",
+    fl: "Florida",
+    ga: "Georgia",
+    hi: "Hawaii",
+    id: "Idaho",
+    il: "Illinois",
+    in: "Indiana",
+    ia: "Iowa",
+    ks: "Kansas",
+    ky: "Kentucky",
+    la: "Louisiana",
+    me: "Maine",
+    md: "Maryland",
+    ma: "Massachusetts",
+    mi: "Michigan",
+    mn: "Minnesota",
+    ms: "Mississippi",
+    mo: "Missouri",
+    mt: "Montana",
+    ne: "Nebraska",
+    nv: "Nevada",
+    nh: "New Hampshire",
+    nj: "New Jersey",
+    nm: "New Mexico",
+    ny: "New York",
+    nc: "North Carolina",
+    nd: "North Dakota",
+    oh: "Ohio",
+    ok: "Oklahoma",
+    or: "Oregon",
+    pa: "Pennsylvania",
+    ri: "Rhode Island",
+    sc: "South Carolina",
+    sd: "South Dakota",
+    tn: "Tennessee",
+    tx: "Texas",
+    ut: "Utah",
+    vt: "Vermont",
+    va: "Virginia",
+    wa: "Washington",
+    wv: "West Virginia",
+    wi: "Wisconsin",
+    wy: "Wyoming",
+  };
+
   const colors = {
     primary: "#D32F2F", // Red
     secondary: "#424242", // Dark Gray
@@ -53,19 +171,7 @@ export default function ViewStore() {
     cardBorder: "#e0e0e0",
     cardShadow: "rgba(0, 0, 0, 0.1)",
     headerBg: "#f8f8f8",
-  }
-
-  // Update the container style to add more breathing room and allow wider content
-  const containerStyle = {
-    marginTop: "24px",
-    marginBottom: "24px",
-    width: "100%",
-    padding: "0 16px",
-    maxWidth: "1800px", // 1.5x wider than standard (1200px)
-    margin: "0 auto", // Center the container
-  }
-
-  // Improve the Paper component styling for filters
+  };
   const filterPaperStyle = {
     padding: "20px",
     marginBottom: "24px",
@@ -73,210 +179,240 @@ export default function ViewStore() {
     backgroundColor: colors.white,
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
     border: `1px solid ${colors.cardBorder}`,
-  }
-
-  // Enhance the card styling for stats cards
-  const statsCardStyle = {
-    borderRadius: "12px",
-    height: "100%",
-    overflow: "hidden",
-    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
-    transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
-  }
-
-  // Enhance the chart card styling
-  const chartCardStyle = {
-    marginBottom: "24px",
-    borderRadius: "12px",
-    overflow: "hidden",
-    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
-  }
-
-  // Enhance the table paper styling - make it wider than other elements
-  const tablePaperStyle = {
-    borderRadius: "12px",
-    overflow: "hidden",
-    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
-    width: "100%",
-    maxWidth: "100%",
-  }
-
-  // Update the header cell style
-  const headerCellStyle = {
-    backgroundColor: colors.primary,
-    color: colors.white,
-    fontWeight: "bold",
-    padding: "14px 10px",
-    fontSize: "0.9rem",
-    textAlign: "center",
-    borderBottom: `2px solid ${colors.primary}`,
-  }
-
-  // Regular cell style
-  const cellStyle = {
-    padding: "10px 8px",
-    fontSize: "0.9rem",
-    textAlign: "center",
-    borderBottom: `1px solid ${colors.mediumGray}`,
-  }
-
-  // Status cell with color coding
-  const getStatusStyle = (status) => {
-    let color = colors.text
-
-    if (status.toLowerCase().includes("delivered")) {
-      color = colors.success // Green for delivered
-    } else if (status.toLowerCase().includes("transit")) {
-      color = colors.secondary // Dark gray for in transit
-    } else if (status.toLowerCase().includes("processing")) {
-      color = colors.warning // Orange for processing
-    }
-
-    return {
-      ...cellStyle,
-      color: color,
-      fontWeight: "bold",
-    }
-  }
-
-  // Yes/No cell with color coding
-  const getBooleanStyle = (value) => ({
-    ...cellStyle,
-    color: value === "1" ? colors.success : colors.darkGray,
-    fontWeight: value === "1" ? "bold" : "normal",
-  })
+  };
 
   useEffect(() => {
     const fetchItems = async () => {
-      const po_id = user?.po_id // Get the manager's ID
+      const po_id = user?.po_id; // Get the manager's ID
       try {
-        const response = await fetch(`https://apipost.vercel.app/api/StoreSales?po_id=${po_id}`, {
-          method: "GET", // Use GET method
-        })
+        const response = await fetch(
+          `https://apipost.vercel.app/api/ViewStore?po_id=${po_id}`,
+          {
+            method: "GET", // Use GET method
+          }
+        );
 
-        const data = await response.json()
-        console.log("Fetched Data:", data)
+        const data = await response.json();
+        console.log("Fetched Data:", data);
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          setItems(data.data) // Update state with API response
+          setItemsForSale(data.data); // Update state with API response
         } else {
-          console.error("⚠ API returned an empty array:", data)
+          console.error("⚠ API returned an empty array:", data);
         }
       } catch (err) {
-        console.error("❌ Error fetching items for sale:", err)
-        setError(err.message)
+        console.error("❌ Error fetching items for sale:", err);
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchItems()
-  }, [user?.po_id]) // Refetch when `po_id` changes
+    fetchItems();
+  }, [user?.po_id]);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const po_id = user?.po_id; // Get the manager's ID
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/ViewStoreTwo?po_id=${po_id}`,
+          {
+            method: "GET", // Use GET method
+          }
+        );
+
+        const data = await response.json();
+        console.log("Fetched Data:", data);
+
+        if (Array.isArray(data.data) && data.data.length > 0) {
+          setRemovedItems(data.data); // Update state with API response
+        } else {
+          console.error("⚠ API returned an empty array:", data);
+        }
+      } catch (err) {
+        console.error("❌ Error fetching removed items for sale:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, [user?.po_id]);
+
+  useEffect(() => {
+    // Fetch data from the API when the component mounts
+    const fetchPostOffices = async () => {
+      try {
+        const poID = user?.po_id; // Assuming you have the po_id in your user object
+        const response = await fetch(
+          `http://localhost:3001/api/ViewOnlineStore?po_id=${poID}`
+        ); // Your API endpoint
+        const result = await response.json();
+
+        if (result.success) {
+          setItems(result.data); // Set the fetched data to state
+          console.log("Fetched data:", result.data); // Log the fetched data
+        } else {
+          setError("Failed to load store sale data.");
+        }
+      } catch (error) {
+        setError(error.message); // Set error if fetch fails
+      } finally {
+        setLoading(false); // Set loading to false when data is fetched or error occurs
+      }
+    };
+
+    fetchPostOffices();
+  }, []);
 
   const filterByDateRangeAndType = () => {
-    let filtered = items
+    let filtered = items;
 
     // Apply date range filter
     filtered = filtered.filter((item) => {
-      const transactionDate = new Date(item.transaction_date)
-      const start = startDate ? new Date(startDate) : null
-      const end = endDate ? new Date(endDate) : null
+      const transactionDate = new Date(item.transaction_date);
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
 
-      return (!start || transactionDate >= start) && (!end || transactionDate <= end)
-    })
+      return (
+        (!start || transactionDate >= start) && (!end || transactionDate <= end)
+      );
+    });
 
-    // Apply package type filter
-    if (packageType !== "any") {
-      filtered = filtered.filter((item) => item.type.toLowerCase() === packageType.toLowerCase())
+    if (destination !== "Any") {
+      filtered = filtered.filter(
+        (item) => item.destination_state === destination
+      );
     }
 
-    setFilteredItems(filtered)
+    if (selectedItemForSale !== "Any") {
+      filtered = filtered.filter(
+        (item) => item.item_id === selectedItemForSale
+      );
+    }
 
-    // Calculate total sales and total packages
-    const total = filtered.reduce((acc, item) => acc + Number.parseFloat(item.total_amount), 0)
-    setTotalSales(total)
-    setTotalPackages(filtered.length)
+    if (category !== "Any") {
+      filtered = filtered.filter((item) => item.item_category === category);
+    }
 
-    // Process data for charts
-    processChartData(filtered)
-  }
+    if (status === "Delivered") {
+      filtered = filtered.filter((item) => item.status === "Delivered");
+    }
+    if (status === "Missing") {
+      filtered = filtered.filter((item) => item.status === "Missing");
+    }
 
-  const processChartData = (data) => {
-    // For package type distribution
-    const typeCount = {}
+    setFilteredItems(filtered);
 
-    data.forEach((item) => {
-      const type = item.type.toLowerCase()
-      if (!typeCount[type]) {
-        typeCount[type] = 0
-      }
-      typeCount[type] += 1
-    })
-
-    const chartData = Object.entries(typeCount).map(([name, value]) => ({
-      name,
-      packages: value,
-      amount: data
-        .filter((item) => item.type.toLowerCase() === name)
-        .reduce((sum, item) => sum + Number.parseFloat(item.total_amount), 0),
-    }))
-
-    setChartData(chartData)
-  }
+    const total = filtered.reduce(
+      (acc, item) => acc + Number.parseFloat(item.total_amount),
+      0
+    );
+    setTotalSales(total);
+  };
 
   useEffect(() => {
-    filterByDateRangeAndType() // Recalculate the filtered items whenever the date range changes
-  }, [startDate, endDate, packageType, items])
+    filterByDateRangeAndType(); // Recalculate the filtered items whenever the date range changes
+  }, [
+    startDate,
+    endDate,
+    items,
+    status,
+    destination,
+    category,
+    selectedItemForSale,
+    selectedRemovedItem,
+  ]); // Make sure to track 'delivered' in the useEffect dependency array
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue)
-  }
+  const handleChange = (event) => {
+    setSelectedItemForSale(event.target.value); // Set the selected item ID
+  };
 
-  // Table styles
-  const tableContainerStyle = {
-    overflowX: "auto",
-    width: "100%",
-    maxWidth: "100%",
-  }
+  const handleChangeForSale = (e) => {
+    setSelectedItemForSale(e.target.value);
+  };
 
-  const tableStyle = {
-    minWidth: 750,
-    width: "100%",
-  }
+  const handleChangeRemovedItem = (e) => {
+    setSelectedRemovedItem(e.target.value);
+  };
 
-  const getRowStyle = (index) => ({
-    backgroundColor: index % 2 === 0 ? colors.lightGray : colors.white,
-    transition: "background-color 0.3s ease",
-    "&:hover": {
-      backgroundColor: colors.mediumGray,
-    },
-  })
+  const handleSwitchChange = (e) => {
+    setIsForSaleSelected(e.target.checked); // toggle the state when the switch is flipped
+  };
 
   return (
-    <Container maxWidth={false} style={containerStyle}>
-      <Typography
-        variant="h4"
-        style={{ fontWeight: "bold", color: colors.primary, marginBottom: "15px", textAlign: "center" }}
+    <Container maxWidth="lg" sx={{ my: 4 }}>
+      <Paper
+        elevation={2}
+        sx={{
+          borderRadius: 2,
+          overflow: "hidden",
+          mb: 4,
+          transition: "box-shadow 0.3s ease",
+          "&:hover": {
+            boxShadow: "0 8px 24px rgba(211, 47, 47, 0.15)",
+          },
+        }}
       >
-        Packages in the system
-      </Typography>
-
-      {/* Filters Section */}
+        <Box
+          sx={{
+            background: "linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)",
+            color: "white",
+            p: 3,
+            position: "relative",
+            overflow: "hidden",
+            textAlign: "center",
+          }}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              opacity: 0.05,
+              backgroundImage:
+                'url(\'data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fillOpacity="1" fillRule="evenodd"/%3E%3C/svg%3E\')',
+            }}
+          />
+          <Box
+            sx={{
+              position: "relative",
+              zIndex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h4" fontWeight="bold">
+              Online Store Sales report
+            </Typography>
+            <Typography variant="subtitle1" sx={{ mt: 1, opacity: 0.9 }}>
+              View and analyze the performance of items in your online store,
+              all in one page.
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
       <Paper elevation={0} style={filterPaperStyle}>
         <Typography
           variant="h6"
           style={{
-            marginBottom: "16px",
+            marginBottom: "24px",
             color: colors.secondary,
             fontWeight: "600",
+            fontSize: "1.25rem",
           }}
         >
           Filter Packages
         </Typography>
         <Grid container spacing={3} alignItems="center">
+          {/* Start Date */}
           <Grid item xs={12} md={4}>
             <TextField
-              label="Start Date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
@@ -284,11 +420,13 @@ export default function ViewStore() {
               fullWidth
               size="small"
               variant="outlined"
+              style={{ borderRadius: "4px" }}
             />
           </Grid>
+
+          {/* End Date */}
           <Grid item xs={12} md={4}>
             <TextField
-              label="End Date"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
@@ -296,306 +434,417 @@ export default function ViewStore() {
               fullWidth
               size="small"
               variant="outlined"
+              style={{ borderRadius: "4px" }}
             />
           </Grid>
+
+          {/* Category Filter */}
           <Grid item xs={12} md={4}>
             <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>Package Type</InputLabel>
-              <Select value={packageType} onChange={(e) => setPackageType(e.target.value)} label="Package Type">
-                <MenuItem value="any">Any</MenuItem>
-                <MenuItem value="box">Box</MenuItem>
-                <MenuItem value="envelope">Envelope</MenuItem>
+              <InputLabel>Category</InputLabel>
+              <Select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                label="Category"
+                style={{ borderRadius: "4px" }}
+              >
+                <MenuItem value="Any">Any</MenuItem>
+                <MenuItem value="Boxes & Sizes">Boxes & Sizes</MenuItem>
+                <MenuItem value="Packing Supplies">Packing Supplies</MenuItem>
+                <MenuItem value="Envelopes & Mailers">
+                  Envelopes & Mailers
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+          {/* Item Selection and Switch */}
+          <Grid container spacing={3} alignItems="center">
+            {/* Item Selection */}
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth size="small" variant="outlined">
+                <InputLabel>Select Item</InputLabel>
+                <Select
+                  value={
+                    isForSaleSelected
+                      ? selectedItemForSale
+                      : selectedRemovedItem
+                  }
+                  onChange={
+                    isForSaleSelected
+                      ? handleChangeForSale
+                      : handleChangeRemovedItem
+                  }
+                  label="Select Item"
+                  style={{ borderRadius: "4px" }}
+                >
+                  <MenuItem value="Any">Any</MenuItem>
+                  {(isForSaleSelected ? itemsForSale : removedItems).map(
+                    (item) => (
+                      <MenuItem key={item.item_id} value={item.item_id}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography>{item.item_name}</Typography>
+                        </Box>
+                      </MenuItem>
+                    )
+                  )}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Arrow between dropdowns */}
+            <Grid
+              item
+              xs={12}
+              md={4}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ArrowForwardIcon
+                sx={{
+                  fontSize: "30px",
+                  color: "#D50032",
+                  transform: isForSaleSelected
+                    ? "rotate(0deg)"
+                    : "rotate(360deg)", // Rotates when toggled
+                  transition: "transform 0.5s ease-in-out",
+                }}
+              />
+            </Grid>
+
+            {/* Switch */}
+            <Grid item xs={12} md={4}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isForSaleSelected}
+                    onChange={handleSwitchChange}
+                    name="itemToggle"
+                    color="default"
+                    size="medium"
+                    sx={{
+                      "& .MuiSwitch-thumb": {
+                        backgroundColor: isForSaleSelected
+                          ? "#D50032"
+                          : "#B0BEC5", // Red for active, gray for inactive
+                      },
+                      "& .MuiSwitch-track": {
+                        backgroundColor: isForSaleSelected
+                          ? "#D50032"
+                          : "#B0BEC5",
+                        borderRadius: "50px",
+                      },
+                      "& .MuiSwitch-switchBase.Mui-checked": {
+                        transform: "translateX(16px)",
+                        color: "#fff", // White thumb when checked
+                      },
+                      "& .MuiSwitch-switchBase": {
+                        padding: 5,
+                      },
+                    }}
+                  />
+                }
+                label={
+                  isForSaleSelected
+                    ? "Items on sale"
+                    : "Items not currently on sale"
+                }
+                style={{ marginTop: "16px" }}
+              />
+            </Grid>
+          </Grid>
+
+          {/* Package Status */}
+          <Grid item xs={12} md={4}>
+            <FormControl fullWidth size="small" variant="outlined">
+              <InputLabel>Package Status</InputLabel>
+              <Select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                style={{ borderRadius: "4px" }}
+              >
+                <MenuItem value="Any">Any</MenuItem>
+                <MenuItem value="Delivered">Only delivered packages</MenuItem>
+                <MenuItem value="Missing">Only missing packages</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+          {/* Destination State */}
+          <Grid item xs={12} md={4}>
+            <FormControl fullWidth size="small" variant="outlined">
+              <InputLabel>Destination State</InputLabel>
+              <Select
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                style={{ borderRadius: "4px" }}
+              >
+                <MenuItem value="Any">Any</MenuItem>
+                {states.map((stateId) => (
+                  <MenuItem key={stateId} value={stateId}>
+                    {stateNames[stateId]}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
         </Grid>
       </Paper>
-
-      {/* Stats Cards */}
-      <Grid container spacing={3} style={{ marginBottom: "24px" }}>
-        <Grid item xs={12} md={6}>
-          <Card elevation={0} style={statsCardStyle}>
-            <CardContent
-              style={{
-                padding: "0",
-              }}
-            >
-              <Box
-                style={{
-                  backgroundColor: colors.primary,
-                  padding: "16px",
-                  borderBottom: `1px solid ${colors.cardBorder}`,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  style={{
-                    color: colors.white,
-                    fontWeight: "600",
-                    textAlign: "center",
-                  }}
-                >
-                  TOTAL SALES
-                </Typography>
-              </Box>
-              <Box
-                style={{
-                  padding: "24px 16px",
-                  textAlign: "center",
-                  backgroundColor: colors.white,
-                }}
-              >
-                <Typography
-                  variant="h3"
-                  style={{
-                    fontWeight: "700",
-                    color: colors.primary,
-                  }}
-                >
-                  ${totalSales.toFixed(2)}
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Card elevation={0} style={statsCardStyle}>
-            <CardContent
-              style={{
-                padding: "0",
-              }}
-            >
-              <Box
-                style={{
-                  backgroundColor: colors.secondary,
-                  padding: "16px",
-                  borderBottom: `1px solid ${colors.cardBorder}`,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  style={{
-                    color: colors.white,
-                    fontWeight: "600",
-                    textAlign: "center",
-                  }}
-                >
-                  TOTAL PACKAGES
-                </Typography>
-              </Box>
-              <Box
-                style={{
-                  padding: "24px 16px",
-                  textAlign: "center",
-                  backgroundColor: colors.white,
-                }}
-              >
-                <Typography
-                  variant="h3"
-                  style={{
-                    fontWeight: "700",
-                    color: colors.secondary,
-                  }}
-                >
-                  {totalPackages}
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Chart Section */}
-      <Card elevation={0} style={chartCardStyle}>
-        <CardContent style={{ padding: "0" }}>
-          <Box
-            style={{
-              backgroundColor: colors.headerBg,
-              padding: "16px",
-              borderBottom: `1px solid ${colors.cardBorder}`,
-            }}
-          >
-            <Typography
-              variant="h5"
-              style={{
-                fontWeight: "600",
-                color: colors.primary,
-                textAlign: "center",
-              }}
-            >
-              Package Analytics
+      <Card>
+        <CardContent sx={{ p: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <Typography variant="h6" color="text.secondary">
+              Total Sales
             </Typography>
           </Box>
-          <Box style={{ padding: "20px" }}>
-            <div style={{ width: "100%", height: 350 }}>
-              <ResponsiveContainer>
-                <BarChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={colors.mediumGray} />
-                  <XAxis dataKey="name" tick={{ fill: colors.text }} />
-                  <YAxis yAxisId="left" orientation="left" stroke={colors.primary} />
-                  <YAxis yAxisId="right" orientation="right" stroke={colors.secondary} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "rgba(255, 255, 255, 0.98)",
-                      borderRadius: "8px",
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-                      border: "none",
-                      padding: "10px",
-                    }}
-                  />
-                  <Legend wrapperStyle={{ paddingTop: "16px" }} />
-                  <Bar yAxisId="left" dataKey="packages" name="Packages" fill={colors.primary} radius={[6, 6, 0, 0]} />
-                  <Bar
-                    yAxisId="right"
-                    dataKey="amount"
-                    name="Amount ($)"
-                    fill={colors.secondary}
-                    radius={[6, 6, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </Box>
+          <Typography variant="h3" fontWeight="bold" color="#D32F2F">
+            ${totalSales}
+          </Typography>
         </CardContent>
       </Card>
 
+      {/* items sold List */}
       {loading ? (
-        <Box display="flex" justifyContent="center" my={4}>
-          <CircularProgress style={{ color: colors.primary }} />
-        </Box>
-      ) : error ? (
-        <Box display="flex" justifyContent="center" my={4} p={3} bgcolor="#FFEBEE" borderRadius="8px">
-          <Typography variant="body1" style={{ color: colors.primary, fontWeight: "bold" }}>
-            ❌ {error}
-          </Typography>
-        </Box>
-      ) : (
-        // Make the Package Details section wider than the rest of the content
-        <div
-          style={{
-            width: "100vw",
-            marginLeft: "calc(-50vw + 50%)",
-            position: "relative",
+        <Box
+          sx={{
             display: "flex",
             justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            py: 8,
           }}
         >
-          <div
-            style={{
-              width: "95%",
-              maxWidth: "2200px", // Make the table wider than the rest of the content
+          <CircularProgress sx={{ color: "#D32F2F", mb: 2 }} />
+          <Typography variant="h6" color="textSecondary">
+            Loading sales data...
+          </Typography>
+        </Box>
+      ) : error ? (
+        <Alert
+          severity="error"
+          sx={{
+            mb: 3,
+            borderRadius: 2,
+            bgcolor: "#FFEBEE",
+            border: "1px solid #FFCDD2",
+          }}
+        >
+          {error}
+        </Alert>
+      ) : (
+        <Paper
+          elevation={0}
+          sx={{
+            borderRadius: 2,
+            overflow: "hidden",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.1)",
+            width: "100%",
+            maxWidth: "100%",
+            height: "auto", // Changed from 100% to auto
+          }}
+        >
+          <TableContainer
+            sx={{
+              overflowX: "auto",
+              width: "100%",
+              maxWidth: "100%",
+              overflowY: "hidden", // This prevents vertical scrolling
             }}
           >
-            <Paper elevation={0} style={tablePaperStyle}>
-              <Box
-                style={{
-                  backgroundColor: colors.headerBg,
-                  padding: "16px",
-                  borderBottom: `1px solid ${colors.cardBorder}`,
-                }}
-              >
-                <Typography
-                  variant="h5"
-                  style={{
-                    fontWeight: "600",
-                    color: colors.primary,
-                    textAlign: "center",
-                  }}
-                >
-                  Package Details
-                </Typography>
-              </Box>
-              {/* Table with improved styling */}
-              <TableContainer style={tableContainerStyle}>
-                <Table style={tableStyle}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell style={headerCellStyle}>ID</TableCell>
-                      <TableCell style={headerCellStyle}>TYPE</TableCell>
-                      <TableCell style={headerCellStyle}>WEIGHT</TableCell>
-                      <TableCell style={headerCellStyle}>SIZE</TableCell>
-                      <TableCell style={headerCellStyle}>STATUS</TableCell>
-                      <TableCell style={headerCellStyle}>ORDER DATE</TableCell>
-                      <TableCell style={headerCellStyle}>DELIVERY</TableCell>
-                      <TableCell style={headerCellStyle}>ORIGIN</TableCell>
-                      <TableCell style={headerCellStyle}>DESTINATION</TableCell>
-                      <TableCell style={headerCellStyle}>INS</TableCell>
-                      <TableCell style={headerCellStyle}>FAST</TableCell>
-                      <TableCell style={headerCellStyle}>FRAG</TableCell>
-                      <TableCell style={headerCellStyle}>AMOUNT</TableCell>
-                      <TableCell style={headerCellStyle}>TAX</TableCell>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Name
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Category
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Price
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Amount purchased
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Total
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Status of Order
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Order Date
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Delivery Date
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Destination State
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
+                    Destination City
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item, index) => (
+                    <TableRow
+                      key={index}
+                      hover
+                      sx={{
+                        "&:nth-of-type(odd)": {
+                          bgcolor: "#fafafa",
+                        },
+                        "&:hover": {
+                          bgcolor: "#FFEBEE",
+                        },
+                        transition: "background-color 0.2s",
+                      }}
+                    >
+                      <TableCell>{item.item_name}</TableCell>
+                      <TableCell>{item.item_category}</TableCell>
+                      <TableCell>${item.item_price}</TableCell>
+                      <TableCell>{item.item_amount_purchased}</TableCell>
+                      <TableCell>
+                        ${item.item_amount_purchased * item.item_price}
+                      </TableCell>
+                      <TableCell>{item.status}</TableCell>
+                      <TableCell>
+                        {new Date(item.transaction_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {item.delivery_date
+                          ? new Date(item.delivery_date).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>{item.destination_state}</TableCell>
+                      <TableCell>{item.destination_city}</TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {filteredItems.length > 0 ? (
-                      filteredItems.map((item, index) => (
-                        <TableRow key={index} hover style={getRowStyle(index)}>
-                          <TableCell style={cellStyle}>{item.tracking_number}</TableCell>
-                          <TableCell style={cellStyle}>{item.type}</TableCell>
-                          <TableCell style={cellStyle}>{item.weight ? item.weight : "N/A"}</TableCell>
-                          <TableCell style={cellStyle}>
-                            {item.size
-                              ? item.size === "s"
-                                ? "Small"
-                                : item.size === "m"
-                                  ? "Medium"
-                                  : item.size === "l"
-                                    ? "Large"
-                                    : "N/A"
-                              : "N/A"}
-                          </TableCell>
-                          <TableCell style={getStatusStyle(item.status)}>{item.status}</TableCell>
-                          <TableCell style={cellStyle}>
-                            {new Date(item.transaction_date).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </TableCell>
-                          <TableCell style={cellStyle}>
-                            {item.delivery_date
-                              ? new Date(item.delivery_date).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                })
-                              : "N/A"}
-                          </TableCell>
-                          <TableCell style={cellStyle}>{item.origin_state}</TableCell>
-                          <TableCell style={cellStyle}>{item.destination_state}</TableCell>
-                          <TableCell style={getBooleanStyle(item.purchased_insurance)}>
-                            {item.purchased_insurance === "1" ? "Yes" : "No"}
-                          </TableCell>
-                          <TableCell style={getBooleanStyle(item.fast_delivery)}>
-                            {item.fast_delivery === "1" ? "Yes" : "No"}
-                          </TableCell>
-                          <TableCell style={getBooleanStyle(item.fragile)}>
-                            {item.fragile === "1" ? "Yes" : "No"}
-                          </TableCell>
-                          <TableCell style={{ ...cellStyle, fontWeight: "bold" }}>${item.total_amount}</TableCell>
-                          <TableCell style={cellStyle}>${item.total_tax}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell
-                          colSpan={14}
-                          style={{
-                            textAlign: "center",
-                            padding: "24px",
-                            color: colors.primary,
-                          }}
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} sx={{ textAlign: "center", py: 4 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
+                        <SearchIcon
+                          sx={{ color: "#D32F2F", fontSize: 40, mb: 1 }}
+                        />
+                        <Typography
+                          variant="h6"
+                          sx={{ color: "#D32F2F", fontWeight: "medium" }}
                         >
-                          ❌ No results found.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          </div>
-        </div>
+                          No results found
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          Try adjusting your search terms
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       )}
     </Container>
-  )
+  );
 }
-

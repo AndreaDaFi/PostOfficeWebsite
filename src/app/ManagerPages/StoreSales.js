@@ -45,14 +45,14 @@ export default function ViewStore() {
   const [totalSales, setTotalSales] = useState(0); // Holds the total sales amount
   const [totalPackages, setTotalPackages] = useState(0); // Holds the total number of packages
   const [filteredItems, setFilteredItems] = useState([]);
-  const [packageType, setPackageType] = useState("any"); // Track the selected package type
+  const [packageType, setPackageType] = useState("Any"); // Track the selected package type
   const [tabValue, setTabValue] = useState(0);
   const [chartData, setChartData] = useState([]);
   const [status, setStatus] = useState("Any");
   const [insured, setInsured] = useState(false);
   const [fastDelivery, setFastDelivery] = useState(false);
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
+  const [origin, setOrigin] = useState("Any");
+  const [destination, setDestination] = useState("Any");
   const states = [
     "al",
     "ak",
@@ -308,20 +308,20 @@ export default function ViewStore() {
       );
     });
 
-    if (packageType !== "any") {
+    if (packageType !== "Any") {
       filtered = filtered.filter(
         (item) => item.type.toLowerCase() === packageType.toLowerCase()
       );
     }
 
-    if (origin !== "any") {
+    if (origin !== "Any") {
       filtered = filtered.filter(
-        (item) => item.origin_state.toLowerCase() === origin
+        (item) => item.origin_state === origin
       );
     }
-    if (destination !== "any") {
+    if (destination !== "Any") {
       filtered = filtered.filter(
-        (item) => item.destination_state.toLowerCase() === destination
+        (item) => item.destination_state === destination
       );
     }
 
