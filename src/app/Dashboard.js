@@ -3,6 +3,7 @@
 import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import Modal from "../components/Modal"; // Import the Modal component
 import {
   Box,
   Typography,
@@ -24,7 +25,9 @@ import {
   Logout,
   ArrowForward,
   AddBox,
+  Delete,
 } from "@mui/icons-material";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 
 export default function Dashboard() {
   const { user, logout, isCustomer } = useContext(AuthContext);
@@ -33,8 +36,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [packages, setPackages] = useState([]);
   const [unreadMessages, setUnreadMessages] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // State for controlling the notification
   const [showNotification, setShowNotification] = useState(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     // Update time every minute
@@ -50,6 +57,37 @@ export default function Dashboard() {
 
     return () => clearInterval(timer);
   }, []);
+
+  const deleteAccount = async () => {
+    const customers_id = user.customers_id;
+
+    try {
+      const response = await fetch("https://apipost.vercel.app/api/custDelete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customers_id }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Login failed")
+      }
+
+      alert("Your account has been deleted.");
+      setIsModalOpen(false);
+      logout()
+      navigate("/");
+      window.location.reload()
+
+    } catch (err) {
+      alert("Error deleting account: " + err.message);
+    }
+  }
+
+  // Function to close the modal if the user cancels
+  const cancelDelete = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -762,6 +800,50 @@ export default function Dashboard() {
           >
             SHIP A NEW PACKAGE
           </Button>
+        </Paper>
+        <Paper
+          elevation={3}
+          sx={{
+            p: { xs: 2, sm: 3 },
+            mb: { xs: 2, sm: 4 },
+            borderRadius: { xs: 2, sm: 3 },
+            background: "linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)",
+            border: "1px solid #eee",
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: { xs: 2, sm: 3 },
+          }}
+        >
+          <Box>
+            <Typography variant="body1" color="text.secondary">
+              If you wish to delete your account, please keep in mind you cannot
+              reuse this account's current email in the future.
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            color="error"
+            size="large"
+            startIcon={<WarningAmberRoundedIcon />}
+            onClick={openModal}
+            sx={{
+              fontWeight: "bold",
+              py: { xs: 1, sm: 1.5 },
+              px: { xs: 2, sm: 3 },
+              borderRadius: { xs: 1, sm: 2 },
+              boxShadow: "0 4px 12px rgba(211, 47, 47, 0.3)",
+              alignSelf: { xs: "stretch", md: "center" },
+            }}
+          >
+            DELETE MY account
+          </Button>
+          <Modal
+            isOpen={isModalOpen}
+            onClose={cancelDelete}
+            onConfirm={deleteAccount} // Pass the delete function to confirm action
+          />
         </Paper>
       </Container>
     </Box>

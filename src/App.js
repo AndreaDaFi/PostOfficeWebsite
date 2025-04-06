@@ -62,6 +62,7 @@ import EmpRecordHours from "./app/EmpRecordHours";
 import RemoveStore from "./app/ManagerPages/RemoveStore";
 import CustomerInfo from "./app/CustomerInfo";
 import ViewOnlineStore from "./app/ManagerPages/ViewOnlineStore";
+import FireStaff from "./app/ManagerPages/FireStaff";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -512,7 +513,7 @@ const App = () => {
                               label: "VIEW MY STAFF ACTIVITY",
                               to: "/ViewStaffActivity",
                             },
-                            { label: "FIRE STAFF MEMBER" },
+                            { label: "FIRE STAFF MEMBER", to: "/FireStaff" },
                           ]}
                         />
                       </ListItem>
@@ -685,6 +686,7 @@ const App = () => {
                     <Route path="/ViewStore" element={<ViewStore />} />
                     <Route path="/StoreSales" element={<StoreSales />} />
                     <Route path="/RemoveStore" element={<RemoveStore />} />
+                    <Route path="/FireStaff" element={<FireStaff />} />
                   </>
                 )}
 
