@@ -32,6 +32,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PublicIcon from "@mui/icons-material/Public";
 import HomeIcon from "@mui/icons-material/Home";
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from "recharts";
 
 export default function ViewPO() {
   const { user } = useContext(AuthContext);
@@ -45,13 +46,17 @@ export default function ViewPO() {
   const [status, setStatus] = useState("Any"); // Status for filtering
   const [origin, setOrigin] = useState("Any"); // Origin for filtering
   const [totalSales, setTotalSales] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [destination, setDestination] = useState("Any"); // Destination for filtering
   const [category, setCategory] = useState("Any"); // Category for filterin
   const [itemsForSale, setItemsForSale] = useState([]); // State to hold items for sale
-  const [selectedItemForSale, setSelectedItemForSale] = useState("Any"); // State to hold selected item for sale
+  const [selectedItem, setSelectedItem] = useState("Any"); // State to hold selected item for sale
   const [removedItems, setRemovedItems] = useState([]); // State to hold removed items
-  const [selectedRemovedItem, setSelectedRemovedItem] = useState("Any"); // State to hold selected removed item
   const [isForSaleSelected, setIsForSaleSelected] = useState(true); // State to hold selected item for sale
+  const [bestCust, setBestCust] = useState(null);
+  const [groupedItems, setGroupedItems] = useState({}); // State to hold grouped items for pie chart
+  const [salesPieData, setSalesPieData] = useState([]); // State to hold sales pie chart data
+  const [amountPieData, setAmountPieData] = useState([]); // State to hold amount pie chart data
   const states = [
     "al",
     "ak",
@@ -287,10 +292,14 @@ export default function ViewPO() {
       );
     }
 
-    if (selectedItemForSale !== "Any") {
-      filtered = filtered.filter(
-        (item) => item.item_id === selectedItemForSale
-      );
+    if (selectedItem !== "Any") {
+      filtered = filtered.filter((item) => item.item_id === selectedItem);
+    }
+
+    if (isForSaleSelected) {
+      filtered = filtered.filter((item) => item.stock > -1);
+    } else {
+      filtered = filtered.filter((item) => item.stock === -1);
     }
 
     if (category !== "Any") {
@@ -303,15 +312,40 @@ export default function ViewPO() {
     if (status === "Missing") {
       filtered = filtered.filter((item) => item.status === "Missing");
     }
+    filtered.sort((a, b) => {
+      const amountA = Number.parseFloat(a.item_amount_purchased);
+      const amountB = Number.parseFloat(b.item_amount_purchased);
+      return amountB - amountA; // For descending order
+      // return amountA - amountB; // For ascending order (lowest first)
+    });
 
     setFilteredItems(filtered);
 
-    const total = filtered.reduce(
-      (acc, item) => acc + Number.parseFloat(item.total_amount),
+    const total_sales = filtered.reduce(
+      (acc, item) => acc + (Number.parseFloat(item.item_amount_purchased) * Number.parseFloat(item.item_price)),
       0
     );
-    setTotalSales(total);
+    setTotalSales(total_sales);
+    
+    const total_amount = filtered.reduce(
+      (acc, item) => acc + Number.parseInt(item.item_amount_purchased),
+      0
+    );
+    setTotalAmount(total_amount);
+
+    const best_cust = filtered.reduce((acc, item) => {
+      if (item.email && item.email !== "") {
+        return item.email;
+      } else {
+        return acc;
+      }
+    }, null);
+    setBestCust(best_cust);
+
+    setGroupedItems(groupItemsByName(filtered)); // Group items by name
   };
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#D50032"];
 
   useEffect(() => {
     filterByDateRangeAndType(); // Recalculate the filtered items whenever the date range changes
@@ -322,24 +356,50 @@ export default function ViewPO() {
     status,
     destination,
     category,
-    selectedItemForSale,
-    selectedRemovedItem,
+    selectedItem,
+    isForSaleSelected,
   ]); // Make sure to track 'delivered' in the useEffect dependency array
 
-  const handleChange = (event) => {
-    setSelectedItemForSale(event.target.value); // Set the selected item ID
-  };
+  useEffect(() => {
+    if (groupedItems) {
+      setSalesPieData(getSalesPieData(groupedItems)); // Get sales pie chart data
+      setAmountPieData(getAmountPieData(groupedItems)); // Get amount pie chart data
+    }
+  }, [groupedItems]); // Recalculate pie chart data whenever groupedItems changes
 
   const handleChangeForSale = (e) => {
-    setSelectedItemForSale(e.target.value);
-  };
-
-  const handleChangeRemovedItem = (e) => {
-    setSelectedRemovedItem(e.target.value);
+    setSelectedItem(e.target.value);
   };
 
   const handleSwitchChange = (e) => {
     setIsForSaleSelected(e.target.checked); // toggle the state when the switch is flipped
+  };
+
+  const groupItemsByName = (stuff) => {
+    const groupedItems = stuff.reduce((acc, item) => {
+      if (!acc[item.item_name]) {
+        acc[item.item_name] = { totalSales: 0, totalAmount: 0 };
+      }
+      acc[item.item_name].totalSales +=
+        item.item_amount_purchased * item.item_price;
+      acc[item.item_name].totalAmount += item.item_amount_purchased;
+      return acc;
+    }, {});
+    return groupedItems;
+  };
+
+  const getSalesPieData = (groupedItems) => {
+    return Object.keys(groupedItems).map((itemName) => ({
+      name: itemName,
+      value: groupedItems[itemName].totalSales,
+    }));
+  };
+
+  const getAmountPieData = (groupedItems) => {
+    return Object.keys(groupedItems).map((itemName) => ({
+      name: itemName,
+      value: groupedItems[itemName].totalAmount,
+    }));
   };
 
   return (
@@ -459,128 +519,51 @@ export default function ViewPO() {
           </Grid>
 
           {/* Item Selection and Switch */}
-          <Grid container spacing={3} alignItems="center">
-            {/* Item Selection */}
-            <Grid item xs={12} md={4}>
-              <FormControl fullWidth size="small" variant="outlined">
-                <InputLabel>Select Item</InputLabel>
-                <Select
-                  value={
-                    isForSaleSelected
-                      ? selectedItemForSale
-                      : selectedRemovedItem
-                  }
-                  onChange={
-                    isForSaleSelected
-                      ? handleChangeForSale
-                      : handleChangeRemovedItem
-                  }
-                  label="Select Item"
-                  style={{ borderRadius: "4px" }}
-                >
-                  <MenuItem value="Any">Any</MenuItem>
-                  {(isForSaleSelected ? itemsForSale : removedItems).map(
-                    (item) => (
-                      <MenuItem key={item.item_id} value={item.item_id}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            width: "100%",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography>{item.item_name}</Typography>
-                        </Box>
-                      </MenuItem>
-                    )
-                  )}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            {/* Arrow between dropdowns */}
-            <Grid
-              item
-              xs={12}
-              md={4}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ArrowForwardIcon
-                sx={{
-                  fontSize: "30px",
-                  color: "#D50032",
-                  transform: isForSaleSelected
-                    ? "rotate(0deg)"
-                    : "rotate(360deg)", // Rotates when toggled
-                  transition: "transform 0.5s ease-in-out",
-                }}
-              />
-            </Grid>
-
-            {/* Switch */}
-            <Grid item xs={12} md={4}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={isForSaleSelected}
-                    onChange={handleSwitchChange}
-                    name="itemToggle"
-                    color="default"
-                    size="medium"
-                    sx={{
-                      "& .MuiSwitch-thumb": {
-                        backgroundColor: isForSaleSelected
-                          ? "#D50032"
-                          : "#B0BEC5", // Red for active, gray for inactive
-                      },
-                      "& .MuiSwitch-track": {
-                        backgroundColor: isForSaleSelected
-                          ? "#D50032"
-                          : "#B0BEC5",
-                        borderRadius: "50px",
-                      },
-                      "& .MuiSwitch-switchBase.Mui-checked": {
-                        transform: "translateX(16px)",
-                        color: "#fff", // White thumb when checked
-                      },
-                      "& .MuiSwitch-switchBase": {
-                        padding: 5,
-                      },
-                    }}
-                  />
-                }
-                label={
-                  isForSaleSelected
-                    ? "Items on sale"
-                    : "Items not currently on sale"
-                }
-                style={{ marginTop: "16px" }}
-              />
-            </Grid>
-          </Grid>
-
-          {/* Package Status */}
           <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>Package Status</InputLabel>
-              <Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                style={{ borderRadius: "4px" }}
-              >
-                <MenuItem value="Any">Any</MenuItem>
-                <MenuItem value="Delivered">Only delivered packages</MenuItem>
-                <MenuItem value="Missing">Only missing packages</MenuItem>
-              </Select>
-            </FormControl>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isForSaleSelected}
+                  onChange={handleSwitchChange}
+                  name="itemToggle"
+                  color="default"
+                  size="medium"
+                  sx={{
+                    "& .MuiSwitch-thumb": {
+                      backgroundColor: isForSaleSelected
+                        ? "#D50032"
+                        : "#B0BEC5", // Red for active, gray for inactive
+                    },
+                    "& .MuiSwitch-track": {
+                      backgroundColor: isForSaleSelected
+                        ? "#D50032"
+                        : "#B0BEC5",
+                      borderRadius: "50px",
+                    },
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      transform: "translateX(16px)",
+                      color: "#fff", // White thumb when checked
+                    },
+                    "& .MuiSwitch-switchBase": {
+                      padding: 5,
+                    },
+                  }}
+                />
+              }
+              label={
+                <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Typography>
+                    {isForSaleSelected
+                      ? "Items on sale"
+                      : "Items not currently on sale"}
+                  </Typography>
+                </Box>
+              }
+              style={{ marginTop: "16px" }}
+            />
           </Grid>
 
-          {/* Destination State */}
+          {/* Item Selection */}
           <Grid item xs={12} md={4}>
             <FormControl fullWidth size="small" variant="outlined">
               <InputLabel>Destination State</InputLabel>
@@ -598,18 +581,176 @@ export default function ViewPO() {
               </Select>
             </FormControl>
           </Grid>
+
+          {/* Package Status */}
+          <Grid item xs={12} md={4}>
+            <FormControl fullWidth size="small" variant="outlined">
+              <InputLabel>Package Status</InputLabel>
+              <Select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                style={{ borderRadius: "4px" }}
+              >
+                <MenuItem value="Any">Any</MenuItem>
+                <MenuItem value="Delivered">Only delivered packages</MenuItem>
+                <MenuItem value="Missing">Only missing packages</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <FormControl fullWidth size="small" variant="outlined">
+              <InputLabel>Select Item</InputLabel>
+              <Select
+                value={selectedItem} // Ensure value is bound to selectedItem state
+                onChange={handleChangeForSale}
+                label="Select Item"
+                style={{ borderRadius: "4px" }}
+                sx={{
+                  boxShadow: isForSaleSelected
+                    ? "0 0 10px rgba(213, 0, 50, 0.75)"
+                    : "none",
+                  "&.Mui-focused": {
+                    borderColor: isForSaleSelected ? "#D50032" : "#B0BEC5",
+                  },
+                }}
+              >
+                <MenuItem value="Any">Any</MenuItem>
+                {(isForSaleSelected ? itemsForSale : removedItems).map(
+                  (item) => (
+                    <MenuItem key={item.item_id} value={item.item_id}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography>{item.item_name}</Typography>
+                      </Box>
+                    </MenuItem>
+                  )
+                )}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
       </Paper>
+
       <Card>
         <CardContent sx={{ p: 2 }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <Typography variant="h6" color="text.secondary">
-              Total Sales
-            </Typography>
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
+          >
+            {/* Sales Card */}
+            <Box sx={{ flex: 1, borderRight: "2px solid #e0e0e0", pr: 2 }}>
+              <Typography variant="h6" color="text.secondary">
+                Total Sales
+              </Typography>
+              <Typography
+                variant="h3"
+                fontWeight="bold"
+                color="#D32F2F"
+                sx={{ fontSize: "2rem" }}
+              >
+                ${totalSales.toFixed(2)}
+              </Typography>
+              {salesPieData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={salesPieData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={80}
+                      label
+                    >
+                      {salesPieData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  No data available to Display.
+                </Typography>
+              )}
+            </Box>
+
+            {/* Quantity Sold Card */}
+            <Box sx={{ flex: 1, pl: 2 }}>
+              <Typography variant="h6" color="text.secondary">
+                Quantity Sold
+              </Typography>
+              <Typography
+                variant="h3"
+                fontWeight="bold"
+                color="#D32F2F"
+                sx={{ fontSize: "2rem" }}
+              >
+                {totalAmount}
+              </Typography>
+              {amountPieData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={amountPieData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={80}
+                      label
+                    >
+                      {amountPieData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  No data available to display.
+                </Typography>
+              )}
+            </Box>
           </Box>
-          <Typography variant="h3" fontWeight="bold" color="#D32F2F">
-            ${totalSales}
-          </Typography>
+        </CardContent>
+      </Card>
+
+      {/* Best Customer Display */}
+      <Card sx={{ mt: 2 }}>
+        <CardContent sx={{ p: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                Best Customer
+              </Typography>
+              <Typography
+                variant="h3"
+                fontWeight="bold"
+                color="#D32F2F"
+                sx={{ fontSize: "2rem" }}
+              >
+                {bestCust ? bestCust : "No customer available"}
+              </Typography>
+            </Box>
+          </Box>
         </CardContent>
       </Card>
 
@@ -722,6 +863,16 @@ export default function ViewPO() {
                       borderBottom: "2px solid #FFCDD2",
                     }}
                   >
+                    Customer Email
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: "#D32F2F",
+                      fontWeight: "bold",
+                      borderBottom: "2px solid #FFCDD2",
+                    }}
+                  >
                     Status of Order
                   </TableCell>
                   <TableCell
@@ -789,6 +940,7 @@ export default function ViewPO() {
                       <TableCell>
                         ${item.item_amount_purchased * item.item_price}
                       </TableCell>
+                      <TableCell>{item.email}</TableCell>
                       <TableCell>{item.status}</TableCell>
                       <TableCell>
                         {new Date(item.transaction_date).toLocaleDateString(
