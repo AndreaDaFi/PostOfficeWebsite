@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   TextField,
@@ -15,19 +16,21 @@ import {
   useMediaQuery,
   Typography,
   Button, // Import Button from Material UI instead
-} from "@mui/material"
-import BadgeIcon from "@mui/icons-material/Badge"
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney"
-import HomeIcon from "@mui/icons-material/Home"
-import LockIcon from "@mui/icons-material/Lock"
-import ContactMailIcon from "@mui/icons-material/ContactMail"
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
-import BusinessIcon from "@mui/icons-material/Business"
-import LocationOnIcon from "@mui/icons-material/LocationOn"
+} from "@mui/material";
+import BadgeIcon from "@mui/icons-material/Badge";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import HomeIcon from "@mui/icons-material/Home";
+import LockIcon from "@mui/icons-material/Lock";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import BusinessIcon from "@mui/icons-material/Business";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function AddStaff() {
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
+  const { user } = useContext(AuthContext);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -36,8 +39,8 @@ export default function AddStaff() {
     salary: "",
     hire_date: "",
     ssn: "",
-    role: "Manager",
-    postOfficeID: "",
+    role: "",
+    po_id: user.po_id,
     street: "",
     streetLine2: "",
     aptNumber: "",
@@ -50,166 +53,222 @@ export default function AddStaff() {
     securityCode: "",
     securityQuestion: "",
     securityAnswer: "",
-  })
+    mngr_id: user.employees_id,
+  });
 
-  const [error, setError] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [activeStep, setActiveStep] = useState(0)
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const navigate = useNavigate();
   const [completed, setCompleted] = useState({
     0: false, // Personal Info
     1: false, // Address
     2: false, // Contact & Security
-  })
+  });
 
   // Define form sections/steps
   const steps = [
     {
       label: "Personal Information",
       icon: <BadgeIcon />,
-      fields: ["firstName", "lastName", "birthdate", "salary", "hire_date", "ssn", "postOfficeID"],
+      fields: [
+        "firstName",
+        "lastName",
+        "birthdate",
+        "salary",
+        "hire_date",
+        "ssn",
+        "role",
+      ],
     },
     {
       label: "Address Information",
       icon: <HomeIcon />,
-      fields: ["street", "streetLine2", "aptNumber", "city", "state", "zipCode"],
+      fields: [
+        "street",
+        "streetLine2",
+        "aptNumber",
+        "city",
+        "state",
+        "zipCode",
+      ],
     },
     {
       label: "Contact & Security",
       icon: <LockIcon />,
-      fields: ["email", "phone", "password", "securityCode", "securityQuestion", "securityAnswer"],
+      fields: [
+        "email",
+        "phone",
+        "password",
+        "securityCode",
+        "securityQuestion",
+        "securityAnswer",
+      ],
     },
-  ]
+  ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
     if (name === "birthdate") {
       // Validate or format the date here if needed
-      const date = new Date(value)
+      const date = new Date(value);
       if (!isNaN(date.getTime())) {
         // Date is valid, proceed with setting state
-        setFormData({ ...formData, [name]: value })
+        setFormData({ ...formData, [name]: value });
       } else {
         // Handle invalid date
-        setError("Invalid date format. Please use YYYY-MM-DD.")
+        setError("Invalid date format. Please use YYYY-MM-DD.");
       }
     } else {
-      setFormData({ ...formData, [name]: value })
+      setFormData({ ...formData, [name]: value });
     }
 
     // Update completion status for the current step
-    updateStepCompletion()
-  }
+    updateStepCompletion();
+  };
 
   const updateStepCompletion = () => {
-    const currentStepFields = steps[activeStep].fields
+    const currentStepFields = steps[activeStep].fields;
     const isStepComplete = currentStepFields.every((field) => {
       // Skip optional fields
-      if (field === "streetLine2" || field === "aptNumber") return true
+      if (field === "streetLine2" || field === "aptNumber") return true;
 
-      return formData[field] && formData[field].trim() !== ""
-    })
+      return formData[field] && formData[field].trim() !== "";
+    });
 
     setCompleted((prev) => ({
       ...prev,
       [activeStep]: isStepComplete,
-    }))
-  }
+    }));
+  };
 
   // Check step completion on form data change
   useEffect(() => {
-    updateStepCompletion()
-  }, [formData])
+    updateStepCompletion();
+  }, [formData]);
 
   const birthdateValid = (birthdate) => {
-    const datePattern = /^\d{4}-\d{2}-\d{2}$/ // YYYY-MM-DD format
-    if (!datePattern.test(birthdate)) return false
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+    if (!datePattern.test(birthdate)) return false;
 
-    const [year, month, day] = birthdate.split("-").map(Number)
+    const [year, month, day] = birthdate.split("-").map(Number);
 
     // Check if the year, month, and day are valid integers
-    if (year < 1900 || year > new Date().getFullYear() - 18 || month < 1 || month > 12 || day < 1 || day > 31) {
-      return false
+    if (
+      year < 1900 ||
+      year > new Date().getFullYear() - 18 ||
+      month < 1 ||
+      month > 12 ||
+      day < 1 ||
+      day > 31
+    ) {
+      return false;
     }
 
-    const birthDateObj = new Date(year, month - 1, day)
-    const currentDate = new Date()
+    const birthDateObj = new Date(year, month - 1, day);
+    const currentDate = new Date();
 
     // Ensure birthdate is not in the future
-    if (birthDateObj > currentDate) return false
+    if (birthDateObj > currentDate) return false;
 
-    return true
-  }
+    return true;
+  };
 
   const validateForm = () => {
-    if (!formData.firstName.trim() || formData.firstName.length > 20) return "⚠ First Name must be up to 20 characters."
-    if (!formData.lastName.trim() || formData.lastName.length > 30) return "⚠ Last Name must be up to 30 characters."
+    if (!formData.firstName.trim() || formData.firstName.length > 20)
+      return "⚠ First Name must be up to 20 characters.";
+    if (!formData.lastName.trim() || formData.lastName.length > 30)
+      return "⚠ Last Name must be up to 30 characters.";
     if (!formData.birthdate || !/^\d{4}-\d{2}-\d{2}$/.test(formData.birthdate))
-      return "⚠ Birthdate must be in YYYY-MM-DD format."
+      return "⚠ Birthdate must be in YYYY-MM-DD format.";
     if (!formData.hire_date || !/^\d{4}-\d{2}-\d{2}$/.test(formData.hire_date))
-      return "⚠ Hire Date must be in YYYY-MM-DD format."
-    if (!formData.salary || isNaN(formData.salary)) return "⚠ Salary must be a valid decimal number."
-    if (!formData.ssn.trim() || formData.ssn.length !== 9 || isNaN(formData.ssn))
-      return "⚠ SSN must be exactly 9 digits."
-    if (!formData.postOfficeID.trim() || isNaN(formData.postOfficeID)) return "⚠ Post Office ID must be a valid number."
-    if (!formData.street.trim() || formData.street.length > 45) return "⚠ Street address must be up to 45 characters."
-    if (formData.streetLine2.length > 45) return "⚠ Street Address Line 2 must be up to 45 characters."
-    if (!formData.city.trim() || formData.city.length > 45) return "⚠ City must be up to 45 characters."
-    if (!formData.state) return "⚠ Please select a state."
-    if (!formData.zipCode.trim() || formData.zipCode.length !== 5 || isNaN(formData.zipCode))
-      return "⚠ Zip Code must be exactly 5 digits."
-    if (!formData.email.trim() || !formData.email.includes("@")) return "⚠ Invalid email format."
-    if (!formData.phone.trim() || formData.phone.length !== 10 || isNaN(formData.phone))
-      return "⚠ Phone number must be exactly 10 digits."
-    if (!formData.password.trim() || formData.password.length > 10) return "⚠ Password must be up to 10 characters."
-    if (!formData.securityQuestion) return "⚠ Please select a security question."
+      return "⚠ Hire Date must be in YYYY-MM-DD format.";
+    if (!formData.salary || isNaN(formData.salary))
+      return "⚠ Salary must be a valid decimal number.";
+    if (
+      !formData.ssn.trim() ||
+      formData.ssn.length !== 9 ||
+      isNaN(formData.ssn)
+    )
+      return "⚠ SSN must be exactly 9 digits.";
+    if (!formData.street.trim() || formData.street.length > 45)
+      return "⚠ Street address must be up to 45 characters.";
+    if (formData.streetLine2.length > 45)
+      return "⚠ Street Address Line 2 must be up to 45 characters.";
+    if (!formData.city.trim() || formData.city.length > 45)
+      return "⚠ City must be up to 45 characters.";
+    if (!formData.state) return "⚠ Please select a state.";
+    if (
+      !formData.zipCode.trim() ||
+      formData.zipCode.length !== 5 ||
+      isNaN(formData.zipCode)
+    )
+      return "⚠ Zip Code must be exactly 5 digits.";
+    if (!formData.email.trim() || !formData.email.includes("@"))
+      return "⚠ Invalid email format.";
+    if (
+      !formData.phone.trim() ||
+      formData.phone.length !== 10 ||
+      isNaN(formData.phone)
+    )
+      return "⚠ Phone number must be exactly 10 digits.";
+    if (!formData.password.trim() || formData.password.length > 10)
+      return "⚠ Password must be up to 10 characters.";
+    if (!formData.securityQuestion)
+      return "⚠ Please select a security question.";
+    if (!formData.role) return "⚠ Please select a role.";
     if (!formData.securityAnswer.trim() || formData.securityAnswer.length > 10)
-      return "⚠ Security answer must be up to 10 characters."
-    return null
-  }
+      return "⚠ Security answer must be up to 10 characters.";
+    return null;
+  };
 
   const handleAddStaff = async () => {
-    setError(null)
-    setSuccessMessage(null)
-    setLoading(true)
+    setError(null);
+    setSuccessMessage(null);
+    setLoading(true);
 
-    const errorMsg = validateForm()
+    const errorMsg = validateForm();
     if (errorMsg) {
-      setLoading(false)
-      return setError(errorMsg)
+      setLoading(false);
+      return setError(errorMsg);
     }
 
     try {
-      const response = await fetch("https://apipost.vercel.app/api/addManager", {
+      const response = await fetch("https://apipost.vercel.app/api/AddStaff", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      })
+      });
 
       //check error
       if (!response.ok) {
-        const errorData = await response.json() // Parse error details from backend
-        throw new Error(errorData.error || response.statusText)
+        const errorData = await response.json(); // Parse error details from backend
+        throw new Error(errorData.error || response.statusText);
       }
 
       //const data = await response.json()
 
-      setSuccessMessage("🎉 Manager added successfully!")
+      alert("employee added successfully!");
+      navigate("/MngrViewStaff"); // ✅ Redirects to Dashboard
+      window.location.reload();
     } catch (err) {
       if (err instanceof TypeError && err.message.includes("Failed to fetch")) {
-        setError("Network error or server issue. Please check your connection.")
+        setError(
+          "Network error or server issue. Please check your connection."
+        );
       } else if (err.message.includes("502")) {
-        setError("Server error: Bad Gateway. Please try again later.")
+        setError("Server error: Bad Gateway. Please try again later.");
       } else if (err.message.includes("404")) {
-        setError("Resource not found. Please check the API endpoint.")
+        setError("Resource not found. Please check the API endpoint.");
       } else {
-        setError(err.message)
+        setError(err.message);
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // List of U.S. states for the dropdown
   const states = [
@@ -263,7 +322,7 @@ export default function AddStaff() {
     "wv",
     "wi",
     "wy",
-  ]
+  ];
 
   const stateNames = {
     al: "Alabama",
@@ -316,24 +375,24 @@ export default function AddStaff() {
     wv: "West Virginia",
     wi: "Wisconsin",
     wy: "Wyoming",
-  }
+  };
 
   // Navigation functions
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
-      setActiveStep(activeStep + 1)
+      setActiveStep(activeStep + 1);
     }
-  }
+  };
 
   const handleBack = () => {
     if (activeStep > 0) {
-      setActiveStep(activeStep - 1)
+      setActiveStep(activeStep - 1);
     }
-  }
+  };
 
   const handleStepClick = (step) => {
-    setActiveStep(step)
-  }
+    setActiveStep(step);
+  };
 
   // Render the current step's form fields
   const renderStepContent = (step) => {
@@ -352,7 +411,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 20 }}
                 helperText="Up to 20 characters"
                 InputProps={{
-                  startAdornment: <BadgeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <BadgeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -377,7 +438,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 30 }}
                 helperText="Up to 30 characters"
                 InputProps={{
-                  startAdornment: <BadgeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <BadgeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -401,7 +464,9 @@ export default function AddStaff() {
                 required
                 helperText="YYYY-MM-DD format"
                 InputProps={{
-                  startAdornment: <CalendarMonthIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <CalendarMonthIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -425,7 +490,9 @@ export default function AddStaff() {
                 required
                 helperText="YYYY-MM-DD format"
                 InputProps={{
-                  startAdornment: <CalendarMonthIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <CalendarMonthIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -451,7 +518,9 @@ export default function AddStaff() {
                 helperText="Decimal number"
                 inputProps={{ min: 0 }}
                 InputProps={{
-                  startAdornment: <AttachMoneyIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <AttachMoneyIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -476,7 +545,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 9 }}
                 helperText="Exactly 9 digits"
                 InputProps={{
-                  startAdornment: <BadgeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <BadgeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -490,34 +561,36 @@ export default function AddStaff() {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Post Office ID"
-                name="postOfficeID"
-                value={formData.postOfficeID}
-                onChange={handleChange}
-                required
-                type="number"
-                inputProps={{ min: 1 }}
-                helperText="Enter the Post Office ID number"
-                InputProps={{
-                  startAdornment: <BusinessIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required>
+                <InputLabel>New Hire Role</InputLabel>
+                <Select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  sx={{
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#ddd",
+                    },
                     "&:hover .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#D32F2F",
                     },
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#D32F2F",
                     },
-                  },
-                }}
-              />
+                  }}
+                >
+                  <MenuItem key="Clerk" value="Clerk">
+                    Clerk
+                  </MenuItem>
+                  <MenuItem key="Driver" value="Driver">
+                    Driver
+                  </MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
-        )
+        );
       case 1:
         return (
           <Grid container spacing={3}>
@@ -532,7 +605,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 45 }}
                 helperText="Up to 45 characters"
                 InputProps={{
-                  startAdornment: <HomeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <HomeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -556,7 +631,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 45 }}
                 helperText="Up to 45 characters (optional)"
                 InputProps={{
-                  startAdornment: <HomeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <HomeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -580,7 +657,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 10 }}
                 helperText="Optional"
                 InputProps={{
-                  startAdornment: <HomeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <HomeIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -605,7 +684,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 45 }}
                 helperText="Up to 45 characters"
                 InputProps={{
-                  startAdornment: <LocationOnIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <LocationOnIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -657,7 +738,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 5 }}
                 helperText="Exactly 5 digits"
                 InputProps={{
-                  startAdornment: <LocationOnIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <LocationOnIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -672,7 +755,7 @@ export default function AddStaff() {
               />
             </Grid>
           </Grid>
-        )
+        );
       case 2:
         return (
           <Grid container spacing={3}>
@@ -686,7 +769,9 @@ export default function AddStaff() {
                 required
                 helperText="Valid email format"
                 InputProps={{
-                  startAdornment: <ContactMailIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <ContactMailIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -711,7 +796,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 10, pattern: "[0-9]*" }}
                 helperText="Exactly 10 digits"
                 InputProps={{
-                  startAdornment: <ContactMailIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <ContactMailIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -736,7 +823,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 45 }}
                 helperText="Up to 45 characters"
                 InputProps={{
-                  startAdornment: <LockIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <LockIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -762,7 +851,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 10 }}
                 helperText="Up to 10 characters"
                 InputProps={{
-                  startAdornment: <LockIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <LockIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -795,9 +886,15 @@ export default function AddStaff() {
                     },
                   }}
                 >
-                  <MenuItem value="What is your pets name">What is your pet's name?</MenuItem>
-                  <MenuItem value="What is your mothers maiden name">What is your mother's maiden name?</MenuItem>
-                  <MenuItem value="What is your favorite book">What is your favorite book?</MenuItem>
+                  <MenuItem value="What is your pets name">
+                    What is your pet's name?
+                  </MenuItem>
+                  <MenuItem value="What is your mothers maiden name">
+                    What is your mother's maiden name?
+                  </MenuItem>
+                  <MenuItem value="What is your favorite book">
+                    What is your favorite book?
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -812,7 +909,9 @@ export default function AddStaff() {
                 inputProps={{ maxLength: 10 }}
                 helperText="Up to 10 characters"
                 InputProps={{
-                  startAdornment: <LockIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
+                  startAdornment: (
+                    <LockIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -827,11 +926,11 @@ export default function AddStaff() {
               />
             </Grid>
           </Grid>
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <Container maxWidth="md" sx={{ my: 4 }}>
@@ -871,7 +970,9 @@ export default function AddStaff() {
           ></Box>
           {/* Title and subtitle */}
           <Box>
-            <h1 style={{ margin: 0, fontSize: "2.5rem", fontWeight: 600 }}>Add New Manager</h1>
+            <h1 style={{ margin: 0, fontSize: "2.5rem", fontWeight: 600 }}>
+              Add A New Staff Member
+            </h1>
             <p style={{ margin: 0, fontSize: "1.1rem", fontWeight: 400 }}>
               Fill in the information below to create a new manager account.
             </p>
@@ -916,7 +1017,10 @@ export default function AddStaff() {
               >
                 {step.icon}
               </Box>
-              <Typography variant="body2" fontWeight={activeStep === index ? "bold" : "normal"}>
+              <Typography
+                variant="body2"
+                fontWeight={activeStep === index ? "bold" : "normal"}
+              >
                 {step.label}
               </Typography>
             </Box>
@@ -931,7 +1035,10 @@ export default function AddStaff() {
             </Typography>
           )}
           {successMessage && (
-            <Typography sx={{ mt: 2, color: "#D32F2F", fontWeight: "medium" }} align="center">
+            <Typography
+              sx={{ mt: 2, color: "#D32F2F", fontWeight: "medium" }}
+              align="center"
+            >
               {successMessage}
             </Typography>
           )}
@@ -996,6 +1103,5 @@ export default function AddStaff() {
         </Box>
       </Paper>
     </Container>
-  )
+  );
 }
-
