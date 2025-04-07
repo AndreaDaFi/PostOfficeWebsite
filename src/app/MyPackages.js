@@ -45,13 +45,12 @@ const MyPackages = () => {
         })
 
         const data = await response.json()
-        console.log("📦 Packages response:", data)
 
         if (!response.ok) throw new Error(data.error || "Failed to fetch packages")
 
         setPackages(data.packages)
       } catch (err) {
-        setError("❌ " + err.message)
+        setError(err.message)
       } finally {
         setLoading(false)
       }

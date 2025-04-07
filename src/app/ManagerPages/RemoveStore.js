@@ -62,7 +62,7 @@ export default function RemoveStoreItem() {
           setError("No items found in inventory")
         }
       } catch (err) {
-        console.error("❌ Error fetching items for sale:", err)
+        console.error("Error fetching items for sale:", err)
         setError(err.message)
       } finally {
         setLoading(false)

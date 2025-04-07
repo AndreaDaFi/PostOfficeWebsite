@@ -205,7 +205,7 @@ export default function ViewPO() {
           console.error("⚠ API returned an empty array:", data)
         }
       } catch (err) {
-        console.error("❌ Error fetching items for sale:", err)
+        console.error("Error fetching items for sale:", err)
         setError(err.message)
       } finally {
         setLoading(false)

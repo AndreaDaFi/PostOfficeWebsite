@@ -80,11 +80,11 @@ export default function CustLogin() {
       }
       login(customer) // ✅ Save user in context
 
-      alert("🎉 Login successful!")
+      alert("Login successful!")
       navigate("/dashboard") // ✅ Redirects to Dashboard
       window.location.reload()
     } catch (err) {
-      setError("❌ " + err.message)
+      setError(err.message)
       setIsLoading(false)
     }
   }

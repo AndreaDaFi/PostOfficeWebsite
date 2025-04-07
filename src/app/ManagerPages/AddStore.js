@@ -73,7 +73,7 @@ export default function AddStoreItem() {
 
       if (!response.ok) throw new Error(data.message || "Item creation failed")
 
-      setMessage({ type: "success", text: "✅ Item added successfully!" })
+      setMessage({ type: "success", text: "Item added successfully" })
 
       setFormData({
         itemName: "",

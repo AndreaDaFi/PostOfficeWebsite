@@ -67,7 +67,7 @@ export default function ViewStaff() {
           setError("No staff members found in the database.")
         }
       } catch (err) {
-        console.error("❌ Error fetching staff:", err)
+        console.error("Error fetching staff:", err)
         setError(err.message || "Failed to fetch staff data")
       } finally {
         setLoading(false)

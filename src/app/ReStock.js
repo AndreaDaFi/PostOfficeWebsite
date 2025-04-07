@@ -104,7 +104,7 @@ export default function ReStock() {
       const data = await response.json()
       if (!response.ok) throw new Error(data.error)
 
-      setSuccessMessage(`✅ Added ${stockToAdd} units to ${selectedItem.item_name} successfully!`)
+      setSuccessMessage(`Added ${stockToAdd} units to ${selectedItem.item_name} successfully!`)
 
       // Update the local state to reflect the change
       setItems((prevItems) =>
@@ -124,7 +124,7 @@ export default function ReStock() {
       setStockToAdd("")
       setSelectedItem(null)
     } catch (err) {
-      setError("❌ " + err.message)
+      setError(err.message)
     }
   }
 

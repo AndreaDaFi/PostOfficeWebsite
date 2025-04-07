@@ -58,7 +58,7 @@ const EmpDashboard = () => {
       try {
         const res = await fetch(`https://apipost.vercel.app/api/getManagerNotifications?po_id=${user.po_id}`)
         const data = await res.json()
-        console.log("📬 Messages response:", data)
+        console.log("Messages response:", data)
 
         if (data.success && data.messages) {
           setManagerMessages(data.messages)

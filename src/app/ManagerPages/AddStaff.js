@@ -109,25 +109,11 @@ export default function AddStaff() {
   ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "birthdate") {
-      // Validate or format the date here if needed
-      const date = new Date(value);
-      if (!isNaN(date.getTime())) {
-        // Date is valid, proceed with setting state
-        setFormData({ ...formData, [name]: value });
-      } else {
-        // Handle invalid date
-        setError("Invalid date format. Please use YYYY-MM-DD.");
-      }
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
     // Update completion status for the current step
-    updateStepCompletion();
-  };
+    updateStepCompletion()
+  }
 
   const updateStepCompletion = () => {
     const currentStepFields = steps[activeStep].fields;
@@ -974,7 +960,7 @@ export default function AddStaff() {
               Add A New Staff Member
             </h1>
             <p style={{ margin: 0, fontSize: "1.1rem", fontWeight: 400 }}>
-              Fill in the information below to create a new manager account.
+              Fill in the information below to add your new employee.
             </p>
           </Box>
         </Box>
@@ -1078,7 +1064,7 @@ export default function AddStaff() {
                   },
                 }}
               >
-                {loading ? "Adding..." : "Add Manager"}
+                {loading ? "Adding..." : "Add Employee"}
               </Button>
             ) : (
               <Button

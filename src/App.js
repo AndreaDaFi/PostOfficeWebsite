@@ -50,7 +50,6 @@ import AddMyHours from "./app/AddMyHours";
 import LowStockPage from "./app/low_stock";
 import DeliveredMessagesPage from "./app/delivered";
 import AskPostOfficeForStore from "./app/ask_postof_for_store";
-import WorkHours from "./app/h_w";
 import Dashboard from "./app/Dashboard";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import EmpDashboard from "./app/EmpDashboard";
@@ -696,7 +695,6 @@ const App = () => {
                   <>
                     <Route path="/ReStock" element={<ReStock />} />
                     <Route path="/low_stock" element={<LowStockPage />} />
-                    <Route path="/work-hours" element={<WorkHours />} />
                     <Route
                       path="/ViewPOPackages"
                       element={<ViewPOPackages />}
@@ -711,7 +709,6 @@ const App = () => {
                 {user && isDriver() && (
                   <>
                     <Route path="/low_stock" element={<LowStockPage />} />
-                    <Route path="/work-hours" element={<WorkHours />} />
                     <Route
                       path="/ViewPOPackages"
                       element={<ViewPOPackages />}

@@ -284,7 +284,7 @@ export default function ViewStore() {
           console.error("⚠ API returned an empty array:", data);
         }
       } catch (err) {
-        console.error("❌ Error fetching items for sale:", err);
+        console.error("Error fetching items for sale:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -720,7 +720,7 @@ export default function ViewStore() {
             variant="body1"
             style={{ color: colors.primary, fontWeight: "bold" }}
           >
-            ❌ {error}
+            {error}
           </Typography>
         </Box>
       ) : (

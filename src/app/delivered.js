@@ -27,13 +27,13 @@ export default function DeliveredPackagesPage() {
         })
 
         const data = await response.json()
-        console.log("📦 Delivered Packages Response:", data)
+        console.log("Delivered Packages Response:", data)
 
         if (!response.ok) throw new Error(data.error || "Failed to fetch delivered packages.")
 
         setPackages(data.packages || [])
       } catch (err) {
-        setError("❌ " + err.message)
+        setError(err.message)
       } finally {
         setLoading(false)
       }
