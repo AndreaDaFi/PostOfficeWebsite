@@ -1,6 +1,7 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useContext } from "react"
+import { AuthProvider, AuthContext } from "../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom"
 import { Container, Paper, Typography, Box, Grid, Divider, Button, CircularProgress } from "@mui/material"
 import { Print, CheckCircle } from "@mui/icons-material"
@@ -41,6 +42,7 @@ const addPrintStyles = () => {
 }
 
 export default function ShipingLabel() {
+  const { isCustomer} = useContext(AuthContext);
   // Access location state passed from the checkout page
   const location = useLocation()
   const navigate = useNavigate()
@@ -67,7 +69,12 @@ export default function ShipingLabel() {
 
   // Function to navigate to MyPackages
   const handleDone = () => {
-    navigate("/MyPackages")
+    if (isCustomer()){
+      navigate("/MyPackages")
+    }
+    else {
+      navigate("/ViewPOPackages");
+    }
   }
 
   // Fetch tracking number

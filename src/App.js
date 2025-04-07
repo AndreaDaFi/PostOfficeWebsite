@@ -62,6 +62,7 @@ import RemoveStore from "./app/ManagerPages/RemoveStore";
 import CustomerInfo from "./app/CustomerInfo";
 import ViewOnlineStore from "./app/ManagerPages/ViewOnlineStore";
 import FireStaff from "./app/ManagerPages/FireStaff";
+import ClerkCheckout from "./app/ClerkCheckout";
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -689,12 +690,13 @@ const App = () => {
                   </>
                 )}
 
-                {/* Clerk/Driver Pages */}
                 {/* ONLY VISIBLE/ACCESSIBLE WHEN A CLERK OR DRIVER IS LOGGED IN */}
                 {user && isClerk() && (
                   <>
                     <Route path="/ReStock" element={<ReStock />} />
                     <Route path="/low_stock" element={<LowStockPage />} />
+                    <Route path="/ClerkCheckout" element={<ClerkCheckout />} />
+                    <Route path="/shipinglabel" element={<ShipingLabel />} />
                     <Route
                       path="/ViewPOPackages"
                       element={<ViewPOPackages />}
