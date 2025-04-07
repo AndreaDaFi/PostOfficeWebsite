@@ -39,6 +39,7 @@ import {
   Refresh,
   Category,
   ArrowForward,
+  Store,
 } from "@mui/icons-material"
 import { AuthContext } from "../context/AuthContext"
 
@@ -54,6 +55,7 @@ const ViewPOPackages = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [refreshing, setRefreshing] = useState(false)
+  const [postOffices, setPostOffices] = useState([])
 
   // Simple color palette with whites and reds
   const colors = {
@@ -69,6 +71,21 @@ const ViewPOPackages = () => {
     darkGray: "#757575",
     success: "#2E7D32",
     warning: "#FF9800",
+  }
+
+  // Fetch post offices for origin address lookup
+  const fetchPostOffices = async () => {
+    try {
+      const response = await fetch("https://apipost.vercel.app/api/CustAddPackage")
+      const result = await response.json()
+      if (result.success) {
+        setPostOffices(result.data)
+      } else {
+        console.error("Failed to load post office data.")
+      }
+    } catch (error) {
+      console.error("Error fetching post offices:", error)
+    }
   }
 
   const fetchData = async () => {
@@ -106,6 +123,7 @@ const ViewPOPackages = () => {
 
   useEffect(() => {
     fetchData()
+    fetchPostOffices() // Fetch post offices for origin address lookup
   }, [user])
 
   const handleRefresh = () => {
@@ -114,6 +132,12 @@ const ViewPOPackages = () => {
 
   const FastSwitch = () => {
     setFast(!fast)
+  }
+
+  // Get post office address by ID
+  const getPostOfficeAddress = (poId) => {
+    const postOffice = postOffices.find((po) => po.po_id === poId)
+    return postOffice ? postOffice.address : "Unknown Location"
   }
 
   // Apply filters when search term or status filter changes
@@ -133,16 +157,23 @@ const ViewPOPackages = () => {
     if (searchTerm) {
       const search = searchTerm.toLowerCase()
       filtered = filtered.filter((pkg) => {
-        if (pkg.type === null && "store order".includes(search)) {
+        // Check if this is a store order
+        const isStoreOrder = pkg.type === null || pkg.type?.toLowerCase() === "store order"
+
+        // If searching for "store order" and this is a store order, include it
+        if (isStoreOrder && "store order".includes(search)) {
           return true
         }
+
         const trackingNumber = pkg.tracking_number ? pkg.tracking_number.toString() : ""
         const receiverName = pkg.receiver_name ? pkg.receiver_name.toLowerCase() : ""
-        const type = pkg.type ? pkg.type.toLowerCase() : ""
+        const type = pkg.type ? pkg.type.toLowerCase() : "store order" // Default to "store order" if type is null
         const originAddress = pkg.origin_address ? pkg.origin_address.toLowerCase() : ""
         const destinationAddress = pkg.destination_address ? pkg.destination_address.toLowerCase() : ""
         const originState = pkg.origin_state ? pkg.origin_state.toLowerCase() : ""
         const destinationState = pkg.destination_state ? pkg.destination_state.toLowerCase() : ""
+        // Get post office address if this is a store order
+        const poAddress = pkg.po_id ? getPostOfficeAddress(pkg.po_id).toLowerCase() : ""
 
         return (
           trackingNumber.includes(search) ||
@@ -151,13 +182,14 @@ const ViewPOPackages = () => {
           originAddress.includes(search) ||
           destinationAddress.includes(search) ||
           originState.includes(search) ||
-          destinationState.includes(search)
+          destinationState.includes(search) ||
+          poAddress.includes(search)
         )
       })
     }
 
     setFilteredPackages(filtered)
-  }, [searchTerm, statusFilter, packages, fast])
+  }, [searchTerm, statusFilter, packages, fast, postOffices])
 
   // Function to get appropriate icon based on package type
   const getPackageIcon = (type) => {
@@ -166,6 +198,9 @@ const ViewPOPackages = () => {
         return <LocalPostOffice />
       case "parcel":
         return <Inventory2 />
+      case "store order":
+      case null:
+        return <Store />
       default:
         return <LocalShipping />
     }
@@ -525,7 +560,9 @@ const ViewPOPackages = () => {
                         border: `1px solid ${colors.primaryLight}`,
                       }}
                     >
-                      {pkg.origin_address || "Not specified"}
+                      {pkg.type === null || pkg.type?.toLowerCase() === "store order"
+                        ? pkg.origin_address || (pkg.po_id ? getPostOfficeAddress(pkg.po_id) : "Store Purchase")
+                        : pkg.origin_address || "Not specified"}
                     </Typography>
 
                     <Box sx={{ display: "flex", justifyContent: "center", my: 1 }}>
