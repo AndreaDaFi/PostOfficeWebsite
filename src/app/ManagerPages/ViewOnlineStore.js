@@ -1,6 +1,7 @@
-import { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
-import ArrowForwardIcon from "@mui/icons-material/RefreshRounded";
+"use client"
+
+import { useState, useEffect, useContext } from "react"
+import { AuthContext } from "../../context/AuthContext"
 import {
   Container,
   Switch,
@@ -17,7 +18,6 @@ import {
   Box,
   CircularProgress,
   Alert,
-  InputAdornment,
   Chip,
   FormControl,
   Grid,
@@ -26,37 +26,33 @@ import {
   MenuItem,
   FormControlLabel,
   Card,
-} from "@mui/material";
-import BusinessIcon from "@mui/icons-material/Business";
-import SearchIcon from "@mui/icons-material/Search";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import PublicIcon from "@mui/icons-material/Public";
-import HomeIcon from "@mui/icons-material/Home";
-import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from "recharts";
+} from "@mui/material"
+import SearchIcon from "@mui/icons-material/Search"
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from "recharts"
 
 export default function ViewPO() {
-  const { user } = useContext(AuthContext);
-  const [filteredItems, setFilteredItems] = useState([]);
-  const [items, setItems] = useState([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [startDate, setStartDate] = useState(""); // Start date for filtering
-  const [endDate, setEndDate] = useState("");
-  const [status, setStatus] = useState("Any"); // Status for filtering
-  const [origin, setOrigin] = useState("Any"); // Origin for filtering
-  const [totalSales, setTotalSales] = useState(0);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [destination, setDestination] = useState("Any"); // Destination for filtering
-  const [category, setCategory] = useState("Any"); // Category for filterin
-  const [itemsForSale, setItemsForSale] = useState([]); // State to hold items for sale
-  const [selectedItem, setSelectedItem] = useState("Any"); // State to hold selected item for sale
-  const [removedItems, setRemovedItems] = useState([]); // State to hold removed items
-  const [isForSaleSelected, setIsForSaleSelected] = useState(true); // State to hold selected item for sale
-  const [bestCust, setBestCust] = useState(null);
-  const [groupedItems, setGroupedItems] = useState({}); // State to hold grouped items for pie chart
-  const [salesPieData, setSalesPieData] = useState([]); // State to hold sales pie chart data
-  const [amountPieData, setAmountPieData] = useState([]); // State to hold amount pie chart data
+  const { user } = useContext(AuthContext)
+  const [filteredItems, setFilteredItems] = useState([])
+  const [items, setItems] = useState([])
+  const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [startDate, setStartDate] = useState("") // Start date for filtering
+  const [endDate, setEndDate] = useState("")
+  const [status, setStatus] = useState("Any") // Status for filtering
+  const [origin, setOrigin] = useState("Any") // Origin for filtering
+  const [totalSales, setTotalSales] = useState(0)
+  const [totalAmount, setTotalAmount] = useState(0)
+  const [destination, setDestination] = useState("Any") // Destination for filtering
+  const [category, setCategory] = useState("Any") // Category for filterin
+  const [itemsForSale, setItemsForSale] = useState([]) // State to hold items for sale
+  const [selectedItem, setSelectedItem] = useState("Any") // State to hold selected item for sale
+  const [removedItems, setRemovedItems] = useState([]) // State to hold removed items
+  const [isForSaleSelected, setIsForSaleSelected] = useState(true) // State to hold selected item for sale
+  const [bestCust, setBestCust] = useState(null)
+  const [groupedItems, setGroupedItems] = useState({}) // State to hold grouped items for pie chart
+  const [salesPieData, setSalesPieData] = useState([]) // State to hold sales pie chart data
+  const [amountPieData, setAmountPieData] = useState([]) // State to hold amount pie chart data
   const states = [
     "al",
     "ak",
@@ -108,7 +104,7 @@ export default function ViewPO() {
     "wv",
     "wi",
     "wy",
-  ];
+  ]
 
   const stateNames = {
     al: "Alabama",
@@ -161,10 +157,11 @@ export default function ViewPO() {
     wv: "West Virginia",
     wi: "Wisconsin",
     wy: "Wyoming",
-  };
+  }
 
+  // Updated color scheme with red tones and gray
   const colors = {
-    primary: "#D32F2F", // Red
+    primary: "#C62828", // Darker red
     secondary: "#424242", // Dark Gray
     text: "#333333",
     lightGray: "#f5f5f5",
@@ -175,8 +172,13 @@ export default function ViewPO() {
     white: "#ffffff",
     cardBorder: "#e0e0e0",
     cardShadow: "rgba(0, 0, 0, 0.1)",
-    headerBg: "#f8f8f8",
-  };
+    headerBg: "#B71C1C", // Deep red for header
+    accentRed: "#EF5350", // Lighter red for accents
+    tableHeaderBg: "#FFEBEE", // Very light red for table headers
+    tableBorderColor: "#FFCDD2", // Light red for borders
+    hoverBg: "#FFEBEE", // Light red for hover states
+  }
+
   const filterPaperStyle = {
     padding: "20px",
     marginBottom: "24px",
@@ -184,241 +186,218 @@ export default function ViewPO() {
     backgroundColor: colors.white,
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
     border: `1px solid ${colors.cardBorder}`,
-  };
+  }
 
   useEffect(() => {
     const fetchItems = async () => {
-      const po_id = user?.po_id; // Get the manager's ID
+      const po_id = user?.po_id // Get the manager's ID
       try {
-        const response = await fetch(
-          `https://apipost.vercel.app/api/ViewStore?po_id=${po_id}`,
-          {
-            method: "GET", // Use GET method
-          }
-        );
+        const response = await fetch(`https://apipost.vercel.app/api/ViewStore?po_id=${po_id}`, {
+          method: "GET", // Use GET method
+        })
 
-        const data = await response.json();
-        console.log("Fetched Data:", data);
+        const data = await response.json()
+        console.log("Fetched Data:", data)
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          setItemsForSale(data.data); // Update state with API response
+          setItemsForSale(data.data) // Update state with API response
         } else {
-          console.error("⚠ API returned an empty array:", data);
+          console.error("⚠ API returned an empty array:", data)
         }
       } catch (err) {
-        console.error("❌ Error fetching items for sale:", err);
-        setError(err.message);
+        console.error("❌ Error fetching items for sale:", err)
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchItems();
-  }, [user?.po_id]);
+    fetchItems()
+  }, [user?.po_id])
 
   useEffect(() => {
     const fetchItems = async () => {
-      const po_id = user?.po_id; // Get the manager's ID
+      const po_id = user?.po_id // Get the manager's ID
       try {
-        const response = await fetch(
-          `https://apipost.vercel.app/api/ViewStoreTwo?po_id=${po_id}`,
-          {
-            method: "GET", // Use GET method
-          }
-        );
+        const response = await fetch(`https://apipost.vercel.app/api/ViewStoreTwo?po_id=${po_id}`, {
+          method: "GET", // Use GET method
+        })
 
-        const data = await response.json();
-        console.log("Fetched Data:", data);
+        const data = await response.json()
+        console.log("Fetched Data:", data)
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          setRemovedItems(data.data); // Update state with API response
+          setRemovedItems(data.data) // Update state with API response
         } else {
-          console.error("⚠ API returned an empty array:", data);
+          console.error("⚠ API returned an empty array:", data)
         }
       } catch (err) {
-        console.error("❌ Error fetching removed items for sale:", err);
-        setError(err.message);
+        console.error("❌ Error fetching removed items for sale:", err)
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchItems();
-  }, [user?.po_id]);
+    fetchItems()
+  }, [user?.po_id])
 
   useEffect(() => {
     // Fetch data from the API when the component mounts
     const fetchPostOffices = async () => {
       try {
-        const poID = user?.po_id; // Assuming you have the po_id in your user object
-        const response = await fetch(
-          `https://apipost.vercel.app/api/ViewOnlineStore?po_id=${poID}`
-        ); // Your API endpoint
-        const result = await response.json();
+        const poID = user?.po_id // Assuming you have the po_id in your user object
+        const response = await fetch(`https://apipost.vercel.app/api/ViewOnlineStore?po_id=${poID}`) // Your API endpoint
+        const result = await response.json()
 
         if (result.success) {
-          setItems(result.data); // Set the fetched data to state
-          console.log("Fetched data:", result.data); // Log the fetched data
+          setItems(result.data) // Set the fetched data to state
+          console.log("Fetched data:", result.data) // Log the fetched data
         } else {
-          setError("Failed to load store sale data.");
+          setError("Failed to load store sale data.")
         }
       } catch (error) {
-        setError(error.message); // Set error if fetch fails
+        setError(error.message) // Set error if fetch fails
       } finally {
-        setLoading(false); // Set loading to false when data is fetched or error occurs
+        setLoading(false) // Set loading to false when data is fetched or error occurs
       }
-    };
+    }
 
-    fetchPostOffices();
-  }, []);
+    fetchPostOffices()
+  }, [])
 
   const filterByDateRangeAndType = () => {
-    let filtered = items;
+    let filtered = items
 
     // Apply date range filter
     filtered = filtered.filter((item) => {
-      const transactionDate = new Date(item.transaction_date);
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
+      const transactionDate = new Date(item.transaction_date)
+      const start = startDate ? new Date(startDate) : null
+      const end = endDate ? new Date(endDate) : null
 
-      return (
-        (!start || transactionDate >= start) && (!end || transactionDate <= end)
-      );
-    });
+      return (!start || transactionDate >= start) && (!end || transactionDate <= end)
+    })
 
     if (destination !== "Any") {
-      filtered = filtered.filter(
-        (item) => item.destination_state === destination
-      );
+      filtered = filtered.filter((item) => item.destination_state === destination)
     }
 
     if (selectedItem !== "Any") {
-      filtered = filtered.filter((item) => item.item_id === selectedItem);
+      filtered = filtered.filter((item) => item.item_id === selectedItem)
     }
 
     if (isForSaleSelected) {
-      filtered = filtered.filter((item) => item.stock > -1);
+      filtered = filtered.filter((item) => item.stock > -1)
     } else {
-      filtered = filtered.filter((item) => item.stock === -1);
+      filtered = filtered.filter((item) => item.stock === -1)
     }
 
     if (category !== "Any") {
-      filtered = filtered.filter((item) => item.item_category === category);
+      filtered = filtered.filter((item) => item.item_category === category)
     }
 
     if (status === "Delivered") {
-      filtered = filtered.filter((item) => item.status === "Delivered");
+      filtered = filtered.filter((item) => item.status === "Delivered")
     }
     if (status === "Missing") {
-      filtered = filtered.filter((item) => item.status === "Missing");
+      filtered = filtered.filter((item) => item.status === "Missing")
     }
     filtered.sort((a, b) => {
-      const amountA = Number.parseFloat(a.item_amount_purchased);
-      const amountB = Number.parseFloat(b.item_amount_purchased);
-      return amountB - amountA; // For descending order
+      const amountA = Number.parseFloat(a.item_amount_purchased)
+      const amountB = Number.parseFloat(b.item_amount_purchased)
+      return amountB - amountA // For descending order
       // return amountA - amountB; // For ascending order (lowest first)
-    });
+    })
 
-    setFilteredItems(filtered);
+    setFilteredItems(filtered)
 
     const total_sales = filtered.reduce(
-      (acc, item) => acc + (Number.parseFloat(item.item_amount_purchased) * Number.parseFloat(item.item_price)),
-      0
-    );
-    setTotalSales(total_sales);
-    
-    const total_amount = filtered.reduce(
-      (acc, item) => acc + Number.parseInt(item.item_amount_purchased),
-      0
-    );
-    setTotalAmount(total_amount);
+      (acc, item) => acc + Number.parseFloat(item.item_amount_purchased) * Number.parseFloat(item.item_price),
+      0,
+    )
+    setTotalSales(total_sales)
+
+    const total_amount = filtered.reduce((acc, item) => acc + Number.parseInt(item.item_amount_purchased), 0)
+    setTotalAmount(total_amount)
 
     const best_cust = filtered.reduce((acc, item) => {
       if (item.email && item.email !== "") {
-        return item.email;
+        return item.email
       } else {
-        return acc;
+        return acc
       }
-    }, null);
-    setBestCust(best_cust);
+    }, null)
+    setBestCust(best_cust)
 
-    setGroupedItems(groupItemsByName(filtered)); // Group items by name
-  };
+    setGroupedItems(groupItemsByName(filtered)) // Group items by name
+  }
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#D50032"];
+  // Updated pie chart colors to match the red theme
+  const COLORS = ["#C62828", "#E53935", "#EF5350", "#F44336", "#FFCDD2"]
 
   useEffect(() => {
-    filterByDateRangeAndType(); // Recalculate the filtered items whenever the date range changes
-  }, [
-    startDate,
-    endDate,
-    items,
-    status,
-    destination,
-    category,
-    selectedItem,
-    isForSaleSelected,
-  ]); // Make sure to track 'delivered' in the useEffect dependency array
+    filterByDateRangeAndType() // Recalculate the filtered items whenever the date range changes
+  }, [startDate, endDate, items, status, destination, category, selectedItem, isForSaleSelected]) // Make sure to track 'delivered' in the useEffect dependency array
 
   useEffect(() => {
     if (groupedItems) {
-      setSalesPieData(getSalesPieData(groupedItems)); // Get sales pie chart data
-      setAmountPieData(getAmountPieData(groupedItems)); // Get amount pie chart data
+      setSalesPieData(getSalesPieData(groupedItems)) // Get sales pie chart data
+      setAmountPieData(getAmountPieData(groupedItems)) // Get amount pie chart data
     }
-  }, [groupedItems]); // Recalculate pie chart data whenever groupedItems changes
+  }, [groupedItems]) // Recalculate pie chart data whenever groupedItems changes
 
   const handleChangeForSale = (e) => {
-    setSelectedItem(e.target.value);
-  };
+    setSelectedItem(e.target.value)
+  }
 
   const handleSwitchChange = (e) => {
-    setIsForSaleSelected(e.target.checked); // toggle the state when the switch is flipped
-  };
+    setIsForSaleSelected(e.target.checked) // toggle the state when the switch is flipped
+  }
 
   const groupItemsByName = (stuff) => {
     const groupedItems = stuff.reduce((acc, item) => {
       if (!acc[item.item_name]) {
-        acc[item.item_name] = { totalSales: 0, totalAmount: 0 };
+        acc[item.item_name] = { totalSales: 0, totalAmount: 0 }
       }
-      acc[item.item_name].totalSales +=
-        item.item_amount_purchased * item.item_price;
-      acc[item.item_name].totalAmount += item.item_amount_purchased;
-      return acc;
-    }, {});
-    return groupedItems;
-  };
+      acc[item.item_name].totalSales += item.item_amount_purchased * item.item_price
+      acc[item.item_name].totalAmount += item.item_amount_purchased
+      return acc
+    }, {})
+    return groupedItems
+  }
 
   const getSalesPieData = (groupedItems) => {
     return Object.keys(groupedItems).map((itemName) => ({
       name: itemName,
       value: groupedItems[itemName].totalSales,
-    }));
-  };
+    }))
+  }
 
   const getAmountPieData = (groupedItems) => {
     return Object.keys(groupedItems).map((itemName) => ({
       name: itemName,
       value: groupedItems[itemName].totalAmount,
-    }));
-  };
+    }))
+  }
 
   return (
     <Container maxWidth="lg" sx={{ my: 4 }}>
+      {/* Header with updated styling */}
       <Paper
-        elevation={2}
+        elevation={3}
         sx={{
           borderRadius: 2,
           overflow: "hidden",
           mb: 4,
           transition: "box-shadow 0.3s ease",
           "&:hover": {
-            boxShadow: "0 8px 24px rgba(211, 47, 47, 0.15)",
+            boxShadow: "0 8px 24px rgba(198, 40, 40, 0.2)",
           },
         }}
       >
         <Box
           sx={{
-            background: "linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)",
+            background: `linear-gradient(135deg, ${colors.headerBg} 0%, ${colors.primary} 100%)`,
             color: "white",
             p: 3,
             position: "relative",
@@ -448,23 +427,86 @@ export default function ViewPO() {
             }}
           >
             <Typography variant="h4" fontWeight="bold">
-              Online Store Sales report
+              Online Store Sales Report
             </Typography>
             <Typography variant="subtitle1" sx={{ mt: 1, opacity: 0.9 }}>
-              View and analyze the performance of items in your online store,
-              all in one page.
+              View and analyze the performance of items in your online store
             </Typography>
           </Box>
         </Box>
       </Paper>
-      <Paper elevation={0} style={filterPaperStyle}>
+
+      {/* Categories Bar - Added as requested */}
+      <Paper
+        elevation={2}
+        sx={{
+          mb: 3,
+          bgcolor: colors.headerBg,
+          color: "white",
+          borderRadius: "8px",
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold">
+            All Categories
+          </Typography>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Chip
+              label="Boxes & Sizes"
+              sx={{
+                bgcolor: "rgba(255,255,255,0.2)",
+                color: "white",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.3)" },
+              }}
+            />
+            <Chip
+              label="Packing Supplies"
+              sx={{
+                bgcolor: "rgba(255,255,255,0.2)",
+                color: "white",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.3)" },
+              }}
+            />
+            <Chip
+              label="Envelopes & Mailers"
+              sx={{
+                bgcolor: "rgba(255,255,255,0.2)",
+                color: "white",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.3)" },
+              }}
+            />
+          </Box>
+        </Box>
+      </Paper>
+
+      {/* Filter Section with updated styling */}
+      <Paper
+        elevation={2}
+        sx={{
+          p: 3,
+          mb: 4,
+          borderRadius: "12px",
+          border: `1px solid ${colors.tableBorderColor}`,
+          boxShadow: "0 4px 12px rgba(198, 40, 40, 0.08)",
+        }}
+      >
         <Typography
           variant="h6"
-          style={{
-            marginBottom: "24px",
-            color: colors.secondary,
+          sx={{
+            mb: 3,
+            color: colors.primary,
             fontWeight: "600",
             fontSize: "1.25rem",
+            borderBottom: `2px solid ${colors.tableBorderColor}`,
+            pb: 1,
           }}
         >
           Filter Packages
@@ -473,6 +515,7 @@ export default function ViewPO() {
           {/* Start Date */}
           <Grid item xs={12} md={4}>
             <TextField
+              label="Start Date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
@@ -480,13 +523,23 @@ export default function ViewPO() {
               fullWidth
               size="small"
               variant="outlined"
-              style={{ borderRadius: "4px" }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "&:hover fieldset": {
+                    borderColor: colors.primary,
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: colors.primary,
+                  },
+                },
+              }}
             />
           </Grid>
 
           {/* End Date */}
           <Grid item xs={12} md={4}>
             <TextField
+              label="End Date"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
@@ -494,7 +547,16 @@ export default function ViewPO() {
               fullWidth
               size="small"
               variant="outlined"
-              style={{ borderRadius: "4px" }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "&:hover fieldset": {
+                    borderColor: colors.primary,
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: colors.primary,
+                  },
+                },
+              }}
             />
           </Grid>
 
@@ -506,71 +568,76 @@ export default function ViewPO() {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 label="Category"
-                style={{ borderRadius: "4px" }}
+                sx={{
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                }}
               >
                 <MenuItem value="Any">Any</MenuItem>
                 <MenuItem value="Boxes & Sizes">Boxes & Sizes</MenuItem>
                 <MenuItem value="Packing Supplies">Packing Supplies</MenuItem>
-                <MenuItem value="Envelopes & Mailers">
-                  Envelopes & Mailers
-                </MenuItem>
+                <MenuItem value="Envelopes & Mailers">Envelopes & Mailers</MenuItem>
               </Select>
             </FormControl>
           </Grid>
 
-          {/* Item Selection and Switch */}
-          <Grid item xs={12} md={4}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isForSaleSelected}
-                  onChange={handleSwitchChange}
-                  name="itemToggle"
-                  color="default"
-                  size="medium"
-                  sx={{
-                    "& .MuiSwitch-thumb": {
-                      backgroundColor: isForSaleSelected
-                        ? "#D50032"
-                        : "#B0BEC5", // Red for active, gray for inactive
-                    },
-                    "& .MuiSwitch-track": {
-                      backgroundColor: isForSaleSelected
-                        ? "#D50032"
-                        : "#B0BEC5",
-                      borderRadius: "50px",
-                    },
-                    "& .MuiSwitch-switchBase.Mui-checked": {
-                      transform: "translateX(16px)",
-                      color: "#fff", // White thumb when checked
-                    },
-                    "& .MuiSwitch-switchBase": {
-                      padding: 5,
-                    },
-                  }}
-                />
-              }
-              label={
-                <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <Typography>
-                    {isForSaleSelected
-                      ? "Items on sale"
-                      : "Items not currently on sale"}
-                  </Typography>
-                </Box>
-              }
-              style={{ marginTop: "16px" }}
-            />
+                   {/* Select Item */}
+                   <Grid item xs={12} md={4}>
+            <FormControl fullWidth size="small" variant="outlined">
+              <InputLabel>Select Item</InputLabel>
+              <Select
+                value={selectedItem}
+                onChange={handleChangeForSale}
+                label="Select Item"
+                sx={{
+                  boxShadow: isForSaleSelected ? `0 0 8px rgba(198, 40, 40, 0.3)` : "none",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                }}
+              >
+                <MenuItem value="Any">Any</MenuItem>
+                {(isForSaleSelected ? itemsForSale : removedItems).map((item) => (
+                  <MenuItem key={item.item_id} value={item.item_id}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography>{item.item_name}</Typography>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
-          {/* Item Selection */}
+          {/* Destination State */}
           <Grid item xs={12} md={4}>
             <FormControl fullWidth size="small" variant="outlined">
               <InputLabel>Destination State</InputLabel>
               <Select
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
-                style={{ borderRadius: "4px" }}
+                label="Destination State"
+                sx={{
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                }}
               >
                 <MenuItem value="Any">Any</MenuItem>
                 {states.map((stateId) => (
@@ -589,7 +656,15 @@ export default function ViewPO() {
               <Select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                style={{ borderRadius: "4px" }}
+                label="Package Status"
+                sx={{
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: colors.primary,
+                  },
+                }}
               >
                 <MenuItem value="Any">Any</MenuItem>
                 <MenuItem value="Delivered">Only delivered packages</MenuItem>
@@ -597,134 +672,108 @@ export default function ViewPO() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel>Select Item</InputLabel>
-              <Select
-                value={selectedItem} // Ensure value is bound to selectedItem state
-                onChange={handleChangeForSale}
-                label="Select Item"
-                style={{ borderRadius: "4px" }}
-                sx={{
-                  boxShadow: isForSaleSelected
-                    ? "0 0 10px rgba(213, 0, 50, 0.75)"
-                    : "none",
-                  "&.Mui-focused": {
-                    borderColor: isForSaleSelected ? "#D50032" : "#B0BEC5",
-                  },
-                }}
-              >
-                <MenuItem value="Any">Any</MenuItem>
-                {(isForSaleSelected ? itemsForSale : removedItems).map(
-                  (item) => (
-                    <MenuItem key={item.item_id} value={item.item_id}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography>{item.item_name}</Typography>
-                      </Box>
-                    </MenuItem>
-                  )
-                )}
-              </Select>
-            </FormControl>
+
+                    {/* Item Selection and Switch */}
+                    <Grid item xs={12} md={4}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isForSaleSelected}
+                  onChange={handleSwitchChange}
+                  name="itemToggle"
+                  color="default"
+                  size="medium"
+                  sx={{
+                    "& .MuiSwitch-thumb": {
+                      backgroundColor: isForSaleSelected ? colors.primary : colors.darkGray,
+                    },
+                    "& .MuiSwitch-track": {
+                      backgroundColor: isForSaleSelected ? colors.primary : colors.darkGray,
+                      borderRadius: "50px",
+                    },
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      transform: "translateX(16px)",
+                      color: "#fff",
+                    },
+                    "& .MuiSwitch-switchBase": {
+                      padding: 5,
+                    },
+                  }}
+                />
+              }
+              label={
+                <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Typography sx={{ color: colors.secondary, fontWeight: 500 }}>
+                    {isForSaleSelected ? "Items on sale" : "Items not currently on sale"}
+                  </Typography>
+                </Box>
+              }
+            />
           </Grid>
+
+
         </Grid>
       </Paper>
 
-      <Card>
-        <CardContent sx={{ p: 2 }}>
-          <Box
-            sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
-          >
+      {/* Stats Cards with updated styling */}
+      <Card
+        elevation={3}
+        sx={{
+          mb: 4,
+          borderRadius: "12px",
+          border: `1px solid ${colors.tableBorderColor}`,
+          overflow: "hidden",
+        }}
+      >
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", gap: 3 }}>
             {/* Sales Card */}
-            <Box sx={{ flex: 1, borderRight: "2px solid #e0e0e0", pr: 2 }}>
-              <Typography variant="h6" color="text.secondary">
+            <Box sx={{ flex: 1, borderRight: `2px solid ${colors.tableBorderColor}`, pr: 3 }}>
+              <Typography variant="h6" color={colors.secondary} fontWeight="600">
                 Total Sales
               </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color="#D32F2F"
-                sx={{ fontSize: "2rem" }}
-              >
+              <Typography variant="h3" fontWeight="bold" color={colors.primary} sx={{ fontSize: "2.25rem", my: 1 }}>
                 ${totalSales.toFixed(2)}
               </Typography>
               {salesPieData.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie
-                      data={salesPieData}
-                      dataKey="value"
-                      nameKey="name"
-                      outerRadius={80}
-                      label
-                    >
+                    <Pie data={salesPieData} dataKey="value" nameKey="name" outerRadius={80} label>
                       {salesPieData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="text.secondary"
-                >
+                <Typography variant="body2" align="center" color="text.secondary">
                   No data available to Display.
                 </Typography>
               )}
             </Box>
 
             {/* Quantity Sold Card */}
-            <Box sx={{ flex: 1, pl: 2 }}>
-              <Typography variant="h6" color="text.secondary">
+            <Box sx={{ flex: 1, pl: 3 }}>
+              <Typography variant="h6" color={colors.secondary} fontWeight="600">
                 Quantity Sold
               </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color="#D32F2F"
-                sx={{ fontSize: "2rem" }}
-              >
+              <Typography variant="h3" fontWeight="bold" color={colors.primary} sx={{ fontSize: "2.25rem", my: 1 }}>
                 {totalAmount}
               </Typography>
               {amountPieData.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie
-                      data={amountPieData}
-                      dataKey="value"
-                      nameKey="name"
-                      outerRadius={80}
-                      label
-                    >
+                    <Pie data={amountPieData} dataKey="value" nameKey="name" outerRadius={80} label>
                       {amountPieData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="text.secondary"
-                >
+                <Typography variant="body2" align="center" color="text.secondary">
                   No data available to display.
                 </Typography>
               )}
@@ -733,20 +782,24 @@ export default function ViewPO() {
         </CardContent>
       </Card>
 
-      {/* Best Customer Display */}
-      <Card sx={{ mt: 2 }}>
-        <CardContent sx={{ p: 2 }}>
+      {/* Best Customer Display with updated styling */}
+      <Card
+        elevation={3}
+        sx={{
+          mb: 4,
+          borderRadius: "12px",
+          border: `1px solid ${colors.tableBorderColor}`,
+          background: `linear-gradient(to right, ${colors.white}, ${colors.tableHeaderBg})`,
+          overflow: "hidden",
+        }}
+      >
+        <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Box sx={{ textAlign: "center" }}>
-              <Typography variant="h6" color="text.secondary">
+              <Typography variant="h6" color={colors.secondary} fontWeight="600">
                 Best Customer
               </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color="#D32F2F"
-                sx={{ fontSize: "2rem" }}
-              >
+              <Typography variant="h3" fontWeight="bold" color={colors.primary} sx={{ fontSize: "2rem", mt: 1 }}>
                 {bestCust ? bestCust : "No customer available"}
               </Typography>
             </Box>
@@ -754,7 +807,7 @@ export default function ViewPO() {
         </CardContent>
       </Card>
 
-      {/* items sold List */}
+      {/* Data Table with updated styling */}
       {loading ? (
         <Box
           sx={{
@@ -765,8 +818,8 @@ export default function ViewPO() {
             py: 8,
           }}
         >
-          <CircularProgress sx={{ color: "#D32F2F", mb: 2 }} />
-          <Typography variant="h6" color="textSecondary">
+          <CircularProgress sx={{ color: colors.primary, mb: 2 }} />
+          <Typography variant="h6" color={colors.secondary}>
             Loading sales data...
           </Typography>
         </Box>
@@ -784,14 +837,15 @@ export default function ViewPO() {
         </Alert>
       ) : (
         <Paper
-          elevation={0}
+          elevation={3}
           sx={{
             borderRadius: 2,
             overflow: "hidden",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.1)",
+            boxShadow: "0 6px 18px rgba(198, 40, 40, 0.1)",
+            border: `1px solid ${colors.tableBorderColor}`,
             width: "100%",
             maxWidth: "100%",
-            height: "auto", // Changed from 100% to auto
+            height: "auto",
           }}
         >
           <TableContainer
@@ -799,7 +853,7 @@ export default function ViewPO() {
               overflowX: "auto",
               width: "100%",
               maxWidth: "100%",
-              overflowY: "hidden", // This prevents vertical scrolling
+              overflowY: "hidden",
             }}
           >
             <Table stickyHeader>
@@ -807,110 +861,110 @@ export default function ViewPO() {
                 <TableRow>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Name
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Category
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Price
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Amount purchased
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Total
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Customer Email
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Status of Order
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Order Date
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Delivery Date
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Destination State
                   </TableCell>
                   <TableCell
                     sx={{
-                      bgcolor: "#f5f5f5",
-                      color: "#D32F2F",
+                      bgcolor: colors.primary,
+                      color: "white",
                       fontWeight: "bold",
-                      borderBottom: "2px solid #FFCDD2",
+                      borderBottom: `2px solid ${colors.tableBorderColor}`,
                     }}
                   >
                     Destination City
@@ -928,7 +982,7 @@ export default function ViewPO() {
                           bgcolor: "#fafafa",
                         },
                         "&:hover": {
-                          bgcolor: "#FFEBEE",
+                          bgcolor: colors.hoverBg,
                         },
                         transition: "background-color 0.2s",
                       }}
@@ -937,29 +991,31 @@ export default function ViewPO() {
                       <TableCell>{item.item_category}</TableCell>
                       <TableCell>${item.item_price}</TableCell>
                       <TableCell>{item.item_amount_purchased}</TableCell>
-                      <TableCell>
-                        ${item.item_amount_purchased * item.item_price}
-                      </TableCell>
+                      <TableCell>${item.item_amount_purchased * item.item_price}</TableCell>
                       <TableCell>{item.email}</TableCell>
-                      <TableCell>{item.status}</TableCell>
                       <TableCell>
-                        {new Date(item.transaction_date).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
+                        <Chip
+                          label={item.status}
+                          size="small"
+                          sx={{
+                            bgcolor: item.status === "Delivered" ? "#E8F5E9" : "#FFEBEE",
+                            color: item.status === "Delivered" ? "#2E7D32" : "#C62828",
+                            fontWeight: 500,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {new Date(item.transaction_date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </TableCell>
                       <TableCell>
                         {item.delivery_date
-                          ? new Date(item.delivery_date).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )
+                          ? new Date(item.delivery_date).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })
                           : "N/A"}
                       </TableCell>
                       <TableCell>{item.destination_state}</TableCell>
@@ -968,7 +1024,7 @@ export default function ViewPO() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} sx={{ textAlign: "center", py: 4 }}>
+                    <TableCell colSpan={11} sx={{ textAlign: "center", py: 4 }}>
                       <Box
                         sx={{
                           display: "flex",
@@ -976,13 +1032,8 @@ export default function ViewPO() {
                           alignItems: "center",
                         }}
                       >
-                        <SearchIcon
-                          sx={{ color: "#D32F2F", fontSize: 40, mb: 1 }}
-                        />
-                        <Typography
-                          variant="h6"
-                          sx={{ color: "#D32F2F", fontWeight: "medium" }}
-                        >
+                        <SearchIcon sx={{ color: colors.primary, fontSize: 40, mb: 1 }} />
+                        <Typography variant="h6" sx={{ color: colors.primary, fontWeight: "medium" }}>
                           No results found
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
@@ -998,5 +1049,6 @@ export default function ViewPO() {
         </Paper>
       )}
     </Container>
-  );
+  )
 }
+
