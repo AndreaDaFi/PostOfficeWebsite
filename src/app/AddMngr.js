@@ -83,21 +83,7 @@ export default function AddManager() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-
-    if (name === "birthdate") {
-      // Validate or format the date here if needed
-      const date = new Date(value)
-      if (!isNaN(date.getTime())) {
-        // Date is valid, proceed with setting state
-        setFormData({ ...formData, [name]: value })
-      } else {
-        // Handle invalid date
-        setError("Invalid date format. Please use YYYY-MM-DD.")
-      }
-    } else {
-      setFormData({ ...formData, [name]: value })
-    }
-
+    setFormData({ ...formData, [name]: value })
     // Update completion status for the current step
     updateStepCompletion()
   }
