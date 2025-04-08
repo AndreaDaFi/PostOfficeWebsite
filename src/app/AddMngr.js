@@ -125,6 +125,17 @@ export default function AddManager() {
     // Ensure birthdate is not in the future
     if (birthDateObj > currentDate) return false
 
+    // Calculate age
+  const age = currentDate.getFullYear() - birthDateObj.getFullYear()
+  const monthDiff = currentDate.getMonth() - birthDateObj.getMonth()
+  
+  // Adjust age if birthday hasn't occurred yet this year
+  if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDateObj.getDate())) {
+    if (age - 1 < 18) return false
+  } else if (age < 18) {
+    return false
+  }
+
     return true
   }
 
@@ -409,6 +420,9 @@ export default function AddManager() {
                 value={formData.hire_date}
                 onChange={handleChange}
                 required
+                inputProps={{ 
+                  max: new Date().toISOString().split('T')[0] // Today's date in YYYY-MM-DD format
+                }}
                 helperText="YYYY-MM-DD format"
                 InputProps={{
                   startAdornment: <CalendarMonthIcon sx={{ mr: 1.5, color: "#D32F2F" }} />,
