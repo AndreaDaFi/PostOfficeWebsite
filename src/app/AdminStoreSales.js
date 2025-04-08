@@ -54,7 +54,7 @@ export default function ViewStore() {
   const [origin, setOrigin] = useState("Any");
   const [destination, setDestination] = useState("Any");
   const [postOffices, setPostOffices] = useState([]);
-  const [selectedPO, setSelectedPO] = useState("");
+  const [selectedPO, setSelectedPO] = useState("Any");
   const states = [
     "al",
     "ak",
