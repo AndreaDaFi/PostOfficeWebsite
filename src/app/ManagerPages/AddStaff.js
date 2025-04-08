@@ -61,6 +61,8 @@ export default function AddStaff() {
   const [loading, setLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
+  const [birthdateError, setBirthdateError] = useState(null);
+  const [hireDateError, setHireDateError] = useState(null);
   const [completed, setCompleted] = useState({
     0: false, // Personal Info
     1: false, // Address
@@ -111,6 +113,20 @@ export default function AddStaff() {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
+    if (name === "birthdate") {
+      if (!birthdateValid(value)) {
+        setBirthdateError("Must be at least 18 years old and a valid date");
+      } else {
+        setBirthdateError(null);
+      }
+    }
+    if (name === "hire_date") {
+      if (!hire_date_valid(value)) {
+        setHireDateError("Hire date cannot be in the future");
+      } else {
+        setHireDateError(null);
+      }
+    }
     // Update completion status for the current step
     updateStepCompletion()
   }
@@ -120,6 +136,9 @@ export default function AddStaff() {
     const isStepComplete = currentStepFields.every((field) => {
       // Skip optional fields
       if (field === "streetLine2" || field === "aptNumber") return true;
+
+      if (field === "birthdate" && birthdateError) return false;
+      if (field === "hire_date" && hireDateError) return false;
 
       return formData[field] && formData[field].trim() !== "";
     });
@@ -133,7 +152,7 @@ export default function AddStaff() {
   // Check step completion on form data change
   useEffect(() => {
     updateStepCompletion();
-  }, [formData]);
+  }, [formData, birthdateError, hireDateError]);
 
   const birthdateValid = (birthdate) => {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
@@ -173,7 +192,29 @@ export default function AddStaff() {
     return true;
   };
 
+  const hire_date_valid = (hire_date) => {
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+    if (!datePattern.test(hire_date)) return false;
+  
+    const [year, month, day] = hire_date.split("-").map(Number);
+    
+    if (year < 1900 || month < 1 || month > 12 || day < 1 || day > 31) {
+      return false;
+    }
+  
+    const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset time part for accurate date comparison
+  const hireDate = new Date(year, month - 1, day);
+  
+  // Return true only if hire date is today or in the past
+  return hireDate <= today;
+  };
+
   const validateForm = () => {
+    if (birthdateError) 
+      return "⚠ " + birthdateError;
+    if (hireDateError)
+      return "⚠ " + hireDateError;
     if (!formData.firstName.trim() || formData.firstName.length > 20)
       return "⚠ First Name must be up to 20 characters.";
     if (!formData.lastName.trim() || formData.lastName.length > 30)
@@ -459,7 +500,8 @@ export default function AddStaff() {
                 value={formData.birthdate}
                 onChange={handleChange}
                 required
-                helperText="YYYY-MM-DD format"
+                helperText={birthdateError || "YYYY-MM-DD format"}
+                error={!!birthdateError}
                 InputProps={{
                   startAdornment: (
                     <CalendarMonthIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
@@ -485,10 +527,9 @@ export default function AddStaff() {
                 value={formData.hire_date}
                 onChange={handleChange}
                 required
-                inputProps={{ 
-                  max: new Date().toISOString().split('T')[0] // Today's date in YYYY-MM-DD format
-                }}
-                helperText="YYYY-MM-DD format"
+                error={!!hireDateError}
+              
+                helperText={hireDateError || "YYYY-MM-DD format"}
                 InputProps={{
                   startAdornment: (
                     <CalendarMonthIcon sx={{ mr: 1.5, color: "#D32F2F" }} />
