@@ -31,6 +31,7 @@ export default function Store() {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
   const selectedPostOffice = queryParams.get("selectedPostOffice")
+  const [itemCosts, setItemCosts] = useState([]);
 
   // Store items data
   const [storeItems, setStoreItems] = useState([
@@ -83,6 +84,9 @@ export default function Store() {
           })
 
           setStoreItems(updatedStoreItems)
+          setItemCosts(parseItemCosts());
+          const costs = parseItemCosts();
+          console.log("Parsed Item Costs:", costs);
         } else {
           console.error("⚠ API returned an empty array:", data)
         }
@@ -129,6 +133,19 @@ export default function Store() {
     setTimeout(() => setShowSuccessAlert(false), 2000)
   }
 
+  const parseItemCosts = () => {
+    const itemCosts = [];
+    storeItems.forEach((category) => {
+      category.items.forEach((item) => {
+        itemCosts.push({ name: item.name, price: item.price });
+      });
+    });
+    return itemCosts;
+  };
+
+  
+
+
   const handleRemoveFromCart = (item) => {
     setCart((prevCart) => {
       const existingItemIndex = prevCart.findIndex((cartItem) => cartItem.id === item.id)
@@ -143,6 +160,7 @@ export default function Store() {
       return prevCart
     })
   }
+  
 
   const handleDeleteFromCart = (item) => {
     setCart((prevCart) => prevCart.filter((cartItem) => cartItem.id !== item.id))
@@ -310,14 +328,16 @@ export default function Store() {
                             }}
                           >
                             <Typography
-                              variant="h6"
-                              sx={{
-                                fontWeight: "bold",
-                                color: primaryRed,
-                              }}
-                            >
-                              {item.price}
-                            </Typography>
+  variant="h6"
+  component="h3"
+  sx={{
+    fontWeight: "bold",
+    color: "#333",
+    mb: 1,
+  }}
+>
+  {item.name} - ${parseFloat(item.price).toFixed(2)}
+</Typography>
 
                             <Button
                               variant="contained"
