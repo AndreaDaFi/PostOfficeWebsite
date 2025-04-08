@@ -63,6 +63,10 @@ import CustomerInfo from "./app/CustomerInfo";
 import ViewOnlineStore from "./app/ManagerPages/ViewOnlineStore";
 import FireStaff from "./app/ManagerPages/FireStaff";
 import ClerkCheckout from "./app/ClerkCheckout";
+import AdminStoreSales from "./app/AdminStoreSales";
+import AdminViewOnlineStoreSales from "./app/AdminViewOnlineStoreSales";
+import AdminViewStaffActivity from "./app/AdminViewStaffActivity";
+
 
 const App = () => {
   const { isCustomer, isAdmin, isManager, isDriver, isClerk, logout } =
@@ -339,7 +343,7 @@ const App = () => {
                           component={Link}
                           to="/CustAddPackage"
                         >
-                          Ship a New Packag3
+                          Ship a New Package
                         </Button>
                       </ListItem>
                     </>
@@ -468,6 +472,16 @@ const App = () => {
                         >
                           View Staff
                         </Button>
+                      </ListItem>
+                      <ListItem>
+                        <DropMenuButton
+                          buttonText="REPORTS FOR ALL LOCATIONS"
+                          menuItems={[
+                            { label: "PACKAGES SALES", to: "/AdminStoreSales" },
+                            { label: "ONLINE STORE SALES", to: "/AdminViewOnlineStoreSales" },
+                            { label: "STAFF ACTIVITY", to: "/AdminViewStaffActivity" },
+                          ]}
+                        />
                       </ListItem>
                     </>
                   )}
@@ -662,6 +676,9 @@ const App = () => {
                 {user && isAdmin() && (
                   <>
                     <Route path="/AddPO" element={<AddPO />} />
+                    <Route path="/AdminStoreSales" element={<AdminStoreSales />} />
+                    <Route path="/AdminViewOnlineStoreSales" element={<AdminViewOnlineStoreSales />} />
+                    <Route path="/AdminViewStaffActivity" element={<AdminViewStaffActivity />} />
                     <Route path="/ViewPO" element={<ViewPO />} />
                     <Route path="/AddMngr" element={<AddMngr />} />
                     <Route path="/ViewStaff" element={<ViewStaff />} />

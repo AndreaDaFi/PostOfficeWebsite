@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useState, useContext } from "react";
 import {
   Box,
   Typography,
@@ -24,7 +24,7 @@ import {
   useTheme,
   useMediaQuery,
   IconButton,
-} from "@mui/material"
+} from "@mui/material";
 import {
   LocalShipping,
   Inventory2,
@@ -40,22 +40,22 @@ import {
   Category,
   ArrowForward,
   Store,
-} from "@mui/icons-material"
-import { AuthContext } from "../context/AuthContext"
+} from "@mui/icons-material";
+import { AuthContext } from "../context/AuthContext";
 
 const ViewPOPackages = () => {
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
-  const { user } = useContext(AuthContext)
-  const [packages, setPackages] = useState([])
-  const [filteredPackages, setFilteredPackages] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [fast, setFast] = useState(false)
-  const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [refreshing, setRefreshing] = useState(false)
-  const [postOffices, setPostOffices] = useState([])
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { user } = useContext(AuthContext);
+  const [packages, setPackages] = useState([]);
+  const [filteredPackages, setFilteredPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fast, setFast] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [refreshing, setRefreshing] = useState(false);
+  const [postOffices, setPostOffices] = useState([]);
 
   // Simple color palette with whites and reds
   const colors = {
@@ -71,109 +71,132 @@ const ViewPOPackages = () => {
     darkGray: "#757575",
     success: "#2E7D32",
     warning: "#FF9800",
-  }
+  };
 
   // Fetch post offices for origin address lookup
   const fetchPostOffices = async () => {
     try {
-      const response = await fetch("https://apipost.vercel.app/api/CustAddPackage")
-      const result = await response.json()
+      const response = await fetch(
+        "https://apipost.vercel.app/api/CustAddPackage"
+      );
+      const result = await response.json();
       if (result.success) {
-        setPostOffices(result.data)
+        setPostOffices(result.data);
       } else {
-        console.error("Failed to load post office data.")
+        console.error("Failed to load post office data.");
       }
     } catch (error) {
-      console.error("Error fetching post offices:", error)
+      console.error("Error fetching post offices:", error);
     }
-  }
+  };
 
   const fetchData = async () => {
     if (!user?.po_id) {
-      setError("❌ No post office ID found in your account.")
-      setLoading(false)
-      return
+      setError("❌ No post office ID found in your account.");
+      setLoading(false);
+      return;
     }
 
     try {
-      setRefreshing(true)
-      const res = await fetch("https://apipost.vercel.app/api/getPackagesByPostOffice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ po_id: user.po_id }),
-      })
+      setRefreshing(true);
+      const res = await fetch(
+        "https://apipost.vercel.app/api/getPackagesByPostOffice",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ po_id: user.po_id }),
+        }
+      );
 
-      const data = await res.json()
-      if (!res.ok || !data.success) throw new Error(data.error || "Failed to load packages")
+      const data = await res.json();
+      if (!res.ok || !data.success)
+        throw new Error(data.error || "Failed to load packages");
 
       // Filter out delivered packages
       const nonDeliveredPackages = (data.packages || []).filter((pkg) => {
-        return (pkg.status || "").toLowerCase() !== "delivered"
-      })
+        return (pkg.status || "").toLowerCase() !== "delivered";
+      });
 
-      setPackages(nonDeliveredPackages)
-      setFilteredPackages(nonDeliveredPackages)
+      setPackages(nonDeliveredPackages);
+      setFilteredPackages(nonDeliveredPackages);
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
-      setRefreshing(false)
+      setLoading(false);
+      setRefreshing(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchData()
-    fetchPostOffices() // Fetch post offices for origin address lookup
-  }, [user])
+    fetchData();
+    fetchPostOffices(); // Fetch post offices for origin address lookup
+  }, [user]);
 
   const handleRefresh = () => {
-    fetchData()
-  }
+    fetchData();
+  };
 
   const FastSwitch = () => {
-    setFast(!fast)
-  }
+    setFast(!fast);
+  };
 
   // Get post office address by ID
   const getPostOfficeAddress = (poId) => {
-    const postOffice = postOffices.find((po) => po.po_id === poId)
-    return postOffice ? postOffice.address : "Unknown Location"
-  }
+    const postOffice = postOffices.find((po) => po.po_id === poId);
+    return postOffice ? postOffice.address : "Unknown Location";
+  };
 
   // Apply filters when search term or status filter changes
   useEffect(() => {
-    let filtered = [...packages]
+    let filtered = [...packages];
 
     // Apply status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter((pkg) => pkg.status?.toLowerCase() === statusFilter.toLowerCase())
+      filtered = filtered.filter(
+        (pkg) => pkg.status?.toLowerCase() === statusFilter.toLowerCase()
+      );
     }
 
     if (fast) {
-      filtered = filtered.filter((pkg) => pkg.fast_delivery === "1")
+      filtered = filtered.filter((pkg) => pkg.fast_delivery === "1");
     }
 
     // Apply search filter
     if (searchTerm) {
-      const search = searchTerm.toLowerCase()
+      const search = searchTerm.toLowerCase();
       filtered = filtered.filter((pkg) => {
         // Check if this is a store order
-        const isStoreOrder = pkg.type === null || pkg.type?.toLowerCase() === "store order"
+        const isStoreOrder =
+          pkg.type === null || pkg.type?.toLowerCase() === "store order";
 
         // If searching for "store order" and this is a store order, include it
         if (isStoreOrder && "store order".includes(search)) {
-          return true
+          return true;
         }
 
-        const trackingNumber = pkg.tracking_number ? pkg.tracking_number.toString() : ""
-        const receiverName = pkg.receiver_name ? pkg.receiver_name.toLowerCase() : ""
-        const type = pkg.type ? pkg.type.toLowerCase() : "store order" // Default to "store order" if type is null
-        const originAddress = pkg.origin_address ? pkg.origin_address.toLowerCase() : ""
-        const destinationAddress = pkg.destination_address ? pkg.destination_address.toLowerCase() : ""
-        const originState = pkg.origin_state ? pkg.origin_state.toLowerCase() : ""
-        const destinationState = pkg.destination_state ? pkg.destination_state.toLowerCase() : ""
+        const trackingNumber = pkg.tracking_number
+          ? pkg.tracking_number.toString()
+          : "";
+        const receiverName = pkg.receiver_name
+          ? pkg.receiver_name.toLowerCase()
+          : "";
+        const type = pkg.type ? pkg.type.toLowerCase() : "store order"; // Default to "store order" if type is null
+        const originAddress = pkg.origin_address
+          ? pkg.origin_address.toLowerCase()
+          : "";
+        const destinationAddress = pkg.destination_address
+          ? pkg.destination_address.toLowerCase()
+          : "";
+        const originState = pkg.origin_state
+          ? pkg.origin_state.toLowerCase()
+          : "";
+        const destinationState = pkg.destination_state
+          ? pkg.destination_state.toLowerCase()
+          : "";
         // Get post office address if this is a store order
-        const poAddress = pkg.po_id ? getPostOfficeAddress(pkg.po_id).toLowerCase() : ""
+        const poAddress = pkg.po_id
+          ? getPostOfficeAddress(pkg.po_id).toLowerCase()
+          : "";
 
         return (
           trackingNumber.includes(search) ||
@@ -184,52 +207,52 @@ const ViewPOPackages = () => {
           originState.includes(search) ||
           destinationState.includes(search) ||
           poAddress.includes(search)
-        )
-      })
+        );
+      });
     }
 
-    setFilteredPackages(filtered)
-  }, [searchTerm, statusFilter, packages, fast, postOffices])
+    setFilteredPackages(filtered);
+  }, [searchTerm, statusFilter, packages, fast, postOffices]);
 
   // Function to get appropriate icon based on package type
   const getPackageIcon = (type) => {
     switch (type?.toLowerCase()) {
       case "letter":
-        return <LocalPostOffice />
+        return <LocalPostOffice />;
       case "parcel":
-        return <Inventory2 />
+        return <Inventory2 />;
       case "store order":
       case null:
-        return <Store />
+        return <Store />;
       default:
-        return <LocalShipping />
+        return <LocalShipping />;
     }
-  }
+  };
 
   // Function to get status color
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "in transit":
-        return colors.primary // Red for in transit
+        return colors.primary; // Red for in transit
       case "printed label":
-        return colors.accent // Lighter red for printed label
+        return colors.accent; // Lighter red for printed label
       case "pending":
-        return "#FF8A80" // Even lighter red for pending
+        return "#FF8A80"; // Even lighter red for pending
       case "out for delivery":
-        return colors.success // Green for out for delivery
+        return colors.success; // Green for out for delivery
       case "missing":
-        return colors.warning // Orange for missing
+        return colors.warning; // Orange for missing
       case "returned":
-        return colors.secondary // Gray for returned
+        return colors.secondary; // Gray for returned
       default:
-        return colors.primaryDark // Dark red for other statuses
+        return colors.primaryDark; // Dark red for other statuses
     }
-  }
+  };
 
   const handlePackageClick = (trackingNumber) => {
     // Navigate to the PackageStatus page with the tracking number
-    window.location.href = `/PackageStatus?tracking=${trackingNumber}`
-  }
+    window.location.href = `/PackageStatus?tracking=${trackingNumber}`;
+  };
 
   return (
     <Container maxWidth="lg" sx={{ my: 4, pb: 4 }}>
@@ -276,7 +299,9 @@ const ViewPOPackages = () => {
             }}
           >
             <LocalShipping sx={{ fontSize: { xs: 32, sm: 40 } }} />
-            <Box sx={{ textAlign: { xs: "center", sm: "left" }, width: "100%" }}>
+            <Box
+              sx={{ textAlign: { xs: "center", sm: "left" }, width: "100%" }}
+            >
               <Typography variant="h4" fontWeight="bold">
                 Active Packages
               </Typography>
@@ -344,10 +369,14 @@ const ViewPOPackages = () => {
                     size="medium"
                     sx={{
                       "& .MuiSwitch-thumb": {
-                        backgroundColor: fast ? colors.primary : colors.darkGray,
+                        backgroundColor: fast
+                          ? colors.primary
+                          : colors.darkGray,
                       },
                       "& .MuiSwitch-track": {
-                        backgroundColor: fast ? colors.primary : colors.darkGray,
+                        backgroundColor: fast
+                          ? colors.primary
+                          : colors.darkGray,
                         borderRadius: "50px",
                       },
                       "& .MuiSwitch-switchBase.Mui-checked": {
@@ -361,9 +390,21 @@ const ViewPOPackages = () => {
                   />
                 }
                 label={
-                  <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Speed sx={{ color: fast ? colors.primary : colors.darkGray, fontSize: 18 }} />
-                    <Typography sx={{ color: fast ? colors.primary : colors.secondary, fontWeight: fast ? 500 : 400 }}>
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", gap: "8px" }}
+                  >
+                    <Speed
+                      sx={{
+                        color: fast ? colors.primary : colors.darkGray,
+                        fontSize: 18,
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        color: fast ? colors.primary : colors.secondary,
+                        fontWeight: fast ? 500 : 400,
+                      }}
+                    >
                       {fast ? "Fast Delivery Only" : "All Delivery Types"}
                     </Typography>
                   </Box>
@@ -391,9 +432,14 @@ const ViewPOPackages = () => {
             }}
           >
             <Info fontSize="small" sx={{ color: colors.primary }} />
-            {filteredPackages.length} {filteredPackages.length === 1 ? "package" : "packages"} found
+            {filteredPackages.length}{" "}
+            {filteredPackages.length === 1 ? "package" : "packages"} found
           </Typography>
-          <IconButton onClick={handleRefresh} disabled={refreshing} sx={{ color: colors.primary }}>
+          <IconButton
+            onClick={handleRefresh}
+            disabled={refreshing}
+            sx={{ color: colors.primary }}
+          >
             <Refresh />
           </IconButton>
         </Box>
@@ -495,13 +541,28 @@ const ViewPOPackages = () => {
                     }}
                   />
 
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, position: "relative", zIndex: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      position: "relative",
+                      zIndex: 1,
+                    }}
+                  >
                     {getPackageIcon(pkg.type)}
                     <Typography variant="subtitle1" fontWeight="medium">
                       {pkg.type || "Store Order"}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: "flex", gap: 1, position: "relative", zIndex: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      position: "relative",
+                      zIndex: 1,
+                    }}
+                  >
                     <Chip
                       label={pkg.status || "Unknown"}
                       sx={{
@@ -513,7 +574,9 @@ const ViewPOPackages = () => {
                     />
                     {pkg.fast_delivery === "1" && (
                       <Chip
-                        icon={<Speed sx={{ color: `${colors.white} !important` }} />}
+                        icon={
+                          <Speed sx={{ color: `${colors.white} !important` }} />
+                        }
                         label="Fast"
                         sx={{
                           bgcolor: colors.primaryDark,
@@ -523,13 +586,18 @@ const ViewPOPackages = () => {
                         size="small"
                       />
                     )}
+                    
                   </Box>
                 </Box>
 
                 <CardContent sx={{ pt: 2, pb: 3, flexGrow: 1 }}>
                   {/* Tracking Number - Simplified */}
                   <Box sx={{ mb: 3, textAlign: "center" }}>
-                    <Typography variant="caption" color="textSecondary" sx={{ display: "block", mb: 0.5 }}>
+                    <Typography
+                      variant="caption"
+                      color="textSecondary"
+                      sx={{ display: "block", mb: 0.5 }}
+                    >
                       TRACKING NUMBER
                     </Typography>
                     <Typography
@@ -546,7 +614,11 @@ const ViewPOPackages = () => {
 
                   {/* Origin and Destination - With white background and red border */}
                   <Box sx={{ mb: 3 }}>
-                    <Typography variant="caption" color="textSecondary" sx={{ display: "block", mb: 0.5 }}>
+                    <Typography
+                      variant="caption"
+                      color="textSecondary"
+                      sx={{ display: "block", mb: 0.5 }}
+                    >
                       ORIGIN
                     </Typography>
                     <Typography
@@ -560,16 +632,26 @@ const ViewPOPackages = () => {
                         border: `1px solid ${colors.primaryLight}`,
                       }}
                     >
-                      {pkg.type === null || pkg.type?.toLowerCase() === "store order"
-                        ? pkg.origin_address || (pkg.po_id ? getPostOfficeAddress(pkg.po_id) : "Store Purchase")
+                      {pkg.type === null ||
+                      pkg.type?.toLowerCase() === "store order"
+                        ? pkg.origin_address ||
+                          (pkg.po_id
+                            ? getPostOfficeAddress(pkg.po_id)
+                            : "Store Purchase")
                         : pkg.origin_address || "Not specified"}
                     </Typography>
 
-                    <Box sx={{ display: "flex", justifyContent: "center", my: 1 }}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "center", my: 1 }}
+                    >
                       <ArrowForward sx={{ color: colors.primary }} />
                     </Box>
 
-                    <Typography variant="caption" color="textSecondary" sx={{ display: "block", mb: 0.5 }}>
+                    <Typography
+                      variant="caption"
+                      color="textSecondary"
+                      sx={{ display: "block", mb: 0.5 }}
+                    >
                       DESTINATION
                     </Typography>
                     <Typography
@@ -585,11 +667,42 @@ const ViewPOPackages = () => {
                       {pkg.destination_address || "Not specified"}
                     </Typography>
                   </Box>
+                  <Typography
+                      variant="caption"
+                      color="textSecondary"
+                      sx={{ display: "block", mb: 0.5 }}
+                    >
+                      ESTIMATED DELIVERY
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        wordBreak: "break-word",
+                        p: 1.5,
+                        bgcolor: colors.white,
+                        borderRadius: "8px",
+                        border: `1px solid ${colors.primaryLight}`,
+                      }}
+                    >
+                      {new Date(
+                        pkg.estimated_delivery
+                      ).toLocaleDateString()}
+                    </Typography>
+                  <Box
+                      sx={{ display: "flex", justifyContent: "center", my: 1 }}
+                    >
+                      
+                  </Box>
+                  
 
                   {/* Package Contents/Items - With white background and red border */}
                   {pkg.store_order_items && (
                     <Box sx={{ mb: 3 }}>
-                      <Typography variant="caption" color="textSecondary" sx={{ display: "block", mb: 0.5 }}>
+                      <Typography
+                        variant="caption"
+                        color="textSecondary"
+                        sx={{ display: "block", mb: 0.5 }}
+                      >
                         PACKAGE CONTENTS
                       </Typography>
                       <Typography
@@ -624,7 +737,11 @@ const ViewPOPackages = () => {
                       >
                         <Person sx={{ color: colors.primary, mr: 1.5 }} />
                         <Box sx={{ minWidth: 0, width: "100%" }}>
-                          <Typography variant="caption" color="textSecondary" sx={{ display: "block" }}>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            sx={{ display: "block" }}
+                          >
                             Receiver
                           </Typography>
                           <Typography sx={{ wordBreak: "break-word" }}>
@@ -648,10 +765,16 @@ const ViewPOPackages = () => {
                       >
                         <Scale sx={{ color: colors.primary, mr: 1.5 }} />
                         <Box sx={{ minWidth: 0, width: "100%" }}>
-                          <Typography variant="caption" color="textSecondary" sx={{ display: "block" }}>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            sx={{ display: "block" }}
+                          >
                             Weight
                           </Typography>
-                          <Typography noWrap>{pkg.weight ? `${pkg.weight} kg` : "N/A"}</Typography>
+                          <Typography noWrap>
+                            {pkg.weight ? `${pkg.weight} kg` : "N/A"}
+                          </Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -670,10 +793,16 @@ const ViewPOPackages = () => {
                       >
                         <Category sx={{ color: colors.primary, mr: 1.5 }} />
                         <Box sx={{ minWidth: 0, width: "100%" }}>
-                          <Typography variant="caption" color="textSecondary" sx={{ display: "block" }}>
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            sx={{ display: "block" }}
+                          >
                             Package Type
                           </Typography>
-                          <Typography noWrap>{pkg.type || "Store Order"}</Typography>
+                          <Typography noWrap>
+                            {pkg.type || "Store Order"}
+                          </Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -692,7 +821,11 @@ const ViewPOPackages = () => {
                         >
                           <LocationOn sx={{ color: colors.primary, mr: 1.5 }} />
                           <Box sx={{ minWidth: 0, width: "100%" }}>
-                            <Typography variant="caption" color="textSecondary" sx={{ display: "block" }}>
+                            <Typography
+                              variant="caption"
+                              color="textSecondary"
+                              sx={{ display: "block" }}
+                            >
                               Destination
                             </Typography>
                             <Typography sx={{ wordBreak: "break-word" }}>
@@ -710,8 +843,7 @@ const ViewPOPackages = () => {
         </Grid>
       )}
     </Container>
-  )
-}
+  );
+};
 
-export default ViewPOPackages
-
+export default ViewPOPackages;

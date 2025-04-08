@@ -44,7 +44,7 @@ const MyPackages = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:3001/api/getCustomerPackages",
+          "https://apipost.vercel.app/api/getCustomerPackages",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -234,6 +234,17 @@ const MyPackages = () => {
                           </Box>
                           <Divider sx={{ borderWidth: 1 }} />
                         </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                          <Box display="flex" alignItems="center" gap={1.2}>
+                            <Person sx={{ fontSize: 20 }} color="action" />
+                            <Typography fontSize="1rem">
+                              <strong>Estimated Delivery:</strong>{" "}
+                              {new Date(
+                                pkg.estimated_delivery
+                              ).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                        </Grid>
                         {pkg.weight && (
                           <Grid item xs={12} sm={6} md={4}>
                             <Box display="flex" alignItems="center" gap={1.2}>
@@ -254,36 +265,42 @@ const MyPackages = () => {
                           </Box>
                         </Grid>
 
-
-                        {pkg.type && <Grid item xs={12} md={4}>
-                          <Box display="flex" alignItems="center" gap={1.2}>
-                            <LocalShipping
-                              sx={{ fontSize: 20 }}
-                              color="action"
-                            />
-                            <Typography fontSize="1rem">
-                              <strong>Type:</strong> {pkg.type}
-                            </Typography>
-                          </Box>
-                        </Grid>}
-                        {!pkg.type && <Grid item xs={12} md={4}>
-                          <Box display="flex" alignItems="center" gap={1.2}>
-                            <LocalShipping
-                              sx={{ fontSize: 20 }}
-                              color="action"
-                            />
-                            <Typography fontSize="1rem">
-                              <strong>Type:</strong> Store Order
-                            </Typography>
-                          </Box>
-                        </Grid>}
-                        {!pkg.type && <Grid item xs={12} md={4}>
-                          <Box display="flex" alignItems="center" gap={1.2}>
-                            <Typography fontSize="1rem">
-                              <strong>Order Summary:</strong> {pkg.store_order_items}
-                            </Typography>
-                          </Box>
-                        </Grid>}
+                        {pkg.type && (
+                          <Grid item xs={12} md={4}>
+                            <Box display="flex" alignItems="center" gap={1.2}>
+                              <LocalShipping
+                                sx={{ fontSize: 20 }}
+                                color="action"
+                              />
+                              <Typography fontSize="1rem">
+                                <strong>Type:</strong> {pkg.type}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        )}
+                        {!pkg.type && (
+                          <Grid item xs={12} md={4}>
+                            <Box display="flex" alignItems="center" gap={1.2}>
+                              <LocalShipping
+                                sx={{ fontSize: 20 }}
+                                color="action"
+                              />
+                              <Typography fontSize="1rem">
+                                <strong>Type:</strong> Store Order
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        )}
+                        {!pkg.type && (
+                          <Grid item xs={12} md={4}>
+                            <Box display="flex" alignItems="center" gap={1.2}>
+                              <Typography fontSize="1rem">
+                                <strong>Order Summary:</strong>{" "}
+                                {pkg.store_order_items}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        )}
 
                         <Grid item xs={12}>
                           <Box display="flex" justifyContent="flex-end" mt={1}>
