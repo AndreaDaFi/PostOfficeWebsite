@@ -457,7 +457,7 @@ export default function ViewStore() {
                 value={packageType}
                 onChange={(e) => setPackageType(e.target.value)}
               >
-                <MenuItem value="any">Any</MenuItem>
+                <MenuItem value="Any">Any</MenuItem>
                 <MenuItem value="box">Box</MenuItem>
                 <MenuItem value="envelope">Envelope</MenuItem>
               </Select>

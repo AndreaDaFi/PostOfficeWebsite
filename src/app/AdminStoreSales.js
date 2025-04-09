@@ -334,7 +334,7 @@ export default function ViewStore() {
       );
     });
 
-    if (packageType !== "Any") {
+    if (packageType !== "any") {
       filtered = filtered.filter(
         (item) => item.type.toLowerCase() === packageType.toLowerCase()
       );

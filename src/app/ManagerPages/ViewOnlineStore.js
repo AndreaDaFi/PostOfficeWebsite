@@ -989,9 +989,9 @@ export default function ViewPO() {
                     >
                       <TableCell>{item.item_name}</TableCell>
                       <TableCell>{item.item_category}</TableCell>
-                      <TableCell>${item.item_price}</TableCell>
+                      <TableCell>${item.item_price.toFixed(2)}</TableCell>
                       <TableCell>{item.item_amount_purchased}</TableCell>
-                      <TableCell>${item.item_amount_purchased * item.item_price}</TableCell>
+                      <TableCell>${(item.item_amount_purchased * item.item_price).toFixed(2)}</TableCell>
                       <TableCell>{item.email}</TableCell>
                       <TableCell>
                         <Chip
