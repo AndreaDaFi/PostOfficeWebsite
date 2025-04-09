@@ -19,6 +19,7 @@ import {
 
 export default function CustomerPackageEntry() {
   const { user } = useContext(AuthContext);
+  const [estimatedDelivery,setEstimatedDelivery] = useState(new Date()); // Initialize estimatedDelivery with the current date
   //const navigate = useNavigate();
 
   const states = [
@@ -226,6 +227,17 @@ export default function CustomerPackageEntry() {
     return /^[0-9]{5}$/.test(value);
   };
 
+  const getDeliveryDate = () => {
+    const today = new Date();
+    if (packageData.fastdelivery) {
+      estimatedDelivery.setDate(today.getDate() + 2); // Add 2 days for fast delivery
+    } else {
+      estimatedDelivery.setDate(today.getDate() + 10); // Add 10 days for regular delivery
+    }
+    return estimatedDelivery.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  }
+
+
   const calculateTotalPrice = () => {
     let basePrice = 0;
     if (packageData.packageType === "envelope") {
@@ -294,19 +306,6 @@ export default function CustomerPackageEntry() {
 
     navigate("/PackageCheckOut", { state: { totalPrice, payload } });
   };
-
-  const today = new Date();
-
-  let estimatedDelivery = new Date(today); // Start with today's date
-
-  useEffect(() => {
-    // Set delivery date based on the fastdelivery flag
-    if (packageData.fastdelivery) {
-      estimatedDelivery.setDate(today.getDate() + 2); // Add 2 days for fast delivery
-    } else {
-      estimatedDelivery.setDate(today.getDate() + 10); // Add 10 days for regular delivery
-    }
-  }, [packageData.fastdelivery]);
 
   // Format the estimated delivery date (optional - if you want it in a specific format)
   const formattedEstDelivery = estimatedDelivery.toISOString().split("T")[0]; // YYYY-MM-DD format
@@ -733,7 +732,7 @@ export default function CustomerPackageEntry() {
             variant="h4"
             sx={{ fontWeight: "bold", color: "#B71C1C" }}
           >
-            Est. Delivery: {estimatedDelivery.toISOString().split("T")[0]}
+            Est. Delivery: {getDeliveryDate()}
           </Typography>
         </Box>
       </Paper>
