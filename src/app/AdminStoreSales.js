@@ -45,7 +45,7 @@ export default function ViewStore() {
   const [totalSales, setTotalSales] = useState(0); // Holds the total sales amount
   const [totalPackages, setTotalPackages] = useState(0); // Holds the total number of packages
   const [filteredItems, setFilteredItems] = useState([]);
-  const [packageType, setPackageType] = useState("Any"); // Track the selected package type
+  const [packageType, setPackageType] = useState("any"); // Track the selected package type
   const [tabValue, setTabValue] = useState(0);
   const [chartData, setChartData] = useState([]);
   const [status, setStatus] = useState("Any");
