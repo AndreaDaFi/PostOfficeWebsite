@@ -56,7 +56,7 @@ export default function RemoveStoreItem() {
 
       try {
         const response = await fetch(
-          `https://apipost.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`,
+          `https://vercel-api-post-office-seven.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`,
           {
             method: "GET",
           }
