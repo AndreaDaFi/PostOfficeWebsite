@@ -20,7 +20,7 @@ export default function DeliveredPackagesPage() {
       }
 
       try {
-        const response = await fetch("https://apipost.vercel.app/api/getDeliveredPackages", {
+        const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/getDeliveredPackages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ customer_id: user.customers_id }),

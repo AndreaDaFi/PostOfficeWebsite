@@ -77,7 +77,7 @@ const ViewPOPackages = () => {
   const fetchPostOffices = async () => {
     try {
       const response = await fetch(
-        "https://apipost.vercel.app/api/CustAddPackage"
+        "https://vercel-api-post-office-seven.vercel.app/api/CustAddPackage"
       );
       const result = await response.json();
       if (result.success) {
@@ -100,7 +100,7 @@ const ViewPOPackages = () => {
     try {
       setRefreshing(true);
       const res = await fetch(
-        "https://apipost.vercel.app/api/getPackagesByPostOffice",
+        "https://vercel-api-post-office-seven.vercel.app/api/getPackagesByPostOffice",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

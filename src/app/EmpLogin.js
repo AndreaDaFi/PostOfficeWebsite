@@ -56,7 +56,7 @@ export default function CustLogin() {
 
     try {
       const response = await fetch(
-        "https://apipost.vercel.app/api/EmployeeLOGIN",
+        "https://vercel-api-post-office-seven.vercel.app/api/EmployeeLOGIN",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

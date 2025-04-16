@@ -198,7 +198,7 @@ export default function AddPO() {
 
   // Fetch states
   useEffect(() => {
-    fetch("https://apipost.vercel.app/api/state_id")
+    fetch("https://vercel-api-post-office-seven.vercel.app/api/state_id")
       .then((res) => res.json())
       .then((result) => {
         if (result.data) setStates(result.data)
@@ -264,7 +264,7 @@ export default function AddPO() {
 
     try {
       // Make a real API call to your backend
-      const response = await fetch("https://apipost.vercel.app/api/addPostOffice", {
+      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/addPostOffice", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

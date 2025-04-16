@@ -44,7 +44,7 @@ const MyPackages = () => {
 
       try {
         const response = await fetch(
-          "https://apipost.vercel.app/api/getCustomerPackages",
+          "https://vercel-api-post-office-seven.vercel.app/api/getCustomerPackages",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

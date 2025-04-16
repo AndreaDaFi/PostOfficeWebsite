@@ -44,7 +44,7 @@ export default function ReStock() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch(`https://apipost.vercel.app/api/ViewStore?po_id=${user.po_id}`)
+        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/ViewStore?po_id=${user.po_id}`)
         const data = await response.json()
         if (data.success) {
           setItems(data.data)
@@ -91,7 +91,7 @@ export default function ReStock() {
     const newTotalStock = selectedItem.stock + Number(stockToAdd)
 
     try {
-      const response = await fetch("https://apipost.vercel.app/api/UpdateStock", {
+      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/UpdateStock", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

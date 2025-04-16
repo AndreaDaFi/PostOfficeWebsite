@@ -39,7 +39,7 @@ export default function UpdatePackageStatus() {
     if (!status.trim()) return setError("⚠ Please select a package status.")
 
     try {
-      const response = await fetch("https://apipost.vercel.app/api/updatePackage", {
+      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/updatePackage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ trackingNumber, employeeId, status }),

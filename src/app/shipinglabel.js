@@ -82,7 +82,7 @@ export default function ShipingLabel() {
     if (payload && payload.customers_id) {
       const fetchTrackingNumber = async () => {
         try {
-          const response = await fetch("https://apipost.vercel.app/api/getCustomerPackages", {
+          const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/getCustomerPackages", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ customer_id: payload.customers_id }),
@@ -119,7 +119,7 @@ export default function ShipingLabel() {
 
           // Using the correct API endpoint provided by the user
           console.log("Fetching post office locations...")
-          const response = await fetch("https://apipost.vercel.app/api/getPostOfficeLocations")
+          const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/getPostOfficeLocations")
 
           if (!response.ok) {
             throw new Error(`API returned status ${response.status}`)

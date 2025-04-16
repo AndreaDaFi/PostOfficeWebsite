@@ -137,7 +137,7 @@ export default function CustomerPackageEntry() {
     const fetchPostOffices = async () => {
       try {
         const response = await fetch(
-          " https://apipost.vercel.app/api/CustAddPackage"
+          " https://vercel-api-post-office-seven.vercel.app/api/CustAddPackage"
         ); // Your API endpoint
         const result = await response.json();
 

@@ -270,7 +270,7 @@ export default function ViewStore() {
     const fetchItems = async () => {
       try {
         const response = await fetch(
-          `https://apipost.vercel.app/api/AdminStoreSales`,
+          `https://vercel-api-post-office-seven.vercel.app/api/AdminStoreSales`,
           {
             method: "GET", // Use GET method
           }
@@ -300,7 +300,7 @@ export default function ViewStore() {
     const fetchPostOffices = async () => {
       try {
         const response = await fetch(
-          "https://apipost.vercel.app/api/getPostOfficeLocations"
+          "https://vercel-api-post-office-seven.vercel.app/api/getPostOfficeLocations"
         ); // Your API endpoint
         const result = await response.json();
 

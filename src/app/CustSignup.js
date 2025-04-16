@@ -370,7 +370,7 @@ export default function CustSignin() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("https://apipost.vercel.app/api/custSignup", {
+      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/custSignup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

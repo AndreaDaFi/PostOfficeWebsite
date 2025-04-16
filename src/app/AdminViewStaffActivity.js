@@ -58,7 +58,7 @@ export default function ViewStaffActivity() {
     const fetchPostOffices = async () => {
       try {
         const response = await fetch(
-          "https://apipost.vercel.app/api/getPostOfficeLocations"
+          "https://vercel-api-post-office-seven.vercel.app/api/getPostOfficeLocations"
         ); // Your API endpoint
         const result = await response.json();
 
@@ -81,7 +81,7 @@ export default function ViewStaffActivity() {
     async function fetchData() {
       try {
         const response = await fetch(
-          `https://apipost.vercel.app/api/AdminStaffActivity`
+          `https://vercel-api-post-office-seven.vercel.app/api/AdminStaffActivity`
         );
 
         if (!response.ok)

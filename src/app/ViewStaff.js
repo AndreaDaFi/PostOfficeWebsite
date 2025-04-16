@@ -54,7 +54,7 @@ export default function ViewStaff() {
   useEffect(() => {
     const fetchStaff = async () => {
       try {
-        const response = await fetch("https://apipost.vercel.app/api/viewstaff-admin")
+        const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/viewstaff-admin")
         const data = await response.json()
 
         if (Array.isArray(data.data) && data.data.length > 0) {
