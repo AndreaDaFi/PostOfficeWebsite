@@ -56,7 +56,7 @@ export default function RemoveStoreItem() {
 
       try {
         const response = await fetch(
-          `https://vercel-api-post-office-seven.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`,
+          `https://final-po-api.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`,
           {
             method: "GET",
           }
@@ -111,7 +111,7 @@ export default function RemoveStoreItem() {
 
       // Fix the API payload format - the API expects "selectedItem" as the key
       const response = await fetch(
-        "https://apipost.vercel.app/api/FireStaff",
+        "https://final-po-api.vercel.app/api/FireStaff",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

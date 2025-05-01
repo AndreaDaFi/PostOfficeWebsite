@@ -126,7 +126,7 @@ const EmpRecordHours = () => {
     }
 
     try {
-      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/empHours", {
+      const response = await fetch("https://final-po-api.vercel.app/api/empHours", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

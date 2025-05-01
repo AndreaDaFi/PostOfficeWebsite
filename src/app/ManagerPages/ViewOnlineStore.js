@@ -192,7 +192,7 @@ export default function ViewPO() {
     const fetchItems = async () => {
       const po_id = user?.po_id // Get the manager's ID
       try {
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/ViewStore?po_id=${po_id}`, {
+        const response = await fetch(`https://final-po-api.vercel.app/api/ViewStore?po_id=${po_id}`, {
           method: "GET", // Use GET method
         })
 
@@ -219,7 +219,7 @@ export default function ViewPO() {
     const fetchItems = async () => {
       const po_id = user?.po_id // Get the manager's ID
       try {
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/ViewStoreTwo?po_id=${po_id}`, {
+        const response = await fetch(`https://final-po-api.vercel.app/api/ViewStoreTwo?po_id=${po_id}`, {
           method: "GET", // Use GET method
         })
 
@@ -247,7 +247,7 @@ export default function ViewPO() {
     const fetchPostOffices = async () => {
       try {
         const poID = user?.po_id // Assuming you have the po_id in your user object
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/ViewOnlineStore?po_id=${poID}`) // Your API endpoint
+        const response = await fetch(`https://final-po-api.vercel.app/api/ViewOnlineStore?po_id=${poID}`) // Your API endpoint
         const result = await response.json()
 
         if (result.success) {

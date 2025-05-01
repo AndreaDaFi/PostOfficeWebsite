@@ -61,7 +61,7 @@ export default function ViewStaffActivity() {
       }
 
       try {
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/staffActivity?po_id=${user?.po_id}`)
+        const response = await fetch(`https://final-po-api.vercel.app/api/staffActivity?po_id=${user?.po_id}`)
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
 

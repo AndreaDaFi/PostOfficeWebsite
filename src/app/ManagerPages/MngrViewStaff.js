@@ -48,7 +48,7 @@ export default function ViewStaff() {
       }
 
       try {
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`, {
+        const response = await fetch(`https://final-po-api.vercel.app/api/MngrViewStaff?mngr_id=${mngr_id}`, {
           method: "GET",
         })
 

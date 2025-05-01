@@ -56,7 +56,7 @@ const EmpDashboard = () => {
       if (!user?.po_id || !(isManager() || isClerk())) return
 
       try {
-        const res = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/getManagerNotifications?po_id=${user.po_id}`)
+        const res = await fetch(`https://final-po-api.vercel.app/api/getManagerNotifications?po_id=${user.po_id}`)
         const data = await res.json()
         console.log("Messages response:", data)
 
@@ -83,7 +83,7 @@ const EmpDashboard = () => {
     if (!user?.po_id) return
 
     try {
-      const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/markManagerNotificationsRead`, {
+      const response = await fetch(`https://final-po-api.vercel.app/api/markManagerNotificationsRead`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ po_id: user.po_id }),

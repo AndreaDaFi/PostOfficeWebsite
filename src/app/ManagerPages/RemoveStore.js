@@ -48,7 +48,7 @@ export default function RemoveStoreItem() {
       }
 
       try {
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/ViewStore?po_id=${po_id}`, {
+        const response = await fetch(`https://final-po-api.vercel.app/api/ViewStore?po_id=${po_id}`, {
           method: "GET",
         })
 
@@ -97,7 +97,7 @@ export default function RemoveStoreItem() {
       console.log("Item to delete: ", selectedItem)
 
       // Fix the API payload format - the API expects "selectedItem" as the key
-      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/RemoveItem", {
+      const response = await fetch("https://final-po-api.vercel.app/api/RemoveItem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selectedItem }), // Changed from item_id to selectedItem

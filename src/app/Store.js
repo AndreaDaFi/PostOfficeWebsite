@@ -44,7 +44,7 @@ export default function Store() {
     const fetchItems = async () => {
       if (!selectedPostOffice) return
       try {
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/ViewStore?po_id=${selectedPostOffice}`, {
+        const response = await fetch(`https://final-po-api.vercel.app/api/ViewStore?po_id=${selectedPostOffice}`, {
           method: "GET",
         })
 

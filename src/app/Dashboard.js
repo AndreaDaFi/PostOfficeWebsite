@@ -62,7 +62,7 @@ export default function Dashboard() {
     const customers_id = user.customers_id;
 
     try {
-      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/custDelete", {
+      const response = await fetch("https://final-po-api.vercel.app/api/custDelete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customers_id }),
@@ -97,7 +97,7 @@ export default function Dashboard() {
 
       try {
         const response = await fetch(
-          "https://vercel-api-post-office-seven.vercel.app/api/getCustomerPackages",
+          "https://final-po-api.vercel.app/api/getCustomerPackages",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -128,7 +128,7 @@ export default function Dashboard() {
 
       try {
         const res = await fetch(
-          `https://vercel-api-post-office-seven.vercel.app/api/CustomerMessages?customerId=${user.customers_id}`
+          `https://final-po-api.vercel.app/api/CustomerMessages?customerId=${user.customers_id}`
         );
         const data = await res.json();
         console.log("📬 Messages response:", data);
@@ -153,7 +153,7 @@ export default function Dashboard() {
 
     try {
       // Use the existing API endpoint structure
-      const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/mark-read`, {
+      const response = await fetch(`https://final-po-api.vercel.app/api/mark-read`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customerId: user.customers_id }),

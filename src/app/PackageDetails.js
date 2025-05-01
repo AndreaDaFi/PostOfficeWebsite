@@ -38,7 +38,7 @@ export default function PackageDetails() {
 
     setIsLoading(true)
     try {
-      const res = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/tracking-history?trackingNumber=${trackingNumber}`)
+      const res = await fetch(`https://final-po-api.vercel.app/api/tracking-history?trackingNumber=${trackingNumber}`)
       const data = await res.json()
 
       if (!data.success || data.history.length === 0) {

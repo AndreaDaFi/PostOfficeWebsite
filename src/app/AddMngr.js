@@ -217,7 +217,7 @@ export default function AddManager() {
     }
 
     try {
-      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/addManager", {
+      const response = await fetch("https://final-po-api.vercel.app/api/addManager", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

@@ -149,7 +149,7 @@ export default function CustomerInfo() {
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch("https://vercel-api-post-office-seven.vercel.app/api/customer-profile", {
+        const res = await fetch("https://final-po-api.vercel.app/api/customer-profile", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ customer_id: user.customers_id }),
@@ -184,7 +184,7 @@ export default function CustomerInfo() {
 
   const handleUpdate = async () => {
     try {
-      const res = await fetch("https://vercel-api-post-office-seven.vercel.app/api/update-customer-profile", {
+      const res = await fetch("https://final-po-api.vercel.app/api/update-customer-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_id: user.customers_id, ...profile }),

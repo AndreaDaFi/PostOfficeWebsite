@@ -19,7 +19,7 @@ export default function PackageCheckout() {
     const fetchTaxRate = async () => {
       try {
         console.log("origin address id:", payload.origin_address_id)
-        const response = await fetch(`https://vercel-api-post-office-seven.vercel.app/api/GetTax?address_id=${payload.origin_address_id}`)
+        const response = await fetch(`https://final-po-api.vercel.app/api/GetTax?address_id=${payload.origin_address_id}`)
         const data = await response.json()
 
         if (data) {
@@ -69,7 +69,7 @@ export default function PackageCheckout() {
     const checkoutData = { ...payload }
 
     try {
-      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/PackageCheckout", {
+      const response = await fetch("https://final-po-api.vercel.app/api/PackageCheckout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

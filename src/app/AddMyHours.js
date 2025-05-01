@@ -35,7 +35,7 @@ export default function AddMyHours() {
     const dataToSend = { ...formData, employeeId };
 
     try {
-      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/add-hours", {
+      const response = await fetch("https://final-po-api.vercel.app/api/add-hours", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend),

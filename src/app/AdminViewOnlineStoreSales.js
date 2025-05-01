@@ -195,7 +195,7 @@ export default function ViewPO() {
     const fetchPostOffices = async () => {
       try {
         const response = await fetch(
-          "https://vercel-api-post-office-seven.vercel.app/api/getPostOfficeLocations"
+          "https://final-po-api.vercel.app/api/getPostOfficeLocations"
         ); // Your API endpoint
         const result = await response.json();
 
@@ -219,7 +219,7 @@ export default function ViewPO() {
     const fetchItems = async () => {
       try {
         const response = await fetch(
-          `https://vercel-api-post-office-seven.vercel.app/api/AdminViewStore`,
+          `https://final-po-api.vercel.app/api/AdminViewStore`,
           {
             method: "GET", // Use GET method
           }
@@ -248,7 +248,7 @@ export default function ViewPO() {
     const fetchItems = async () => {
       try {
         const response = await fetch(
-          `https://vercel-api-post-office-seven.vercel.app/api/AdminViewStoreTwo`,
+          `https://final-po-api.vercel.app/api/AdminViewStoreTwo`,
           {
             method: "GET", // Use GET method
           }
@@ -278,7 +278,7 @@ export default function ViewPO() {
     const fetchPostOffices = async () => {
       try {
         const response = await fetch(
-          `https://vercel-api-post-office-seven.vercel.app/api/AdminViewOnlineStore`
+          `https://final-po-api.vercel.app/api/AdminViewOnlineStore`
         ); // Your API endpoint
         const result = await response.json();
 

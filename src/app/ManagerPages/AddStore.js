@@ -63,7 +63,7 @@ export default function AddStoreItem() {
         po_id: po_id,
       }
       console.log("Form Data:", newItem)
-      const response = await fetch("https://vercel-api-post-office-seven.vercel.app/api/AddStore", {
+      const response = await fetch("https://final-po-api.vercel.app/api/AddStore", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newItem),
